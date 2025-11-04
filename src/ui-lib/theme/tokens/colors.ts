@@ -42,7 +42,7 @@ export const colors = defineTokens.colors({
       value: "#767676",
     },
     disable: {
-      value: "#9999",
+      value: "#999999",
     },
   },
 
