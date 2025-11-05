@@ -31,16 +31,16 @@ const tagRecipe = cva({
 
   variants: {
     color: {
-      pink: {
-        bgColor: '#FAAB9E',
+      city: {
+        bgColor: 'bus.city',
       },
-      green: {
-        bgColor: '#B7DCCA',
+      suburb: {
+        bgColor: 'bus.suburb',
       },
-      red: {
-        bgColor: '#FF534F',
+      tour: {
+        bgColor: 'bus.tour',
       },
-      white: {
+      default: {
         bgColor: 'background.normal',
         border: '1px solid',
         borderColor: 'line.normal',
@@ -49,7 +49,7 @@ const tagRecipe = cva({
   },
 
   defaultVariants: {
-    color: 'white',
+    color: 'default',
   },
 })
 
@@ -61,7 +61,7 @@ type TagProps = {
   HTMLStyledProps<'span'>
 
 export const Tag = forwardRef<HTMLSpanElement, TagProps>((props, ref) => {
-  const { children, color = 'pink', ...rest } = props
+  const { children, color = 'default', ...rest } = props
 
   const TagComponent = styled(ark.span, tagRecipe)
 

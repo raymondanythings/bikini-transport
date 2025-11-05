@@ -87,4 +87,10 @@ export const colors = defineTokens.colors({
       value: "#000000",
     },
   },
+
+  bus: {
+    tour: { value: "#FF534F" },
+    city: { value: "#FAAB9E" },
+    suburb: { value: "#B7DCCA" },
+  },
 });
