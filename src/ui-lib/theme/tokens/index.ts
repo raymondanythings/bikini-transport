@@ -1,6 +1,6 @@
 import { defineTokens } from "@pandacss/dev";
-import { fonts } from "./fonts";
 import { colors } from "./colors";
+import { fonts } from "./fonts";
 
 export const tokens = defineTokens({
   fonts,

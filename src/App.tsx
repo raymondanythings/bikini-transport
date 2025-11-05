@@ -1,26 +1,17 @@
-import { css } from 'styled-system/css'
-
-import './App.css'
 import { Flex } from 'styled-system/jsx'
+import { Tabs } from './ui-lib/components/Tabs'
 
 function App() {
   return (
-    <Flex direction="column" gap="16px" padding="16px">
-      <div className={css({ textStyle: 'H0_Bold' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'H1_Bold' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'H1_Medium' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'H2_Bold' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'H2_Medium' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'B1_Bold' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'B1_Medium' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'B1_Regular' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'B2_Bold' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'B2_Medium' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'B2_Regular' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'C1_Bold' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'C1_Medium' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'C2_Medium' })}>스타일 가이드</div>
-      <div className={css({ textStyle: 'C2_Regular' })}>스타일 가이드</div>
+    <Flex direction="column" gap="16px">
+      <Tabs.Root defaultValue="tab1">
+        <Tabs.List>
+          <Tabs.Trigger value="tab1">탭 1</Tabs.Trigger>
+          <Tabs.Trigger value="tab2">탭 2</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="tab1">내용 1</Tabs.Content>
+        <Tabs.Content value="tab2">내용 2</Tabs.Content>
+      </Tabs.Root>
     </Flex>
   )
 }
