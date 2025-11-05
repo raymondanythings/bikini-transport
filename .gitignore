@@ -34,3 +34,7 @@ dist-ssr
 !.yarn/unsupported
 !.yarn/build-state.yml
 !.yarn/install-state.gz
+
+## Panda
+styled-system
+styled-system-studio
