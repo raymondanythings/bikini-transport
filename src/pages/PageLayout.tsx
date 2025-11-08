@@ -1,12 +1,13 @@
+import { Box } from 'styled-system/jsx'
+
 interface PageLayoutProps {
   children: React.ReactNode
 }
 
 export const PageLayout = ({ children }: PageLayoutProps) => {
   return (
-    <div>
-      Page Layout
+    <Box minH="screen" backgroundColor="background.normal" pb="env(safe-area-inset-bottom, 0px)">
       {children}
-    </div>
+    </Box>
   )
 }
