@@ -2,7 +2,7 @@ import { Box, Flex } from 'styled-system/jsx'
 import { Button } from '@/ui-lib/components/Button'
 import { CloseOutlined } from '@/ui-lib/components/Icon'
 import { Header } from '../../layout/Header'
-import { Text } from '../../ui-lib/components/Text'
+import { Typography } from '../../ui-lib/components/Typography'
 
 export const PaymentPage = () => {
   return (
@@ -14,7 +14,7 @@ export const PaymentPage = () => {
           </button>
         </Header.Left>
         <Header.Center>
-          <Text variant="H1_Bold">결제</Text>
+          <Typography variant="H1_Bold">결제</Typography>
         </Header.Center>
       </Header>
       <Box flex="1" overflowY="auto" p={5}>

@@ -80,3 +80,40 @@ export const CloseOutlined = ({ size = 24, color = 'label.normal' }: IconProps) 
     <path d="M18 18L6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 )
+
+export const CircleOutlined = ({ size = 10, color = 'label.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 10 10"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <circle cx="5" cy="5" r="4" fill="white" stroke="currentColor" stroke-width="2" />
+  </svg>
+)
+
+export const ExclamationCircleFilled = ({ size = 36, color = 'primary.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 36 36"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path
+      d="M18 31.5C25.4558 31.5 31.5 25.4558 31.5 18C31.5 10.5442 25.4558 4.5 18 4.5C10.5442 4.5 4.5 10.5442 4.5 18C4.5 25.4558 10.5442 31.5 18 31.5Z"
+      fill="currentColor"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M18 22.5C17.175 22.5 16.5 23.175 16.5 24C16.5 24.825 17.175 25.5 18 25.5C18.825 25.5 19.5 24.825 19.5 24C19.5 23.175 18.825 22.5 18 22.5Z"
+      fill="black"
+    />
+    <path d="M18 12V18" stroke="black" stroke-width="2" stroke-linecap="round" />
+  </svg>
+)

@@ -3,12 +3,12 @@ import { cva, type RecipeVariantProps } from 'styled-system/css'
 import { styled, type HTMLStyledProps } from 'styled-system/jsx'
 
 /**
- * Text recipe variants
+ * Typography recipe variants
  * - H1, H2: Heading styles
  * - B1, B2: Body text styles
  * - C1, C2: Caption/small text styles
  */
-const textRecipe = cva({
+const typographyRecipe = cva({
   base: {
     color: 'label.normal',
     display: 'block',
@@ -40,22 +40,22 @@ const textRecipe = cva({
 })
 
 // Pre-created styled components for better performance
-const StyledH1 = styled('h1', textRecipe)
-const StyledH2 = styled('h2', textRecipe)
-const StyledP = styled('p', textRecipe)
-const StyledSpan = styled('span', textRecipe)
+const StyledH1 = styled('h1', typographyRecipe)
+const StyledH2 = styled('h2', typographyRecipe)
+const StyledP = styled('p', typographyRecipe)
+const StyledSpan = styled('span', typographyRecipe)
 
-type TextVariantProps = RecipeVariantProps<typeof textRecipe>
+type TypographyVariantProps = RecipeVariantProps<typeof typographyRecipe>
 
 /**
  * Semantic HTML tag options for Text component
  */
-type TextTag = 'h1' | 'h2' | 'p' | 'span'
+type TypographyTag = 'h1' | 'h2' | 'p' | 'span'
 
 /**
  * Mapping of variant prefix to default HTML tag
  */
-const VARIANT_TO_TAG_MAP: Record<string, TextTag> = {
+const VARIANT_TO_TAG_MAP: Record<string, TypographyTag> = {
   H0: 'h1',
   H1: 'h1',
   H2: 'h2',
@@ -68,20 +68,20 @@ const VARIANT_TO_TAG_MAP: Record<string, TextTag> = {
 /**
  * Mapping of HTML tag to styled component
  */
-const TAG_TO_COMPONENT_MAP: Record<TextTag, ElementType> = {
+const TAG_TO_COMPONENT_MAP: Record<TypographyTag, ElementType> = {
   h1: StyledH1,
   h2: StyledH2,
   p: StyledP,
   span: StyledSpan,
 }
 
-export type TextProps = Omit<HTMLStyledProps<'p'>, 'as'> &
-  TextVariantProps & {
+export type TypographyProps = Omit<HTMLStyledProps<'p'>, 'as'> &
+  TypographyVariantProps & {
     /**
      * Override the default HTML tag
      * @default Auto-selected based on variant (H1 → h1, B1 → p, C1 → span)
      */
-    as?: TextTag
+    as?: TypographyTag
   }
 
 /**
@@ -96,7 +96,7 @@ function getVariantPrefix(variant?: string): string {
 /**
  * Determine the HTML tag to use based on variant and as prop
  */
-function resolveTag(variant?: string, as?: TextTag): TextTag {
+function resolveTag(variant?: string, as?: TypographyTag): TypographyTag {
   // Explicit 'as' prop takes priority
   if (as) return as
 
@@ -105,7 +105,7 @@ function resolveTag(variant?: string, as?: TextTag): TextTag {
   return VARIANT_TO_TAG_MAP[prefix] || 'p'
 }
 
-export const Text = forwardRef<HTMLElement, TextProps>((props, ref) => {
+export const Typography = forwardRef<HTMLElement, TypographyProps>((props, ref) => {
   const { variant, as, children, ...rest } = props
 
   const tag = resolveTag(variant, as)
@@ -118,4 +118,4 @@ export const Text = forwardRef<HTMLElement, TextProps>((props, ref) => {
   )
 })
 
-Text.displayName = 'Text'
+Typography.displayName = 'Typography'
