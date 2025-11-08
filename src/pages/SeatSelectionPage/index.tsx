@@ -1,7 +1,7 @@
 import { Box, Flex } from 'styled-system/jsx'
 import { LeftOutlined } from '@/ui-lib/components/Icon'
 import { Header } from '../../layout/Header'
-import { Text } from '../../ui-lib/components/Text'
+import { Typography } from '../../ui-lib/components/Typography'
 import { Button } from '@/ui-lib/components/Button'
 
 export const SeatSelectionPage = () => {
@@ -14,7 +14,7 @@ export const SeatSelectionPage = () => {
           </button>
         </Header.Left>
         <Header.Center>
-          <Text variant="H1_Bold">좌석 선택</Text>
+          <Typography variant="H1_Bold">좌석 선택</Typography>
         </Header.Center>
       </Header>
       <Box flex="1" overflowY="auto" p={5} backgroundColor="background.neutral">

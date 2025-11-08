@@ -1,7 +1,7 @@
 import { Box, Flex } from 'styled-system/jsx'
 import { Button } from '@/ui-lib/components/Button'
 import { CloseOutlined } from '@/ui-lib/components/Icon'
-import { Text } from '../../ui-lib/components/Text'
+import { Typography } from '../../ui-lib/components/Typography'
 import { Header } from '@/layout/Header'
 
 export const PaymentSuccessPage = () => {
@@ -9,7 +9,7 @@ export const PaymentSuccessPage = () => {
     <Flex direction="column" height="screen">
       <Header>
         <Header.Center>
-          <Text variant="H1_Bold">결재 완료</Text>
+          <Typography variant="H1_Bold">결재 완료</Typography>
         </Header.Center>
         <Header.Right>
           <button>
@@ -20,9 +20,9 @@ export const PaymentSuccessPage = () => {
       <Box flex="1" overflowY="auto" py="25vh">
         <Flex direction="column" alignItems="center" gap="20px">
           <PaymentSuccessIcon />
-          <Text variant="H0_Bold" color="label.normal">
+          <Typography variant="H0_Bold" color="label.normal">
             결제가 완료되었어요
-          </Text>
+          </Typography>
         </Flex>
       </Box>
       <Box px={5} py={4} flexShrink={0}>
