@@ -1,6 +1,7 @@
-import { Button } from '@/ui-lib/components/Button'
 import { Box, Divider, Flex } from 'styled-system/jsx'
-import { Text } from '../../ui-lib/components/Text'
+import { Button } from '@/ui-lib/components/Button'
+import { Typography } from '@/ui-lib/components/Typography'
+import { TicketSelectionBottomSheet } from './components/TicketSelectionBottomSheet'
 
 // TODO: Layout 변경 필요
 export const HomePage = () => {
@@ -15,13 +16,14 @@ export const HomePage = () => {
           <Box>
             출발지~도착지
             <Divider />
-            <Text variant="H2_Bold">2024.06.15 (토) 14:00 출발</Text>
+            <Typography variant="H2_Bold">2024.06.15 (토) 14:00 출발</Typography>
           </Box>
         </Box>
       </Box>
       <Box px={5} py={4} flexShrink={0} backgroundColor="background.normal" zIndex={1}>
         <Button fullWidth>버스표 조회</Button>
       </Box>
+      <TicketSelectionBottomSheet />
     </Flex>
   )
 }

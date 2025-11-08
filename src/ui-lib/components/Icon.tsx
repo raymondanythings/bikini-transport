@@ -80,3 +80,16 @@ export const CloseOutlined = ({ size = 24, color = 'label.normal' }: IconProps) 
     <path d="M18 18L6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 )
+
+export const CircleOutlined = ({ size = 10, color = 'label.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 10 10"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <circle cx="5" cy="5" r="4" fill="white" stroke="currentColor" stroke-width="2" />
+  </svg>
+)
