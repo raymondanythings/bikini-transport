@@ -9,11 +9,11 @@ export const DiscountBottomSheet = () => {
     <BottomSheet
       open={false}
       header={<BottomSheet.Header>할인</BottomSheet.Header>}
-      cta={[
+      cta={
         <Button key="사용하기" fullWidth>
           사용하기
-        </Button>,
-      ]}
+        </Button>
+      }
     >
       <Box p={5} height="568px">
         <VStack gap={4}>

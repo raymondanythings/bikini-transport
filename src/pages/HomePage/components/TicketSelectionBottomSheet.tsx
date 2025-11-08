@@ -8,51 +8,44 @@ import { Typography } from '@/ui-lib/components/Typography'
 
 export const TicketSelectionBottomSheet = () => {
   return (
-    <BottomSheet open={true} header={<BottomSheet.Header>버스표 선택</BottomSheet.Header>}>
+    <BottomSheet
+      open={false}
+      header={<BottomSheet.Header>버스표 선택</BottomSheet.Header>}
+      cta={
+        <Button key="결제" fullWidth>
+          10,000원 결제하기
+        </Button>
+      }
+    >
       <Tabs
         items={[
           {
             key: '최단시간',
             label: '최단시간',
             children: (
-              <>
-                <Flex p="5" direction="column" gap="3.5" height="480px" overflowY="auto">
-                  <DepartureArrivalCard />
-                  <TicketDetailCard />
-                </Flex>
-                <Box px="5" py="4">
-                  <Button fullWidth>10,000원 결재하기</Button>
-                </Box>
-              </>
+              <Flex p="5" direction="column" gap="3.5" height="480px" overflowY="auto">
+                <DepartureArrivalCard />
+                <TicketDetailCard />
+              </Flex>
             ),
           },
           {
             key: '최소환승',
             label: '최소환승',
             children: (
-              <>
-                <Box height="480px" overflowY="auto" pt="140px">
-                  <TicketSoldOut />
-                </Box>
-                <Box px="5" py="4">
-                  <Button fullWidth>13,000원 결재하기</Button>
-                </Box>
-              </>
+              <Box height="480px" overflowY="auto" pt="140px">
+                <TicketSoldOut />
+              </Box>
             ),
           },
           {
             key: '최저요금',
             label: '최저요금',
             children: (
-              <>
-                <Flex p="5" direction="column" gap="3.5" height="480px" overflowY="auto">
-                  <DepartureArrivalCard />
-                  <TicketDetailCard />
-                </Flex>
-                <Box px="5" py="4">
-                  <Button fullWidth>12,000원 결재하기</Button>
-                </Box>
-              </>
+              <Flex p="5" direction="column" gap="3.5" height="480px" overflowY="auto">
+                <DepartureArrivalCard />
+                <TicketDetailCard />
+              </Flex>
             ),
           },
         ]}

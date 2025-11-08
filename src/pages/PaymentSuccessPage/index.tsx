@@ -10,7 +10,7 @@ export const PaymentSuccessPage = () => {
     <Flex direction="column" height="screen">
       <Header>
         <Header.Center>
-          <Typography variant="H1_Bold">결재 완료</Typography>
+          <Typography variant="H1_Bold">결제 완료</Typography>
         </Header.Center>
         <Header.Right>
           <ark.button>
