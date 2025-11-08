@@ -8,7 +8,7 @@ import { styled, type HTMLStyledProps } from 'styled-system/jsx'
  * - B1, B2: Body text styles
  * - C1, C2: Caption/small text styles
  */
-export const textRecipe = cva({
+const textRecipe = cva({
   base: {
     color: 'label.normal',
     display: 'block',
@@ -105,7 +105,7 @@ function resolveTag(variant?: string, as?: TextTag): TextTag {
   return VARIANT_TO_TAG_MAP[prefix] || 'p'
 }
 
-const Text = forwardRef<HTMLElement, TextProps>((props, ref) => {
+export const Text = forwardRef<HTMLElement, TextProps>((props, ref) => {
   const { variant, as, children, ...rest } = props
 
   const tag = resolveTag(variant, as)
@@ -119,5 +119,3 @@ const Text = forwardRef<HTMLElement, TextProps>((props, ref) => {
 })
 
 Text.displayName = 'Text'
-
-export { Text }
