@@ -7,6 +7,7 @@ import { Tag } from '@/ui-lib/components/Tag'
 import { Header } from '../../layout/Header'
 import { Typography } from '../../ui-lib/components/Typography'
 import { DiscountBottomSheet } from './components/DiscountBottomSheet'
+import { PaymentCancelBottomSheet } from './components/PaymentCancelBottomSheet'
 import { PaymentConfirmBottomSheet } from './components/PaymentConfirmBottomSheet'
 
 export const PaymentPage = () => {
@@ -118,6 +119,7 @@ export const PaymentPage = () => {
       </Box>
       <DiscountBottomSheet />
       <PaymentConfirmBottomSheet />
+      <PaymentCancelBottomSheet />
     </Flex>
   )
 }
