@@ -6,6 +6,7 @@ import { CircleOutlined, CloseOutlined, DownOutlined, SwapRightOutlined } from '
 import { Tag } from '@/ui-lib/components/Tag'
 import { Header } from '../../layout/Header'
 import { Typography } from '../../ui-lib/components/Typography'
+import { DiscountBottomSheet } from './components/DiscountBottomSheet'
 
 export const PaymentPage = () => {
   return (
@@ -20,6 +21,7 @@ export const PaymentPage = () => {
           <Typography variant="H1_Bold">결제</Typography>
         </Header.Center>
       </Header>
+
       <Box flex="1" overflowY="auto" pt="5" pb="2.5" px="5">
         <Box borderWidth="1px" borderStyle="solid" borderColor="line.neutral" borderRadius="xl">
           <VStack gap="3" p="5" backgroundColor="background.neutral" borderRadius="xl">
@@ -99,7 +101,10 @@ export const PaymentPage = () => {
                 </Typography>
                 <Button color="secondary" size="small" icon={<CloseOutlined size={16} />} iconPosition="end">
                   <Flex>
-                    <Typography color="secondary.heavy">2₴</Typography>가 할인되었어요!
+                    <Typography variant="B2_Medium" color="secondary.heavy">
+                      2₴
+                    </Typography>
+                    가 할인되었어요!
                   </Flex>
                 </Button>
               </HStack>
@@ -110,6 +115,7 @@ export const PaymentPage = () => {
       <Box px={5} py={4} flexShrink={0}>
         <Button fullWidth>확인</Button>
       </Box>
+      <DiscountBottomSheet />
     </Flex>
   )
 }

@@ -94,6 +94,19 @@ export const CircleOutlined = ({ size = 10, color = 'label.normal' }: IconProps)
   </svg>
 )
 
+export const CircleFilled = ({ size = 2, color = 'label.alternative' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 2 2"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <circle cx="1" cy="1" r="1" fill="currentColor" />
+  </svg>
+)
+
 export const ExclamationCircleFilled = ({ size = 36, color = 'primary.normal' }: IconProps) => (
   <svg
     width={size}
