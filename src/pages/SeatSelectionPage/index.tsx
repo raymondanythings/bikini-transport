@@ -53,11 +53,60 @@ export const SeatSelectionPage = () => {
           </HStack>
         </HStack>
         <Spacer height="6" />
-        <Flex>
-          <SeatButton size="large" status="available" seatNumber="1C" />
-          <SeatButton size="large" status="disabled" seatNumber="1A" />
-          <SeatButton size="large" status="selected" seatNumber="1B" />
-        </Flex>
+        <VStack gap="2">
+          {/* Row 1 */}
+          <Box display="grid" gridTemplateColumns="1fr 1fr 0.8fr 1fr 1fr" gap="2" alignItems="center">
+            <SeatButton size="large" status="available" seatNumber="1A" />
+            <SeatButton size="large" status="available" seatNumber="1B" />
+            <Box width="15px" />
+            <SeatButton size="large" status="available" seatNumber="1C" />
+            <SeatButton size="large" status="available" seatNumber="1D" />
+          </Box>
+
+          {/* Row 2 */}
+          <Box display="grid" gridTemplateColumns="1fr 1fr 0.8fr 1fr 1fr" gap="2" alignItems="center">
+            <SeatButton size="large" status="available" seatNumber="2A" />
+            <SeatButton size="large" status="disabled" seatNumber="2B" />
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <BusExitArrow />
+            </Box>
+            <SeatButton size="large" status="available" seatNumber="2C" />
+            <SeatButton size="large" status="available" seatNumber="2D" />
+          </Box>
+
+          {/* Row 3 */}
+          <Box display="grid" gridTemplateColumns="1fr 1fr 0.8fr 1fr 1fr" gap="2" alignItems="center">
+            <SeatButton size="large" status="available" seatNumber="3A" />
+            <SeatButton size="large" status="available" seatNumber="3B" />
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <BusExitArrow />
+            </Box>
+            <SeatButton size="large" status="selected" seatNumber="3C" />
+            <SeatButton size="large" status="available" seatNumber="3D" />
+          </Box>
+
+          {/* Row 4 */}
+          <Box display="grid" gridTemplateColumns="1fr 1fr 0.8fr 1fr 1fr" gap="2" alignItems="center">
+            <SeatButton size="large" status="available" seatNumber="4A" />
+            <SeatButton size="large" status="available" seatNumber="4B" />
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <BusExitArrow />
+            </Box>
+            <SeatButton size="large" status="available" seatNumber="4C" />
+            <SeatButton size="large" status="available" seatNumber="4D" />
+          </Box>
+
+          {/* Row 5 */}
+          <Box display="grid" gridTemplateColumns="1fr 1fr 0.8fr 1fr 1fr" gap="2" alignItems="center">
+            <SeatButton size="large" status="available" seatNumber="5A" />
+            <SeatButton size="large" status="available" seatNumber="5B" />
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <BusExitArrow />
+            </Box>
+            <SeatButton size="large" status="available" seatNumber="5C" />
+            <SeatButton size="large" status="available" seatNumber="5D" />
+          </Box>
+        </VStack>
       </Box>
       <Box px={5} py={4} flexShrink={0}>
         <Button fullWidth>선택 완료 1/3</Button>
@@ -65,3 +114,9 @@ export const SeatSelectionPage = () => {
     </Flex>
   )
 }
+
+export const BusExitArrow = () => (
+  <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.5 0L0 13H15L7.5 0Z" fill="#4B4B4B" />
+  </svg>
+)
