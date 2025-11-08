@@ -1,8 +1,9 @@
-import { Box, Flex } from 'styled-system/jsx'
-import { LeftOutlined } from '@/ui-lib/components/Icon'
+import { Box, Divider, Flex, HStack, Spacer, VStack } from 'styled-system/jsx'
+import { Button } from '@/ui-lib/components/Button'
+import { LeftOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon'
 import { Header } from '../../layout/Header'
 import { Typography } from '../../ui-lib/components/Typography'
-import { Button } from '@/ui-lib/components/Button'
+import { SeatButton } from './components/SeatButton'
 
 export const SeatSelectionPage = () => {
   return (
@@ -18,10 +19,45 @@ export const SeatSelectionPage = () => {
         </Header.Center>
       </Header>
       <Box flex="1" overflowY="auto" p={5} backgroundColor="background.neutral">
-        <Box height="2000px" border={'1px solid black'}>
-          <div>대충 현재 구역</div>
-          <div>대충 좌석들 나열</div>
-        </Box>
+        <VStack gap="3" p="5" backgroundColor="background.normal" borderRadius="xl">
+          <HStack gap="4">
+            <Typography variant="B1_Bold" color="label.normal">
+              첫번째 환승
+            </Typography>
+            <SwapRightOutlined />
+            <Typography variant="B1_Bold" color="label.normal">
+              첫번째 환승
+            </Typography>
+          </HStack>
+          <HStack>
+            <HStack gap="1">
+              <Typography variant="B2_Medium" color="label.normal">
+                전체 20석
+              </Typography>
+              <Divider orientation="vertical" height="2.5" color="line.normal" />
+              <Typography variant="B2_Medium" color="label.normal">
+                잔여 19석
+              </Typography>
+            </HStack>
+          </HStack>
+        </VStack>
+        <Spacer height="4" />
+        <HStack gap="5" justifyContent="center">
+          <HStack gap="1">
+            <SeatButton size="small" status="available" />
+            <Typography>선택 가능</Typography>
+          </HStack>
+          <HStack gap="1">
+            <SeatButton size="small" status="disabled" />
+            <Typography>선택 불가</Typography>
+          </HStack>
+        </HStack>
+        <Spacer height="6" />
+        <Flex>
+          <SeatButton size="large" status="available" seatNumber="1C" />
+          <SeatButton size="large" status="disabled" seatNumber="1A" />
+          <SeatButton size="large" status="selected" seatNumber="1B" />
+        </Flex>
       </Box>
       <Box px={5} py={4} flexShrink={0}>
         <Button fullWidth>선택 완료 1/3</Button>
