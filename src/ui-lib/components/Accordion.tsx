@@ -7,6 +7,8 @@ const Root = styled(ArkAccordion.Root, {
   },
 })
 
+const Item = styled(ArkAccordion.Item)
+
 const ItemTrigger = styled(ArkAccordion.ItemTrigger, {
   base: {
     w: 'full',
@@ -36,6 +38,10 @@ const ItemIndicator = styled(ArkAccordion.ItemIndicator, {
   },
 })
 
+const ItemContent = styled(ArkAccordion.ItemContent, {
+  base: { pt: 4 },
+})
+
 interface AccordionItem {
   key: string
   label: React.ReactNode
@@ -54,13 +60,13 @@ export const Accordion = ({ items, defaultValue, multiple = false, collapsible =
   return (
     <Root defaultValue={defaultValue} multiple={multiple} collapsible={collapsible}>
       {items.map(item => (
-        <ArkAccordion.Item key={item.key} value={item.key}>
+        <Item key={item.key} value={item.key}>
           <ItemTrigger>
             {item.label}
             {item.indicator && <ItemIndicator>{item.indicator}</ItemIndicator>}
           </ItemTrigger>
-          <ArkAccordion.ItemContent>{item.children}</ArkAccordion.ItemContent>
-        </ArkAccordion.Item>
+          <ItemContent>{item.children}</ItemContent>
+        </Item>
       ))}
     </Root>
   )

@@ -86,9 +86,6 @@ export const colors = defineTokens.colors({
     black: {
       value: "#000000",
     },
-    gray: {
-      value: "#767676",
-    },
   },
 
   bus: {

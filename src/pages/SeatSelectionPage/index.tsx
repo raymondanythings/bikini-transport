@@ -1,3 +1,4 @@
+import { ark } from '@ark-ui/react'
 import { Box, Divider, Flex, HStack, Spacer, VStack } from 'styled-system/jsx'
 import { Button } from '@/ui-lib/components/Button'
 import { LeftOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon'
@@ -10,9 +11,9 @@ export const SeatSelectionPage = () => {
     <Flex direction="column" height="screen">
       <Header>
         <Header.Left>
-          <button>
+          <ark.button>
             <LeftOutlined />
-          </button>
+          </ark.button>
         </Header.Left>
         <Header.Center>
           <Typography variant="H1_Bold">좌석 선택</Typography>

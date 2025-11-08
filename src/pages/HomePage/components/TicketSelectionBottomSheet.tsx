@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, VStack } from 'styled-system/jsx'
+import { Box, Divider, Flex, HStack, VStack } from 'styled-system/jsx'
 import { BottomSheet } from '@/ui-lib/components/BottomSheet'
 import { Button } from '@/ui-lib/components/Button'
 import { CircleOutlined, ExclamationCircleFilled, SwapRightOutlined } from '@/ui-lib/components/Icon'
@@ -8,7 +8,7 @@ import { Typography } from '@/ui-lib/components/Typography'
 
 export const TicketSelectionBottomSheet = () => {
   return (
-    <BottomSheet open={false} header={<BottomSheet.Header>버스표 선택</BottomSheet.Header>}>
+    <BottomSheet open={true} header={<BottomSheet.Header>버스표 선택</BottomSheet.Header>}>
       <Tabs
         items={[
           {
@@ -63,11 +63,11 @@ export const TicketSelectionBottomSheet = () => {
 
 const DepartureArrivalCard = () => {
   return (
-    <Flex direction="column" gap="3" alignItems="center" p="5" backgroundColor="background.neutral" borderRadius="xl">
+    <VStack gap="3" p="5" backgroundColor="background.neutral" borderRadius="xl">
       <Typography variant="C2_Regular" color="label.normal">
         10월 28일 (화) 09:00
       </Typography>
-      <Flex alignItems="center" gap="6">
+      <HStack gap="6">
         <Typography variant="H1_Bold" color="label.normal">
           비키니환초
         </Typography>
@@ -75,8 +75,8 @@ const DepartureArrivalCard = () => {
         <Typography variant="H1_Bold" color="label.normal">
           구-라군
         </Typography>
-      </Flex>
-      <Flex alignItems="center" gap="1">
+      </HStack>
+      <HStack gap="1">
         <Typography variant="C2_Regular" color="label.normal">
           총 8시간 6분
         </Typography>
@@ -85,8 +85,8 @@ const DepartureArrivalCard = () => {
         <Typography variant="C2_Regular" color="label.normal">
           환승 3회
         </Typography>
-      </Flex>
-    </Flex>
+      </HStack>
+    </VStack>
   )
 }
 
@@ -190,7 +190,7 @@ const TicketSoldOut = () => {
       <Typography variant="H2_Bold" color="label.normal">
         버스표가 모두 매진되었어요
       </Typography>
-      <Typography variant="B1_Medium" color="static.gray">
+      <Typography variant="B1_Medium" color="label.alternative">
         다른 날짜나 시간대를 선택해주세요
       </Typography>
     </VStack>
