@@ -57,10 +57,35 @@ const Indicator = styled(ArkTabs.Indicator, {
   },
 })
 
-export const Tabs = {
-  Root,
-  List,
-  Trigger,
-  Content: ArkTabs.Content,
-  Indicator,
+const Content = styled(ArkTabs.Content)
+
+interface TabItem {
+  key: string
+  label: React.ReactNode
+  children: React.ReactNode
+}
+
+interface TabsProps {
+  items: TabItem[]
+  defaultActiveKey?: string
+}
+
+export const Tabs = ({ items, defaultActiveKey }: TabsProps) => {
+  return (
+    <Root defaultValue={defaultActiveKey || items[0]?.key}>
+      <List>
+        {items.map(item => (
+          <Trigger key={item.key} value={item.key}>
+            {item.label}
+          </Trigger>
+        ))}
+      </List>
+      {items.map(item => (
+        <Content key={item.key} value={item.key}>
+          {item.children}
+        </Content>
+      ))}
+      <Indicator />
+    </Root>
+  )
 }

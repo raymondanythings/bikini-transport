@@ -1,7 +1,7 @@
 import { ark } from '@ark-ui/react'
 import { forwardRef } from 'react'
 import { cva, type RecipeVariantProps } from 'styled-system/css'
-import { styled, type HTMLStyledProps } from 'styled-system/jsx'
+import { type HTMLStyledProps, styled } from 'styled-system/jsx'
 
 type ButtonVariantProps = RecipeVariantProps<typeof buttonRecipe>
 
@@ -195,6 +195,14 @@ type ButtonProps = {
 } & BaseButtonProps &
   HTMLStyledProps<'button'>
 
+const ButtonComponent = styled(ark.button, buttonRecipe)
+
+const SPINNER_SIZE = {
+  small: 12,
+  medium: 14,
+  large: 16,
+} as const
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const {
     children,
@@ -209,16 +217,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
     ...rest
   } = props
 
-  const ButtonComponent = styled(ark.button, buttonRecipe)
-
-  const spinnerSize = {
-    small: 12,
-    medium: 14,
-    large: 16,
-  }[size]
-
   const isDisabled = disabled || loading
-  const displayIcon = loading ? <LoadingSpinner size={spinnerSize} /> : icon ? icon : null
+  const displayIcon = loading ? <LoadingSpinner size={SPINNER_SIZE[size]} /> : icon ? icon : null
 
   return (
     <ButtonComponent

@@ -1,20 +1,21 @@
+import { ark } from '@ark-ui/react'
 import { Box, Flex } from 'styled-system/jsx'
+import { Header } from '@/layout/Header'
 import { Button } from '@/ui-lib/components/Button'
 import { CloseOutlined } from '@/ui-lib/components/Icon'
 import { Typography } from '../../ui-lib/components/Typography'
-import { Header } from '@/layout/Header'
 
 export const PaymentSuccessPage = () => {
   return (
     <Flex direction="column" height="screen">
       <Header>
         <Header.Center>
-          <Typography variant="H1_Bold">결재 완료</Typography>
+          <Typography variant="H1_Bold">결제 완료</Typography>
         </Header.Center>
         <Header.Right>
-          <button>
+          <ark.button>
             <CloseOutlined />
-          </button>
+          </ark.button>
         </Header.Right>
       </Header>
       <Box flex="1" overflowY="auto" py="25vh">

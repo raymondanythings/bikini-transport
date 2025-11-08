@@ -1,6 +1,6 @@
-import { forwardRef, type ElementType } from 'react'
+import { type ElementType, forwardRef } from 'react'
 import { cva, type RecipeVariantProps } from 'styled-system/css'
-import { styled, type HTMLStyledProps } from 'styled-system/jsx'
+import { type HTMLStyledProps, styled } from 'styled-system/jsx'
 
 /**
  * Typography recipe variants
