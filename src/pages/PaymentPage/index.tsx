@@ -7,6 +7,7 @@ import { Tag } from '@/ui-lib/components/Tag'
 import { Header } from '../../layout/Header'
 import { Typography } from '../../ui-lib/components/Typography'
 import { DiscountBottomSheet } from './components/DiscountBottomSheet'
+import { PaymentConfirmBottomSheet } from './components/PaymentConfirmBottomSheet'
 
 export const PaymentPage = () => {
   return (
@@ -116,6 +117,7 @@ export const PaymentPage = () => {
         <Button fullWidth>확인</Button>
       </Box>
       <DiscountBottomSheet />
+      <PaymentConfirmBottomSheet />
     </Flex>
   )
 }
