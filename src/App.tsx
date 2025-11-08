@@ -1,14 +1,11 @@
-import { Flex, styled } from 'styled-system/jsx'
-import { Text } from './ui-lib/components/Text'
+import { PageLayout } from './pages/PageLayout'
+import { Routes } from './pages/Routes'
 
 function App() {
   return (
-    <Flex direction="column" gap="16px">
-      <styled.img src="/logo.svg" alt="Bikini Transport" />
-      <Text variant="H0_Bold" textAlign="center">
-        Hello, Bikini Transport
-      </Text>
-    </Flex>
+    <PageLayout>
+      <Routes />
+    </PageLayout>
   )
 }
 
