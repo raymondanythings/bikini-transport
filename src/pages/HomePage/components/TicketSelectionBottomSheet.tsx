@@ -1,7 +1,7 @@
-import { Box, Divider, Flex } from 'styled-system/jsx'
+import { Box, Divider, Flex, VStack } from 'styled-system/jsx'
 import { BottomSheet } from '@/ui-lib/components/BottomSheet'
 import { Button } from '@/ui-lib/components/Button'
-import { CircleOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon'
+import { CircleOutlined, ExclamationCircleFilled, SwapRightOutlined } from '@/ui-lib/components/Icon'
 import { Tabs } from '@/ui-lib/components/Tabs'
 import { Tag } from '@/ui-lib/components/Tag'
 import { Typography } from '@/ui-lib/components/Typography'
@@ -25,10 +25,9 @@ export const TicketSelectionBottomSheet = () => {
           </Box>
         </Tabs.Content>
         <Tabs.Content value="tab2">
-          <Flex p="5" direction="column" gap="3.5" height="480px" overflowY="auto">
-            <DepartureArrivalCard />
-            <TicketDetailCard />
-          </Flex>
+          <Box height="480px" overflowY="auto" pt="140px">
+            <TicketSoldOut />
+          </Box>
           <Box px="5" py="4">
             <Button fullWidth>13,000원 결재하기</Button>
           </Box>
@@ -166,5 +165,19 @@ const TicketDetailCard = () => {
         구-라군
       </Typography>
     </Box>
+  )
+}
+
+const TicketSoldOut = () => {
+  return (
+    <VStack gap="3" p="5">
+      <ExclamationCircleFilled />
+      <Typography variant="H2_Bold" color="label.normal">
+        버스표가 모두 매진되었어요
+      </Typography>
+      <Typography variant="B1_Medium" color="static.gray">
+        다른 날짜나 시간대를 선택해주세요
+      </Typography>
+    </VStack>
   )
 }
