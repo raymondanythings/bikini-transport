@@ -81,6 +81,24 @@ export const CloseOutlined = ({ size = 24, color = 'label.normal' }: IconProps) 
   </svg>
 )
 
+export const CloseCircleFilled = ({ size = 24, color = 'label.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M2.10004 12.0001C2.10004 6.53248 6.5324 2.1001 12 2.1001C17.4676 2.1001 21.9 6.53248 21.9 12.0001C21.9 17.4677 17.4676 21.9001 12 21.9001C6.5324 21.9001 2.10004 17.4677 2.10004 12.0001ZM9.1364 7.86373C8.78493 7.51225 8.21508 7.51225 7.86361 7.86373C7.51214 8.2152 7.51214 8.78505 7.86361 9.13652L10.7272 12.0001L7.86361 14.8637C7.51214 15.2152 7.51214 15.785 7.86361 16.1365C8.21508 16.488 8.78493 16.488 9.1364 16.1365L12 13.2729L14.8636 16.1365C15.2151 16.488 15.7849 16.488 16.1364 16.1365C16.4878 15.785 16.4878 15.2152 16.1364 14.8637L13.2728 12.0001L16.1364 9.13652C16.4878 8.78505 16.4878 8.2152 16.1364 7.86373C15.7849 7.51225 15.2151 7.51225 14.8636 7.86373L12 10.7273L9.1364 7.86373Z"
+      fill="#B0B0B0"
+    />
+  </svg>
+)
+
 export const CircleOutlined = ({ size = 10, color = 'label.normal' }: IconProps) => (
   <svg
     width={size}
@@ -165,6 +183,29 @@ export const DownOutlined = ({ size = 16, color = 'label.normal' }: IconProps) =
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
+    />
+  </svg>
+)
+
+// 111111
+export const SearchOutlined = ({ size = 24, color = 'label.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path
+      d="M10.5 17C14.0899 17 17 14.0899 17 10.5C17 6.91015 14.0899 4 10.5 4C6.91015 4 4 6.91015 4 10.5C4 14.0899 6.91015 17 10.5 17Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeMiterlimit="10"
+    />
+    <path
+      d="M19.4697 20.5303C19.7626 20.8232 20.2374 20.8232 20.5303 20.5303C20.8232 20.2374 20.8232 19.7626 20.5303 19.4697L20 20L19.4697 20.5303ZM15 15L14.4697 15.5303L19.4697 20.5303L20 20L20.5303 19.4697L15.5303 14.4697L15 15Z"
+      fill="currentColor"
     />
   </svg>
 )

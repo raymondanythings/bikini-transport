@@ -2,6 +2,7 @@ import { Box, Divider, Flex } from 'styled-system/jsx'
 import { Button } from '@/ui-lib/components/Button'
 import { Typography } from '@/ui-lib/components/Typography'
 import { DepartureTimeBottomSheet } from './components/DepartureTimeBottomSheet'
+import { StationSearchBottomSheet } from './components/StationSearchBottomSheet'
 import { TicketSelectionBottomSheet } from './components/TicketSelectionBottomSheet'
 
 // TODO: Layout 변경 필요
@@ -26,6 +27,7 @@ export const HomePage = () => {
       </Box>
       <TicketSelectionBottomSheet />
       <DepartureTimeBottomSheet />
+      <StationSearchBottomSheet />
     </Flex>
   )
 }
