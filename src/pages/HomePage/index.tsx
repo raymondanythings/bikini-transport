@@ -32,17 +32,19 @@ export const HomePage = () => {
           <SpongeBobImage />
           <Box pt={7} pb={4} px={5}>
             <HStack gap={4} justify="center" alignItems="center" flexDirection={{ base: 'column', xs: 'row' }}>
-              <VStack>
+              <VStack as="button">
                 <Typography variant="SpongeBob_Body" color="label.neutral">
                   Departure
                 </Typography>
+
                 <Typography variant="SpongeBob_Headline" color="static.black" textAlign="center">
                   JINGJING BILA
                 </Typography>
               </VStack>
 
               <ChangeButton />
-              <VStack>
+
+              <VStack as="button">
                 <Typography variant="SpongeBob_Body" color="label.neutral">
                   Arrival
                 </Typography>
@@ -54,6 +56,7 @@ export const HomePage = () => {
           </Box>
           <Box px={5} gap={4}>
             <HStack
+              as="button"
               gap={4}
               px={5}
               py={4}
@@ -61,16 +64,17 @@ export const HomePage = () => {
               borderTopStyle="solid"
               borderTopColor="line.neutral"
               flexWrap="wrap"
+              w="full"
             >
               <Typography variant="SpongeBob_Body" color="label.normal">
                 DATE
               </Typography>
-              <Typography variant="SpongeBob_Body" color="label.normal" flex={1}>
+
+              <Typography variant="SpongeBob_Body" color="label.normal" flex={1} textAlign="left">
                 October 27 09:00 AM
               </Typography>
-              <ark.button>
-                <CalendarOutlined />
-              </ark.button>
+
+              <CalendarOutlined />
             </HStack>
           </Box>
         </Box>
