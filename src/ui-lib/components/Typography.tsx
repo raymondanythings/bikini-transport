@@ -32,6 +32,8 @@ const typographyRecipe = cva({
       C1_Medium: { textStyle: 'C1_Medium' },
       C2_Medium: { textStyle: 'C2_Medium' },
       C2_Regular: { textStyle: 'C2_Regular' },
+      SpongeBob_Headline: { textStyle: 'SpongeBob_Headline' },
+      SpongeBob_Body: { textStyle: 'SpongeBob_Body' },
     },
   },
   defaultVariants: {
@@ -63,6 +65,7 @@ const VARIANT_TO_TAG_MAP: Record<string, TypographyTag> = {
   B2: 'p',
   C1: 'span',
   C2: 'span',
+  SpongeBob: 'span',
 }
 
 /**

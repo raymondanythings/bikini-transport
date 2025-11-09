@@ -81,6 +81,24 @@ export const CloseOutlined = ({ size = 24, color = 'label.normal' }: IconProps) 
   </svg>
 )
 
+export const CloseCircleFilled = ({ size = 24, color = 'label.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M2.10004 12.0001C2.10004 6.53248 6.5324 2.1001 12 2.1001C17.4676 2.1001 21.9 6.53248 21.9 12.0001C21.9 17.4677 17.4676 21.9001 12 21.9001C6.5324 21.9001 2.10004 17.4677 2.10004 12.0001ZM9.1364 7.86373C8.78493 7.51225 8.21508 7.51225 7.86361 7.86373C7.51214 8.2152 7.51214 8.78505 7.86361 9.13652L10.7272 12.0001L7.86361 14.8637C7.51214 15.2152 7.51214 15.785 7.86361 16.1365C8.21508 16.488 8.78493 16.488 9.1364 16.1365L12 13.2729L14.8636 16.1365C15.2151 16.488 15.7849 16.488 16.1364 16.1365C16.4878 15.785 16.4878 15.2152 16.1364 14.8637L13.2728 12.0001L16.1364 9.13652C16.4878 8.78505 16.4878 8.2152 16.1364 7.86373C15.7849 7.51225 15.2151 7.51225 14.8636 7.86373L12 10.7273L9.1364 7.86373Z"
+      fill="#B0B0B0"
+    />
+  </svg>
+)
+
 export const CircleOutlined = ({ size = 10, color = 'label.normal' }: IconProps) => (
   <svg
     width={size}
@@ -165,6 +183,72 @@ export const DownOutlined = ({ size = 16, color = 'label.normal' }: IconProps) =
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
+    />
+  </svg>
+)
+
+export const SearchOutlined = ({ size = 24, color = 'label.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path
+      d="M10.5 17C14.0899 17 17 14.0899 17 10.5C17 6.91015 14.0899 4 10.5 4C6.91015 4 4 6.91015 4 10.5C4 14.0899 6.91015 17 10.5 17Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeMiterlimit="10"
+    />
+    <path
+      d="M19.4697 20.5303C19.7626 20.8232 20.2374 20.8232 20.5303 20.5303C20.8232 20.2374 20.8232 19.7626 20.5303 19.4697L20 20L19.4697 20.5303ZM15 15L14.4697 15.5303L19.4697 20.5303L20 20L20.5303 19.4697L15.5303 14.4697L15 15Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export const CalendarOutlined = ({ size = 24, color = 'label.alternative' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path d="M20 7H4V20H20V7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 7H4V12H20V7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M7 4V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M17 4V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+export const SyncOutlined = ({ size = 24, color = 'label.neutral' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path
+      d="M19.2654 9.297C19.1209 8.9088 18.6891 8.71122 18.3009 8.85569C17.9127 9.00017 17.7151 9.43199 17.8596 9.82019L18.5625 9.55859L19.2654 9.297ZM19 11.9999H18.25C18.25 15.4517 15.4518 18.2499 12 18.2499V18.9999V19.7499C16.2802 19.7499 19.75 16.2802 19.75 11.9999H19ZM18.5625 9.55859L17.8596 9.82019C18.1118 10.4979 18.25 11.2319 18.25 11.9999H19H19.75C19.75 11.0506 19.579 10.1396 19.2654 9.297L18.5625 9.55859Z"
+      fill="currentColor"
+    />
+    <path
+      d="M5.70354 16.5194C5.94533 16.8558 6.41397 16.9324 6.7503 16.6906C7.08662 16.4488 7.16325 15.9802 6.92146 15.6438L6.3125 16.0816L5.70354 16.5194ZM5 12H5.75C5.75 8.54822 8.54822 5.75 12 5.75V5V4.25C7.71979 4.25 4.25 7.71979 4.25 12H5ZM6.3125 16.0816L6.92146 15.6438C6.18408 14.6182 5.75 13.3609 5.75 12H5H4.25C4.25 13.6854 4.78885 15.2471 5.70354 16.5194L6.3125 16.0816Z"
+      fill="currentColor"
+    />
+    <path
+      d="M14.7331 4.72265C14.8821 4.87752 14.8821 5.12248 14.7331 5.27735L11.9382 8.18188C11.6886 8.44135 11.25 8.26462 11.25 7.90453L11.25 2.09547C11.25 1.73538 11.6886 1.55865 11.9382 1.81812L14.7331 4.72265Z"
+      fill="currentColor"
+    />
+    <path
+      d="M9.26688 19.2773C9.11785 19.1225 9.11785 18.8775 9.26688 18.7227L12.0618 15.8181C12.3114 15.5586 12.75 15.7354 12.75 16.0955L12.75 21.9045C12.75 22.2646 12.3114 22.4414 12.0618 22.1819L9.26688 19.2773Z"
+      fill="currentColor"
     />
   </svg>
 )
