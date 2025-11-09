@@ -128,4 +128,22 @@ export const textStyles = defineTextStyles({
       letterSpacing: "-0.025em",
     },
   },
+  SpongeBob_Headline: {
+    value: {
+      fontFamily: "krabbyPatty",
+      fontSize: "20px",
+      fontWeight: "regular",
+      lineHeight: 1.5,
+      letterSpacing: "-0.025em",
+    },
+  },
+  SpongeBob_Body: {
+    value: {
+      fontFamily: "krabbyPatty",
+      fontSize: "14px",
+      fontWeight: "regular",
+      lineHeight: 1.5,
+      letterSpacing: "-0.025em",
+    },
+  },
 });
