@@ -12,8 +12,13 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 전체 역 목록 조회
+         * 전체 역 목록 조회 및 검색
          * @description 비키니시티의 모든 버스 정류장 목록을 반환합니다.
+         *
+         *     **검색 기능:**
+         *     - 쿼리 파라미터 `q`를 사용하여 정류장 이름으로 검색 가능
+         *     - 부분 일치 검색 지원 (대소문자 무시)
+         *     - `q` 파라미터가 없으면 전체 목록 반환
          */
         get: operations["getStations"];
         put?: never;
@@ -44,23 +49,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/lines/{lineId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 특정 노선 상세 조회 */
-        get: operations["getLineById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/itineraries/search": {
         parameters: {
             query?: never;
@@ -81,6 +69,37 @@ export interface paths {
          *     - 2회 이상 환승: 노선별 설정된 할인율
          */
         post: operations["searchItineraries"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/itineraries/{itineraryId}/calculate-fare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 요금 계산 (결제 전 미리보기)
+         * @description 선택한 경로에 대해 쿠폰을 적용한 최종 요금을 계산합니다.
+         *
+         *     **계산 순서:**
+         *     1. 각 구간의 기본 요금 계산
+         *     2. 환승 할인 적용 (환승된 구간만)
+         *     3. 쿠폰 할인 적용
+         *        - PEARL_PASS: 첫 탑승 노선 기본요금에서 2₴ 차감
+         *        - GARY_NIGHT/TOUR_FUN: 각 구간에서 환승할인과 비교하여 큰 값 적용
+         *
+         *     **주의사항:**
+         *     - 같은 노선을 계속 타면 환승으로 계산되지 않음
+         *     - 쿠폰은 1개만 적용 가능
+         */
+        post: operations["calculateFare"];
         delete?: never;
         options?: never;
         head?: never;
@@ -197,11 +216,15 @@ export interface paths {
          * @description 경로, 좌석, 쿠폰 정보를 기반으로 예약을 생성합니다.
          *
          *     **할인 계산 순서:**
-         *     1. 환승 할인 적용 (갈아타는 노선에만)
-         *     2. 쿠폰 할인 적용 (환승 할인 후 금액에)
+         *     1. 각 구간의 기본 요금 계산 (baseFare만 사용)
+         *     2. 환승 할인 적용 (갈아타는 노선에만)
+         *     3. 쿠폰 할인 적용
+         *        - PEARL_PASS: 첫 탑승 노선 기본요금에서 2₴ 차감
+         *        - GARY_NIGHT/TOUR_FUN: 환승할인과 비교하여 큰 값 적용
          *
          *     **주의사항:**
-         *     - 일부 쿠폰은 환승 할인을 무효화할 수 있음
+         *     - 같은 노선을 계속 타면 환승으로 계산되지 않음
+         *     - 쿠폰은 1개만 적용 가능
          *     - 좌석이 이미 예약된 경우 에러 반환
          */
         post: operations["createBooking"];
@@ -243,14 +266,6 @@ export interface components {
              * @example 비키니시티
              */
             name: string;
-            /**
-             * @description 위치 좌표 [위도, 경도]
-             * @example [
-             *       37.5665,
-             *       126.978
-             *     ]
-             */
-            location: number[];
         };
         Line: {
             /**
@@ -289,11 +304,6 @@ export interface components {
              * @example 5
              */
             baseFare: number;
-            /**
-             * @description 3정거장당 추가 요금 (₴)
-             * @example 1
-             */
-            extraFarePer3Stops: number;
             /**
              * @description 1회 환승 할인율 (0-1)
              * @example 0.2
@@ -349,28 +359,28 @@ export interface components {
              */
             stopsCount: number;
             /**
-             * @description 기본 요금
+             * @description 기본 요금 (₴)
              * @example 5
              */
             baseFare: number;
             /**
-             * @description 추가 요금 (거리 기반)
-             * @example 1
+             * @description 환승 순서 (0=환승 없음/첫 탑승, 1=1회 환승, 2=2회 이상 환승)
+             * @example 0
              */
-            extraFare: number;
+            transferNumber: number;
             /**
-             * @description 할인 전 요금 (기본 + 추가)
-             * @example 6
-             */
-            fareBeforeDiscount: number;
-            /**
-             * @description 적용된 환승 할인 금액
-             * @example 1.2
+             * @description 이 구간에 적용된 환승 할인 금액 (₴)
+             * @example 0
              */
             transferDiscount: number;
             /**
-             * @description 최종 요금 (환승 할인 적용 후)
-             * @example 4.8
+             * @description 이 구간에 적용된 쿠폰 할인 금액 (₴)
+             * @example 0
+             */
+            couponDiscount: number;
+            /**
+             * @description 이 구간의 최종 요금 (baseFare - transferDiscount - couponDiscount)
+             * @example 5
              */
             finalFare: number;
         };
@@ -402,41 +412,43 @@ export interface components {
             legs: components["schemas"]["Leg"][];
             pricing: {
                 /**
-                 * @description 환승 할인 전 총 요금
-                 * @example 12
+                 * @description 할인 전 총액 (모든 구간 baseFare 합계)
+                 * @example 17
                  */
                 subtotal: number;
                 /**
                  * @description 환승 할인 총액
-                 * @example 2.4
+                 * @example 1.05
                  */
                 transferDiscount: number;
                 /**
                  * @description 쿠폰 적용 전 금액 (환승 할인 후)
-                 * @example 9.6
+                 * @example 15.95
                  */
                 totalBeforeCoupon: number;
             };
         };
         Seat: {
             /**
-             * @description 좌석 번호
-             * @example A1
+             * @description 좌석 번호 (1A~6D)
+             * @example 2C
              */
             seatNumber: string;
             /**
-             * @description 행 번호 (0부터 시작)
-             * @example 0
+             * @description 행 번호 (0부터 시작, 0~5)
+             * @example 1
              */
             row: number;
             /**
-             * @description 열 번호 (0부터 시작)
-             * @example 0
+             * @description 열 번호 (0=A, 1=B, 2=C, 3=D)
+             * @example 2
              */
             column: number;
             /**
              * @description 좌석 위치
-             * @example WINDOW
+             *     - WINDOW: A열(왼쪽 창), D열(오른쪽 창)
+             *     - AISLE: B열, C열
+             * @example AISLE
              * @enum {string}
              */
             position: "WINDOW" | "AISLE";
@@ -458,25 +470,30 @@ export interface components {
              */
             legId: string;
             /**
-             * @description 총 행 수
-             * @example 10
+             * @description 총 행 수 (고정값 6)
+             * @example 6
              */
             rows: number;
             /**
-             * @description 총 열 수
+             * @description 총 열 수 (고정값 4)
              * @example 4
              */
             columns: number;
             /**
-             * @description 운전석 위치
-             * @example LEFT
-             * @enum {string}
+             * @description 전체 좌석 목록 (1A~6D, 총 24개)
+             *
+             *     좌석 배치:
+             *     1A  1B  [통로]  1C  1D
+             *     2A  2B  [통로]  2C  2D
+             *     3A  3B  [통로]  3C  3D
+             *     4A  4B  [통로]  4C  4D
+             *     5A  5B  [통로]  5C  5D
+             *     6A  6B  [통로]  6C  6D
              */
-            driverPosition: "LEFT" | "RIGHT";
-            /** @description 전체 좌석 목록 */
             seats: components["schemas"]["Seat"][];
         };
-        Coupon: {
+        /** @description 쿠폰 기본 정보 (사용자 독립적) */
+        CouponDefinition: {
             /**
              * @description 쿠폰 코드
              * @example PEARL_PASS
@@ -490,7 +507,7 @@ export interface components {
             name: string;
             /**
              * @description 쿠폰 설명
-             * @example 모든 노선 기본요금 0.5₴ 할인
+             * @example 모든 노선 기본요금 2₴ 할인
              */
             description: string;
             /**
@@ -500,16 +517,18 @@ export interface components {
             emoji: string;
             /**
              * @description 할인 타입
-             *     - FIXED_BASE_FARE: 기본요금 고정 할인
-             *     - PERCENTAGE_TOTAL: 전체 요금 비율 할인
-             *     - PERCENTAGE_LINE: 특정 노선 비율 할인
-             * @example FIXED_BASE_FARE
+             *     - FIXED_AMOUNT: 고정 금액 할인 (PEARL_PASS)
+             *     - PERCENTAGE: 비율 할인 (GARY_NIGHT, TOUR_FUN)
+             * @example FIXED_AMOUNT
              * @enum {string}
              */
-            discountType: "FIXED_BASE_FARE" | "PERCENTAGE_TOTAL" | "PERCENTAGE_LINE";
+            discountType: "FIXED_AMOUNT" | "PERCENTAGE";
             /**
-             * @description 할인 값 (고정 금액 또는 비율)
-             * @example 0.5
+             * @description 할인 값
+             *     - PEARL_PASS: 2.0 (₴)
+             *     - GARY_NIGHT: 0.4 (40%)
+             *     - TOUR_FUN: 0.3 (30%)
+             * @example 2
              */
             discountValue: number;
             /**
@@ -517,11 +536,6 @@ export interface components {
              * @example 3
              */
             maxOwnedCount: number;
-            /**
-             * @description 현재 소지 개수
-             * @example 1
-             */
-            currentOwnedCount: number;
             /**
              * @description 적용 가능한 노선 타입 (없으면 전체)
              * @example [
@@ -537,11 +551,14 @@ export interface components {
                  */
                 afterHour?: number;
             } | null;
+        };
+        /** @description 사용자가 보유한 쿠폰 정보 */
+        UserCoupon: components["schemas"]["CouponDefinition"] & {
             /**
-             * @description 2회 이상 환승 할인 무효화 여부
-             * @example false
+             * @description 현재 사용자가 보유한 개수
+             * @example 1
              */
-            invalidatesTransferDiscount?: boolean;
+            ownedCount: number;
         };
         Booking: {
             /**
@@ -568,7 +585,7 @@ export interface components {
                 seatNumber: string;
             }[];
             /** @description 적용된 쿠폰 (없으면 null) */
-            appliedCoupon?: components["schemas"]["Coupon"] & unknown;
+            appliedCoupon?: components["schemas"]["UserCoupon"] & unknown;
             /**
              * Format: date-time
              * @description 출발 시간 (ISO 8601)
@@ -577,28 +594,28 @@ export interface components {
             departureTime: string;
             pricing: {
                 /**
-                 * @description 원가 (환승 할인 전)
-                 * @example 12
+                 * @description 할인 전 총액 (모든 구간 baseFare 합계)
+                 * @example 17
                  */
                 subtotal: number;
                 /**
                  * @description 환승 할인 금액
-                 * @example 2.4
+                 * @example 1.05
                  */
                 transferDiscount: number;
                 /**
-                 * @description 환승 할인 후 금액
-                 * @example 9.6
-                 */
-                subtotalAfterTransfer: number;
-                /**
                  * @description 쿠폰 할인 금액
-                 * @example 1
+                 * @example 2
                  */
                 couponDiscount: number;
                 /**
+                 * @description 총 할인 금액 (환승 + 쿠폰)
+                 * @example 3.05
+                 */
+                totalDiscount: number;
+                /**
                  * @description 최종 결제 금액
-                 * @example 8.6
+                 * @example 13.95
                  */
                 finalTotal: number;
                 /**
@@ -648,7 +665,13 @@ export type $defs = Record<string, never>;
 export interface operations {
     getStations: {
         parameters: {
-            query?: never;
+            query?: {
+                /**
+                 * @description 검색어 (정류장 이름 부분 일치)
+                 * @example 비키니
+                 */
+                q?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -686,38 +709,6 @@ export interface operations {
                     "application/json": {
                         lines: components["schemas"]["Line"][];
                     };
-                };
-            };
-        };
-    };
-    getLineById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @example city-line */
-                lineId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Line"];
-                };
-            };
-            /** @description 노선을 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
                 };
             };
         };
@@ -775,6 +766,90 @@ export interface operations {
             };
         };
     };
+    calculateFare: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @example itinerary-1 */
+                itineraryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description 적용할 쿠폰 코드 (선택)
+                     * @example PEARL_PASS
+                     * @enum {string|null}
+                     */
+                    couponCode?: "PEARL_PASS" | "GARY_NIGHT" | "TOUR_FUN" | null;
+                };
+            };
+        };
+        responses: {
+            /** @description 요금 계산 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 쿠폰이 적용된 경로 정보 (각 구간별 할인 금액 포함) */
+                        itinerary: components["schemas"]["Itinerary"];
+                        pricing: {
+                            /**
+                             * @description 할인 전 총액 (모든 구간 baseFare 합계)
+                             * @example 17
+                             */
+                            subtotal: number;
+                            /**
+                             * @description 환승 할인 총액
+                             * @example 1.05
+                             */
+                            transferDiscount: number;
+                            /**
+                             * @description 쿠폰 할인 총액
+                             * @example 2
+                             */
+                            couponDiscount: number;
+                            /**
+                             * @description 총 할인 금액 (환승 + 쿠폰)
+                             * @example 3.05
+                             */
+                            totalDiscount: number;
+                            /**
+                             * @description 최종 결제 금액
+                             * @example 13.95
+                             */
+                            finalTotal: number;
+                        };
+                        /** @description 적용된 쿠폰 정보 (없으면 null) */
+                        appliedCoupon?: components["schemas"]["UserCoupon"] & unknown;
+                    };
+                };
+            };
+            /** @description 잘못된 요청 (쿠폰 조건 불일치 등) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description 경로를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     getSeatsByLeg: {
         parameters: {
             query?: never;
@@ -823,7 +898,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        coupon?: components["schemas"]["Coupon"] & unknown;
+                        coupon?: components["schemas"]["CouponDefinition"] & unknown;
                     };
                 };
             };
@@ -857,7 +932,7 @@ export interface operations {
                     "application/json": {
                         /** @example true */
                         success: boolean;
-                        coupon: components["schemas"]["Coupon"];
+                        coupon: components["schemas"]["UserCoupon"];
                     };
                 };
             };
@@ -894,7 +969,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        coupons: components["schemas"]["Coupon"][];
+                        coupons: components["schemas"]["UserCoupon"][];
                     };
                 };
             };

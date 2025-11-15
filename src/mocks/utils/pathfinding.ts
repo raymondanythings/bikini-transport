@@ -1,17 +1,11 @@
 import type { components } from '@/generated/api-types'
 import { stations, getStationById } from '../data/stations'
-import {
-	lines,
-	getLineById,
-	getStopsCount,
-	calculateExtraFare,
-} from '../data/lines'
+import { lines } from '../data/lines'
 import {
 	calculateLegsWithTransferDiscount,
 	calculateItineraryPricing,
 } from './pricing'
 
-type Station = components['schemas']['Station']
 type Line = components['schemas']['Line']
 type Leg = components['schemas']['Leg']
 type Itinerary = components['schemas']['Itinerary']
@@ -40,7 +34,6 @@ function createLeg(
 	}
 
 	const stopsCount = Math.abs(toIndex - fromIndex)
-	const extraFare = calculateExtraFare(line, fromStationId, toStationId)
 
 	// 대략적인 소요 시간 계산 (정거장당 5분)
 	const durationMinutes = stopsCount * 5
@@ -57,10 +50,10 @@ function createLeg(
 		durationMinutes,
 		stopsCount,
 		baseFare: line.baseFare,
-		extraFare,
-		fareBeforeDiscount: line.baseFare + extraFare,
+		transferNumber: 0, // 나중에 계산
 		transferDiscount: 0, // 나중에 계산
-		finalFare: line.baseFare + extraFare, // 나중에 계산
+		couponDiscount: 0, // 나중에 계산
+		finalFare: line.baseFare, // 나중에 계산
 	}
 }
 
@@ -157,7 +150,10 @@ function findOneTransferPaths(
 
 /**
  * 2회 환승 경로 찾기 (최대 3개 노선 사용)
+ *
+ * Note: 현재 사용되지 않는 함수 (향후 확장용)
  */
+// biome-ignore lint/correctness/noUnusedVariables: 향후 사용 예정
 function findTwoTransferPaths(
 	fromStationId: string,
 	toStationId: string,

@@ -1,5 +1,4 @@
 import type { components } from '@/generated/api-types'
-import { calculateExtraFare, getStopsCount } from '../data/lines'
 import {
 	checkLineTypeCondition,
 	checkTimeCondition,
@@ -8,7 +7,6 @@ import {
 
 type Line = components['schemas']['Line']
 type Leg = components['schemas']['Leg']
-type Coupon = components['schemas']['Coupon']
 
 /**
  * 구간별 요금 계산 (환승 할인 적용)
@@ -27,32 +25,30 @@ export function calculateLegsWithTransferDiscount(
 			throw new Error(`Line not found: ${leg.lineId}`)
 		}
 
-		// 환승 인덱스 (0: 첫 구간, 1: 1회 환승, 2: 2회 환승, ...)
-		const transferIndex = index
+		// 환승 번호 (0: 첫 구간, 1: 1회 환승, 2: 2회 환승, ...)
+		const transferNumber = index
 
 		// 할인율 결정
 		let discountRate = 0
-		if (transferIndex === 1) {
+		if (transferNumber === 1) {
 			// 1회 환승 (두 번째 구간)
 			discountRate = line.transferDiscount1st
-		} else if (transferIndex >= 2) {
+		} else if (transferNumber >= 2) {
 			// 2회 이상 환승 (세 번째 구간부터)
 			discountRate = line.transferDiscount2nd
 		}
 
-		// 할인 전 요금
-		const fareBeforeDiscount = leg.baseFare + leg.extraFare
+		// 환승 할인 금액 (baseFare에 대해서만 적용)
+		const transferDiscount = leg.baseFare * discountRate
 
-		// 환승 할인 금액
-		const transferDiscount = fareBeforeDiscount * discountRate
-
-		// 최종 요금 (환승 할인 적용)
-		const finalFare = fareBeforeDiscount - transferDiscount
+		// 최종 요금 (환승 할인 적용, 쿠폰 할인은 나중에)
+		const finalFare = leg.baseFare - transferDiscount
 
 		return {
 			...leg,
-			fareBeforeDiscount,
+			transferNumber,
 			transferDiscount,
+			couponDiscount: 0, // 쿠폰 할인은 별도 계산
 			finalFare,
 		}
 	})
@@ -66,10 +62,7 @@ export function calculateItineraryPricing(legs: Leg[]): {
 	transferDiscount: number
 	totalBeforeCoupon: number
 } {
-	const subtotal = legs.reduce(
-		(sum, leg) => sum + leg.fareBeforeDiscount,
-		0,
-	)
+	const subtotal = legs.reduce((sum, leg) => sum + leg.baseFare, 0)
 	const transferDiscount = legs.reduce(
 		(sum, leg) => sum + leg.transferDiscount,
 		0,
@@ -110,31 +103,34 @@ export function calculateCouponDiscount(
 	let discount = 0
 
 	switch (couponDef.discountType) {
-		case 'FIXED_BASE_FARE': {
-			// 진주패스: 모든 구간의 기본요금에서 0.5₴ 할인
-			discount = legs.length * couponDef.discountValue
+		case 'FIXED_AMOUNT': {
+			// 진주패스: 고정 금액 할인 (전체 구간에서 한 번만 적용)
+			discount = couponDef.discountValue
 			break
 		}
 
-		case 'PERCENTAGE_TOTAL': {
-			// 달팽이패스: 전체 요금(환승 할인 후)에서 40% 할인
-			const totalBeforeCoupon = legs.reduce((sum, leg) => sum + leg.finalFare, 0)
-			discount = totalBeforeCoupon * couponDef.discountValue
-			break
-		}
+		case 'PERCENTAGE': {
+			// 달팽이패스 또는 투어패스: 퍼센트 할인
+			if (couponDef.applicableLineTypes) {
+				// 투어패스: 특정 노선만 할인
+				const applicableLegs = legs.filter((leg) => {
+					const line = linesMap.get(leg.lineId)
+					if (!line) return false
+					return checkLineTypeCondition(couponDef, line.type)
+				})
 
-		case 'PERCENTAGE_LINE': {
-			// 투어패스: 특정 노선만 30% 할인
-			const applicableLegs = legs.filter((leg) => {
-				const line = linesMap.get(leg.lineId)
-				if (!line) return false
-				return checkLineTypeCondition(couponDef, line.type)
-			})
-
-			discount = applicableLegs.reduce(
-				(sum, leg) => sum + leg.finalFare * couponDef.discountValue,
-				0,
-			)
+				discount = applicableLegs.reduce(
+					(sum, leg) => sum + leg.finalFare * couponDef.discountValue,
+					0,
+				)
+			} else {
+				// 달팽이패스: 전체 요금에 대해 퍼센트 할인
+				const totalBeforeCoupon = legs.reduce(
+					(sum, leg) => sum + leg.finalFare,
+					0,
+				)
+				discount = totalBeforeCoupon * couponDef.discountValue
+			}
 			break
 		}
 	}
@@ -158,23 +154,19 @@ export function calculateFinalBookingPrice(
 ): {
 	subtotal: number
 	transferDiscount: number
-	subtotalAfterTransfer: number
 	couponDiscount: number
+	totalDiscount: number
 	finalTotal: number
 } {
 	// 1. 환승 할인 적용
 	const legsWithDiscount = calculateLegsWithTransferDiscount(legs, linesMap)
 
 	// 2. 가격 계산
-	const subtotal = legsWithDiscount.reduce(
-		(sum, leg) => sum + leg.fareBeforeDiscount,
-		0,
-	)
+	const subtotal = legsWithDiscount.reduce((sum, leg) => sum + leg.baseFare, 0)
 	const transferDiscount = legsWithDiscount.reduce(
 		(sum, leg) => sum + leg.transferDiscount,
 		0,
 	)
-	const subtotalAfterTransfer = subtotal - transferDiscount
 
 	// 3. 쿠폰 할인 계산
 	let couponDiscount = 0
@@ -187,14 +179,17 @@ export function calculateFinalBookingPrice(
 		)
 	}
 
-	// 4. 최종 금액
-	const finalTotal = Math.max(0, subtotalAfterTransfer - couponDiscount)
+	// 4. 총 할인 금액
+	const totalDiscount = transferDiscount + couponDiscount
+
+	// 5. 최종 금액
+	const finalTotal = Math.max(0, subtotal - totalDiscount)
 
 	return {
 		subtotal,
 		transferDiscount,
-		subtotalAfterTransfer,
 		couponDiscount,
+		totalDiscount,
 		finalTotal,
 	}
 }
