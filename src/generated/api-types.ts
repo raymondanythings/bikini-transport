@@ -301,19 +301,41 @@ export interface components {
             stationIds: string[];
             /**
              * @description 기본 요금 (₴)
-             * @example 5
+             * @example 10
              */
             baseFare: number;
             /**
+             * @description 정거장당 추가 요금 (₴)
+             * @example 2
+             */
+            extraFarePerStop: number;
+            /**
              * @description 1회 환승 할인율 (0-1)
-             * @example 0.2
+             * @example 0.1
              */
             transferDiscount1st: number;
             /**
              * @description 2회 이상 환승 할인율 (0-1)
-             * @example 0.15
+             * @example 0.2
              */
             transferDiscount2nd: number;
+            schedule: {
+                /**
+                 * @description 첫차 시간 (HH:mm)
+                 * @example 06:30
+                 */
+                firstDeparture: string;
+                /**
+                 * @description 막차 시간 (HH:mm)
+                 * @example 23:30
+                 */
+                lastDeparture: string;
+                /**
+                 * @description 배차 간격 (분)
+                 * @example 15
+                 */
+                intervalMinutes: number;
+            };
         };
         Leg: {
             /**
@@ -750,18 +772,9 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @description 추천 경로 목록 (최대 3개) */
+                        /** @description 추천 경로 목록 (최대 3개, 경로가 없으면 빈 배열) */
                         itineraries: components["schemas"]["Itinerary"][];
                     };
-                };
-            };
-            /** @description 잘못된 요청 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
                 };
             };
         };

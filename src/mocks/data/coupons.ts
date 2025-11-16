@@ -32,10 +32,10 @@ export const couponDefinitions: CouponDefinition[] = [
   {
     couponCode: COUPON_CODES.GARY_NIGHT,
     name: '달팽이패스',
-    description: '21시 이후 모든 요금 40% 할인',
+    description: '야간(21시~05시) 탑승 시 모든 노선 요금 15% 할인',
     emoji: '🐌',
     discountType: 'PERCENTAGE',
-    discountValue: 0.4, // 40%
+    discountValue: 0.15, // 15%
     maxOwnedCount: 2,
     timeCondition: {
       afterHour: 21,

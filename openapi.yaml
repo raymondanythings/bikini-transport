@@ -135,15 +135,9 @@ paths:
                 properties:
                   itineraries:
                     type: array
-                    description: 추천 경로 목록 (최대 3개)
+                    description: 추천 경로 목록 (최대 3개, 경로가 없으면 빈 배열)
                     items:
                       $ref: '#/components/schemas/Itinerary'
-        '400':
-          description: 잘못된 요청
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
   /itineraries/{itineraryId}/calculate-fare:
     post:
@@ -554,8 +548,10 @@ components:
         - color
         - stationIds
         - baseFare
+        - extraFarePerStop
         - transferDiscount1st
         - transferDiscount2nd
+        - schedule
       properties:
         lineId:
           type: string
@@ -590,15 +586,38 @@ components:
         baseFare:
           type: number
           description: 기본 요금 (₴)
-          example: 5.0
+          example: 10.0
+        extraFarePerStop:
+          type: number
+          description: 정거장당 추가 요금 (₴)
+          example: 2.0
         transferDiscount1st:
           type: number
           description: 1회 환승 할인율 (0-1)
-          example: 0.2
+          example: 0.1
         transferDiscount2nd:
           type: number
           description: 2회 이상 환승 할인율 (0-1)
-          example: 0.15
+          example: 0.2
+        schedule:
+          type: object
+          required:
+            - firstDeparture
+            - lastDeparture
+            - intervalMinutes
+          properties:
+            firstDeparture:
+              type: string
+              description: 첫차 시간 (HH:mm)
+              example: '06:30'
+            lastDeparture:
+              type: string
+              description: 막차 시간 (HH:mm)
+              example: '23:30'
+            intervalMinutes:
+              type: integer
+              description: 배차 간격 (분)
+              example: 15
 
     Leg:
       type: object

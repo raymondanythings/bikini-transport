@@ -1,64 +1,95 @@
 import type { components } from '@/generated/api-types';
+import { STATION_UUIDS } from './stations';
 
 type Line = components['schemas']['Line'];
+
+/**
+ * 노선 UUID 상수
+ * 고정된 UUID를 사용하여 테스트 및 개발 시 일관성 유지
+ */
+export const LINE_UUIDS = {
+  CITY_LINE: '550e8400-e29b-41d4-a716-446655440001',
+  SUBURBAN_LINE: '550e8400-e29b-41d4-a716-446655440002',
+  TOUR_LINE: '550e8400-e29b-41d4-a716-446655440003',
+} as const;
 
 /**
  * 비키니시티 버스 노선 데이터
  *
  * 3개 노선:
- * 1. 시티선 (City Line) - 도심 순환
- * 2. 외곽선 (Suburban Line) - 주거 지역 연결
- * 3. 투어선 (Tour Line) - 관광 특화
+ * 1. 시티선 (City Line) - 도심 순환 (양방향)
+ * 2. 외곽선 (Suburban Line) - 주거 지역 연결 (단방향)
+ * 3. 투어선 (Tour Line) - 관광 특화 (양방향)
  */
 export const lines: Line[] = [
   {
-    lineId: 'city-line',
+    lineId: LINE_UUIDS.CITY_LINE,
     name: '시티선',
     type: 'CITY',
-    color: '#FFC107', // 노란색
+    color: '#faab9e', // 연한 주황색
     stationIds: [
-      'new-kelp-city',
-      'glove-world',
-      'jellyfish-fields',
-      'bikini-city', // 환승역
-      'floaters-cemetery',
-      'bubble-city',
+      STATION_UUIDS.BIKINI_CITY, // 비키니 시티 (환승역)
+      STATION_UUIDS.FLOATERS_CEMETERY, // 플로터스 묘지
+      STATION_UUIDS.BUBBLE_TOWN, // 버블시티
+      STATION_UUIDS.NEW_KELP_CITY, // 뉴 켈프 시티
+      STATION_UUIDS.GLOVE_WORLD, // 글러브월드
+      STATION_UUIDS.BIKINI_CITY, // 비키니 시티로 순환 (종점)
     ],
-    baseFare: 5.0, // 기본요금 5₴
-    transferDiscount1st: 0.2, // 1회 환승 20% 할인
-    transferDiscount2nd: 0.15, // 2회 이상 환승 15% 할인
+    baseFare: 10.0, // 기본요금 10₴
+    extraFarePerStop: 2.0, // 정거장당 추가 요금 2₴
+    transferDiscount1st: 0.1, // 1회 환승 10% 할인
+    transferDiscount2nd: 0.2, // 2회 이상 환승 20% 할인
+    schedule: {
+      firstDeparture: '06:30', // 첫차
+      lastDeparture: '23:30', // 막차
+      intervalMinutes: 15, // 배차간격 15분
+    },
   },
   {
-    lineId: 'suburban-line',
+    lineId: LINE_UUIDS.SUBURBAN_LINE,
     name: '외곽선',
     type: 'SUBURBAN',
-    color: '#4CAF50', // 초록색
+    color: '#b7dcca', // 연한 청록색
     stationIds: [
-      'bubble-city',
-      'merong-city',
-      'bikini-city', // 환승역
-      'squidward-villa',
-      'bikini-atoll',
+      STATION_UUIDS.BIKINI_CITY, // 비키니 시티 (출발)
+      STATION_UUIDS.ROCK_BOTTOM, // 메롱시티
+      STATION_UUIDS.BUBBLE_TOWN, // 버블시티
+      STATION_UUIDS.BIKINI_ATOLL, // 비키니 환초
+      STATION_UUIDS.TENTACLE_ACRES, // 징징빌라
+      STATION_UUIDS.BIKINI_CITY, // 비키니 시티로 복귀 (종점, 단방향)
     ],
-    baseFare: 4.5, // 기본요금 4.5₴
-    transferDiscount1st: 0.25, // 1회 환승 25% 할인
-    transferDiscount2nd: 0.2, // 2회 이상 환승 20% 할인
+    baseFare: 25.0, // 기본요금 25₴
+    extraFarePerStop: 8.0, // 정거장당 추가 요금 8₴
+    transferDiscount1st: 0.15, // 1회 환승 15% 할인
+    transferDiscount2nd: 0.25, // 2회 이상 환승 25% 할인
+    schedule: {
+      firstDeparture: '05:00', // 첫차
+      lastDeparture: '21:30', // 막차
+      intervalMinutes: 90, // 배차간격 1시간 30분
+    },
   },
   {
-    lineId: 'tour-line',
+    lineId: LINE_UUIDS.TOUR_LINE,
     name: '투어선',
     type: 'TOUR',
-    color: '#F44336', // 빨간색
+    color: '#ff534f', // 빨간색
     stationIds: [
-      'glove-world',
-      'bikini-city', // 환승역
-      'jellyfish-fields',
-      'old-lagoon',
-      'kelp-forest',
+      STATION_UUIDS.BIKINI_CITY, // 비키니 시티 (환승역)
+      STATION_UUIDS.GLOVE_WORLD, // 글러브월드
+      STATION_UUIDS.KELP_FOREST, // 다시마숲
+      STATION_UUIDS.GOO_LAGOON, // 구-라군
+      STATION_UUIDS.JELLYFISH_FIELDS, // 해파리 초원
+      STATION_UUIDS.BIKINI_CITY, // 비키니 시티로 복귀 (종점)
     ],
-    baseFare: 6.0, // 기본요금 6₴
+    baseFare: 15.0, // 기본요금 15₴
+    extraFarePerStop: 5.0, // 정거장당 추가 요금 5₴
     transferDiscount1st: 0.15, // 1회 환승 15% 할인
-    transferDiscount2nd: 0.1, // 2회 이상 환승 10% 할인
+    transferDiscount2nd: 0.2, // 2회 이상 환승 20% 할인
+    schedule: {
+      firstDeparture: '06:00', // 첫차
+      lastDeparture: '22:00', // 막차
+      intervalMinutes: 60, // 배차간격 1시간
+    },
   },
 ];
 

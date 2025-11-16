@@ -33,6 +33,7 @@
     "msw": "^2.12.1",
     "openapi-msw": "^2.0.0",
     "openapi-typescript": "^7.10.1",
+    "swagger-ui-watcher": "^2.1.14",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.45.0",
     "vite": "^7.1.7",

@@ -3,6 +3,7 @@ import { couponDefinitions } from './data/coupons';
 
 type UserCoupon = components['schemas']['UserCoupon'];
 type Booking = components['schemas']['Booking'];
+type Itinerary = components['schemas']['Itinerary'];
 
 /**
  * 인메모리 저장소
@@ -97,6 +98,24 @@ export function useCoupon(couponCode: string): boolean {
 
   userCoupons.set(couponCode, currentCount - 1);
   return true;
+}
+
+// ===== 경로(Itinerary) 저장소 =====
+
+const itineraryStore = new Map<string, Itinerary>();
+
+export function saveItineraries(itineraries: Itinerary[]): void {
+  itineraries.forEach((itinerary) => {
+    itineraryStore.set(itinerary.itineraryId, itinerary);
+  });
+}
+
+export function getItineraryById(itineraryId: string): Itinerary | undefined {
+  return itineraryStore.get(itineraryId);
+}
+
+function clearItineraries(): void {
+  itineraryStore.clear();
 }
 
 // ===== 예약 저장소 =====
@@ -248,6 +267,7 @@ export function initializeStorage(): void {
   bookings.clear();
   reservedSeats.clear();
   bookingIdCounter = 1;
+  clearItineraries();
 }
 
 // 앱 시작 시 초기화
