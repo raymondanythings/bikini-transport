@@ -1,5 +1,5 @@
 import type { components } from '@/generated/api-types';
-import { checkLineTypeCondition, checkTimeCondition, getCouponDefinition } from '../data/coupons';
+import { COUPON_CODES, checkLineTypeCondition, checkTimeCondition, getCouponDefinition } from '../data/coupons';
 
 type Line = components['schemas']['Line'];
 type Leg = components['schemas']['Leg'];
@@ -71,17 +71,25 @@ export function calculateItineraryPricing(legs: Leg[]): {
  *
  * @param legs - 구간 목록 (환승 할인 적용된 상태)
  * @param couponCode - 적용할 쿠폰 코드
- * @param departureTime - 출발 시간
+ * @param departureTime - 전체 여정 출발 시간
+ * @param legStartTimes - 각 구간별 실제 탑승 시작 시각
  * @returns 쿠폰 할인 금액
  */
-export function calculateCouponDiscount(legs: Leg[], couponCode: string, departureTime: Date, linesMap: Map<string, Line>): number {
+export function calculateCouponDiscount(
+  legs: Leg[],
+  couponCode: string,
+  departureTime: Date,
+  linesMap: Map<string, Line>,
+  legStartTimes?: Date[]
+): number {
   const couponDef = getCouponDefinition(couponCode);
   if (!couponDef) {
     return 0;
   }
 
-  // 시간 조건 체크
-  if (!checkTimeCondition(couponDef, departureTime)) {
+  const requiresPerLegTimeCheck = couponDef.couponCode === COUPON_CODES.GARY_NIGHT;
+
+  if (!requiresPerLegTimeCheck && !checkTimeCondition(couponDef, departureTime)) {
     return 0;
   }
 
@@ -89,14 +97,40 @@ export function calculateCouponDiscount(legs: Leg[], couponCode: string, departu
 
   switch (couponDef.discountType) {
     case 'FIXED_AMOUNT': {
-      // 진주패스: 고정 금액 할인 (전체 구간에서 한 번만 적용)
-      discount = couponDef.discountValue;
+      // 진주패스: 각 구간(Leg)마다 고정 금액 할인 적용
+      // 예: 3개 노선 탑승 시 2₴ × 3 = 6₴ 할인
+      discount = legs.reduce((sum, leg) => {
+        if (leg.baseFare <= 0) {
+          return sum;
+        }
+        return sum + couponDef.discountValue;
+      }, 0);
       break;
     }
 
     case 'PERCENTAGE': {
-      // 달팽이패스 또는 투어패스: 퍼센트 할인
-      if (couponDef.applicableLineTypes) {
+      if (requiresPerLegTimeCheck) {
+        const couponRate = couponDef.discountValue;
+        const startTimes = legStartTimes && legStartTimes.length === legs.length ? legStartTimes : legs.map(() => departureTime);
+        discount = legs.reduce((sum, leg, index) => {
+          if (leg.baseFare <= 0) {
+            return sum;
+          }
+
+          const legStartTime = startTimes[index] ?? departureTime;
+          if (!checkTimeCondition(couponDef, legStartTime)) {
+            return sum;
+          }
+
+          const transferRate = leg.transferDiscount > 0 ? leg.transferDiscount / leg.baseFare : 0;
+          const extraRate = Math.max(couponRate - transferRate, 0);
+          return sum + leg.baseFare * extraRate;
+        }, 0);
+        break;
+      }
+
+      // 달팽이패스 외의 퍼센트 할인 (투어패스 등)
+      if (couponDef.applicableLineTypes && couponDef.applicableLineTypes.length > 0) {
         // 투어패스: 특정 노선만 할인
         const applicableLegs = legs.filter((leg) => {
           const line = linesMap.get(leg.lineId);
@@ -106,7 +140,7 @@ export function calculateCouponDiscount(legs: Leg[], couponCode: string, departu
 
         discount = applicableLegs.reduce((sum, leg) => sum + leg.finalFare * couponDef.discountValue, 0);
       } else {
-        // 달팽이패스: 전체 요금에 대해 퍼센트 할인
+        // 기타 퍼센트 쿠폰: 전체 요금 기준
         const totalBeforeCoupon = legs.reduce((sum, leg) => sum + leg.finalFare, 0);
         discount = totalBeforeCoupon * couponDef.discountValue;
       }
@@ -145,9 +179,10 @@ export function calculateFinalBookingPrice(
   const transferDiscount = legsWithDiscount.reduce((sum, leg) => sum + leg.transferDiscount, 0);
 
   // 3. 쿠폰 할인 계산
+  const legStartTimes = buildLegStartTimes(legsWithDiscount, departureTime);
   let couponDiscount = 0;
   if (couponCode) {
-    couponDiscount = calculateCouponDiscount(legsWithDiscount, couponCode, departureTime, linesMap);
+    couponDiscount = calculateCouponDiscount(legsWithDiscount, couponCode, departureTime, linesMap, legStartTimes);
   }
 
   // 4. 총 할인 금액
@@ -170,4 +205,17 @@ export function calculateFinalBookingPrice(
  */
 export function roundPrice(price: number): number {
   return Math.round(price * 100) / 100;
+}
+
+function buildLegStartTimes(legs: Leg[], departureTime: Date): Date[] {
+  const startTimes: Date[] = [];
+  let currentTime = new Date(departureTime);
+
+  for (const leg of legs) {
+    startTimes.push(new Date(currentTime));
+    const durationMillis = (leg.durationMinutes || 0) * 60 * 1000;
+    currentTime = new Date(currentTime.getTime() + durationMillis);
+  }
+
+  return startTimes;
 }

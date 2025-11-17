@@ -5,7 +5,7 @@ import { lines, LINE_UUIDS } from '../data/lines';
 
 describe('경로 찾기 (Pathfinding)', () => {
   describe('직행 경로', () => {
-    it('시티선 직행: 비키니시티 → 버블타운 (45분, 14₴)', () => {
+    it('시티선 직행: 비키니시티 → 버블타운 (45분, 10₴)', () => {
       const itineraries = searchItineraries(STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN);
 
       expect(itineraries.length).toBeGreaterThan(0);
@@ -13,39 +13,39 @@ describe('경로 찾기 (Pathfinding)', () => {
       const direct = itineraries.find((it) => it.transferCount === 0);
       expect(direct).toBeDefined();
       expect(direct!.totalDurationMinutes).toBe(45);
-      expect(direct!.legs[0].baseFare).toBe(14);
+      expect(direct!.legs[0].baseFare).toBe(10);
     });
 
-    it('투어선 양방향 최단: 해파리초원 → 글러브월드 (70분, 25₴)', () => {
+    it('투어선 양방향 최단: 해파리초원 → 글러브월드 (70분, 15₴)', () => {
       const itineraries = searchItineraries(STATION_UUIDS.JELLYFISH_FIELDS, STATION_UUIDS.GLOVE_WORLD);
 
       const direct = itineraries.find((it) => it.transferCount === 0);
       expect(direct).toBeDefined();
       expect(direct!.totalDurationMinutes).toBe(70);
-      expect(direct!.legs[0].baseFare).toBe(25);
+      expect(direct!.legs[0].baseFare).toBe(15);
       expect(direct!.legs[0].lineId).toBe(LINE_UUIDS.TOUR_LINE);
     });
 
-    it('외곽선 단방향: 메롱시티 → 비키니환초 (185분, 41₴)', () => {
+    it('외곽선 단방향: 메롱시티 → 비키니환초 (185분, 25₴)', () => {
       const itineraries = searchItineraries(STATION_UUIDS.ROCK_BOTTOM, STATION_UUIDS.BIKINI_ATOLL);
 
       const direct = itineraries.find((it) => it.transferCount === 0);
       expect(direct).toBeDefined();
       expect(direct!.totalDurationMinutes).toBe(185);
-      expect(direct!.legs[0].baseFare).toBe(41);
+      expect(direct!.legs[0].baseFare).toBe(25);
       expect(direct!.legs[0].lineId).toBe(LINE_UUIDS.SUBURBAN_LINE);
     });
   });
 
   describe('양방향 순환 경로 (최단 경로 선택)', () => {
-    it('시티선 역방향이 더 빠름: 버블타운 → 플로터스묘지 (20분, 12₴)', () => {
+    it('시티선 역방향이 더 빠름: 버블타운 → 플로터스묘지 (20분, 10₴)', () => {
       const itineraries = searchItineraries(STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.FLOATERS_CEMETERY);
 
       const direct = itineraries.find((it) => it.transferCount === 0 && it.legs[0].lineId === LINE_UUIDS.CITY_LINE);
       expect(direct).toBeDefined();
       // 역방향 1구간이 순방향 4구간보다 빠름
       expect(direct!.totalDurationMinutes).toBe(20);
-      expect(direct!.legs[0].baseFare).toBe(12);
+      expect(direct!.legs[0].baseFare).toBe(10);
     });
 
     it('글러브월드 → 비키니시티: 시티선과 투어선 모두 40분', () => {
@@ -127,7 +127,7 @@ describe('경로 찾기 (Pathfinding)', () => {
       expect(lowestFare).toBeDefined();
 
       // 환승 할인으로 인해 환승이 더 저렴함
-      expect(lowestFare!.pricing.totalBeforeCoupon).toBeLessThan(57); // 직행 요금
+      expect(lowestFare!.pricing.totalBeforeCoupon).toBeLessThan(41); // 직행 요금 (25 + 2×8)
     });
   });
 
@@ -166,34 +166,56 @@ describe('경로 찾기 (Pathfinding)', () => {
   });
 
   describe('요금 계산 정확성', () => {
-    it('시티선: 기본 10₴ + 정거장당 2₴', () => {
+    it('시티선: 기본 10₴ + 정거장당 2₴ (2정거장까지 무료)', () => {
       const itineraries = searchItineraries(STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN);
 
       const direct = itineraries.find((it) => it.transferCount === 0);
       expect(direct).toBeDefined();
 
-      // 10 + (2 × 2) = 14₴
-      expect(direct!.legs[0].baseFare).toBe(14);
+      // 2정거장 이동: 10 + max(0, 2-2) × 2 = 10₴
+      expect(direct!.legs[0].baseFare).toBe(10);
     });
 
-    it('외곽선: 기본 25₴ + 정거장당 8₴', () => {
+    it('시티선: 양방향 순환으로 최단 경로 선택 (비키니시티 → 뉴켈프시티)', () => {
+      const itineraries = searchItineraries(STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.NEW_KELP_CITY);
+
+      const direct = itineraries.find((it) => it.transferCount === 0);
+      expect(direct).toBeDefined();
+
+      // 순방향: 0→1→2→3 (3정거장)
+      // 역방향: 0→4→3 (2정거장) ✓ 더 짧음
+      // 2정거장 이동: 10 + max(0, 2-2) × 2 = 10₴
+      expect(direct!.legs[0].baseFare).toBe(10);
+    });
+
+    it('외곽선: 기본 25₴ + 정거장당 8₴ (2정거장까지 무료)', () => {
       const itineraries = searchItineraries(STATION_UUIDS.ROCK_BOTTOM, STATION_UUIDS.BIKINI_ATOLL);
 
       const direct = itineraries.find((it) => it.transferCount === 0);
       expect(direct).toBeDefined();
 
-      // 25 + (2 × 8) = 41₴
+      // 2정거장 이동: 25 + max(0, 2-2) × 8 = 25₴
+      expect(direct!.legs[0].baseFare).toBe(25);
+    });
+
+    it('외곽선: 4정거장 이동 시 추가요금 (비키니시티 → 징징빌라)', () => {
+      const itineraries = searchItineraries(STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.TENTACLE_ACRES);
+
+      const direct = itineraries.find((it) => it.transferCount === 0);
+      expect(direct).toBeDefined();
+
+      // 4정거장 이동: 25 + max(0, 4-2) × 8 = 25 + 2×8 = 41₴
       expect(direct!.legs[0].baseFare).toBe(41);
     });
 
-    it('투어선: 기본 15₴ + 정거장당 5₴', () => {
+    it('투어선: 기본 15₴ + 정거장당 5₴ (2정거장까지 무료)', () => {
       const itineraries = searchItineraries(STATION_UUIDS.JELLYFISH_FIELDS, STATION_UUIDS.GLOVE_WORLD);
 
       const direct = itineraries.find((it) => it.transferCount === 0 && it.legs[0].lineId === LINE_UUIDS.TOUR_LINE);
       expect(direct).toBeDefined();
 
-      // 15 + (2 × 5) = 25₴
-      expect(direct!.legs[0].baseFare).toBe(25);
+      // 2정거장 이동 (최단경로): 15 + max(0, 2-2) × 5 = 15₴
+      expect(direct!.legs[0].baseFare).toBe(15);
     });
   });
 

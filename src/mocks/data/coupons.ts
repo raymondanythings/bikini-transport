@@ -1,6 +1,15 @@
 import type { components } from '@/generated/api-types';
 
 type CouponDefinition = components['schemas']['CouponDefinition'];
+type BaseTimeCondition = NonNullable<CouponDefinition['timeCondition']>;
+
+export type CouponTimeCondition = BaseTimeCondition & {
+  beforeHour?: number;
+};
+
+export type AppCouponDefinition = Omit<CouponDefinition, 'timeCondition'> & {
+  timeCondition?: CouponTimeCondition | null;
+};
 
 /**
  * 쿠폰 코드 상수
@@ -19,7 +28,7 @@ export const COUPON_CODES = {
  * 2. 달팽이패스 - 21시 이후 전체 요금 40% 할인
  * 3. 투어패스 - 투어선 전용 30% 할인
  */
-export const couponDefinitions: CouponDefinition[] = [
+export const couponDefinitions: AppCouponDefinition[] = [
   {
     couponCode: COUPON_CODES.PEARL_PASS,
     name: '진주패스',
@@ -39,6 +48,7 @@ export const couponDefinitions: CouponDefinition[] = [
     maxOwnedCount: 2,
     timeCondition: {
       afterHour: 21,
+      beforeHour: 5,
     },
   },
   {
@@ -56,7 +66,7 @@ export const couponDefinitions: CouponDefinition[] = [
 /**
  * 쿠폰 코드로 쿠폰 정의 조회
  */
-export function getCouponDefinition(couponCode: string): CouponDefinition | undefined {
+export function getCouponDefinition(couponCode: string): AppCouponDefinition | undefined {
   return couponDefinitions.find((c) => c.couponCode === couponCode);
 }
 
@@ -65,7 +75,7 @@ export function getCouponDefinition(couponCode: string): CouponDefinition | unde
  *
  * 약 10% 확률로 쿠폰 반환
  */
-export function getRandomCoupon(): CouponDefinition | null {
+export function getRandomCoupon(): AppCouponDefinition | null {
   // 10% 확률
   if (Math.random() > 0.1) {
     return null;
@@ -79,19 +89,37 @@ export function getRandomCoupon(): CouponDefinition | null {
 /**
  * 쿠폰 시간 조건 체크
  */
-export function checkTimeCondition(coupon: CouponDefinition, departureTime: Date): boolean {
-  if (!coupon.timeCondition || !coupon.timeCondition.afterHour) {
+export function checkTimeCondition(coupon: AppCouponDefinition, departureTime: Date): boolean {
+  if (!coupon.timeCondition) {
     return true;
   }
 
+  const { afterHour, beforeHour } = coupon.timeCondition;
   const hour = departureTime.getHours();
-  return hour >= coupon.timeCondition.afterHour;
+
+  if (afterHour === undefined && beforeHour === undefined) {
+    return true;
+  }
+
+  if (afterHour !== undefined && beforeHour !== undefined) {
+    if (afterHour <= beforeHour) {
+      return hour >= afterHour && hour <= beforeHour;
+    }
+
+    return hour >= afterHour || hour <= beforeHour;
+  }
+
+  if (afterHour !== undefined) {
+    return hour >= afterHour;
+  }
+
+  return hour <= beforeHour!;
 }
 
 /**
  * 쿠폰 노선 타입 조건 체크
  */
-export function checkLineTypeCondition(coupon: CouponDefinition, lineType: 'CITY' | 'SUBURBAN' | 'TOUR'): boolean {
+export function checkLineTypeCondition(coupon: AppCouponDefinition, lineType: 'CITY' | 'SUBURBAN' | 'TOUR'): boolean {
   if (!coupon.applicableLineTypes) {
     return true;
   }

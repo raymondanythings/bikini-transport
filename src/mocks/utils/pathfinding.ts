@@ -68,8 +68,10 @@ function createLeg(legId: string, line: Line, fromStationId: string, toStationId
     }
   }
 
-  // 요금 계산: 기본 요금 + (정거장 수 × 정거장당 추가 요금)
-  const baseFare = line.baseFare + stopsCount * (line.extraFarePerStop || 0);
+  // 요금 계산: 기본 요금 + (추가 정거장 수 × 정거장당 추가 요금)
+  // 탑승지(0번째)와 1번째 정거장은 무료, 2번째 정거장부터 추가요금 부과
+  const extraStops = Math.max(0, stopsCount - 2);
+  const baseFare = line.baseFare + extraStops * (line.extraFarePerStop || 0);
 
   return {
     legId,
