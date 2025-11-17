@@ -35,7 +35,11 @@ export const durationMap: Record<string, number> = {
   [`${STATION_UUIDS.BIKINI_ATOLL}|${STATION_UUIDS.TENTACLE_ACRES}`]: 95, // 징징빌라까지
   [`${STATION_UUIDS.TENTACLE_ACRES}|${STATION_UUIDS.BIKINI_CITY}`]: 80, // 다시 중심으로
 
-  // 투어선 (양방향)
+  // 투어선 (양방향) - 빨간색 노선, 관광 특화
+  // 순환: 비키니 시티 → 글러브월드 → 다시마숲 → 구-라군 → 해파리 초원 → 비키니 시티
+  [`${STATION_UUIDS.BIKINI_CITY}|${STATION_UUIDS.GLOVE_WORLD}`]: 40,
+  [`${STATION_UUIDS.GLOVE_WORLD}|${STATION_UUIDS.BIKINI_CITY}`]: 40,
+
   [`${STATION_UUIDS.GLOVE_WORLD}|${STATION_UUIDS.KELP_FOREST}`]: 50, // 다시마숲까지
   [`${STATION_UUIDS.KELP_FOREST}|${STATION_UUIDS.GLOVE_WORLD}`]: 50,
 
@@ -61,14 +65,21 @@ export function getDuration(fromStationId: string, toStationId: string): number 
  * 여러 역을 거쳐가는 경로의 총 소요시간 계산
  */
 export function calculateTotalDuration(stationIds: string[]): number {
+  if (stationIds.length < 2) {
+    throw new Error('At least 2 stations are required to calculate duration');
+  }
+
   let totalDuration = 0;
 
   for (let i = 0; i < stationIds.length - 1; i++) {
     const duration = getDuration(stationIds[i], stationIds[i + 1]);
+
     if (duration === null) {
-      // 소요시간을 찾을 수 없는 경우 기본값 사용 (정거장당 5분)
-      return (stationIds.length - 1) * 5;
+      throw new Error(
+        `Duration not found for route: ${stationIds[i]} → ${stationIds[i + 1]}. ` + 'Please check durationMap data integrity.'
+      );
     }
+
     totalDuration += duration;
   }
 

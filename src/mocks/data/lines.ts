@@ -16,10 +16,15 @@ export const LINE_UUIDS = {
 /**
  * 비키니시티 버스 노선 데이터
  *
- * 3개 노선:
- * 1. 시티선 (City Line) - 도심 순환 (양방향)
- * 2. 외곽선 (Suburban Line) - 주거 지역 연결 (단방향)
- * 3. 투어선 (Tour Line) - 관광 특화 (양방향)
+ * 3개 노선 (모든 노선이 순환 노선):
+ * 1. 시티선 (City Line) - 도심 순환 (양방향 순환)
+ * 2. 외곽선 (Suburban Line) - 주거 지역 연결 (단방향 순환)
+ * 3. 투어선 (Tour Line) - 관광 특화 (양방향 순환)
+ *
+ * 순환 노선 특징:
+ * - 마지막 정거장에서 첫 정거장으로 복귀 (예: 4→0 경로 존재)
+ * - 양방향 순환: 양방향 운행 + 최단 경로 자동 선택
+ * - 단방향 순환: 한 방향으로만 운행 (0→1→2→3→4→0)
  */
 export const lines: Line[] = [
   {
@@ -33,7 +38,6 @@ export const lines: Line[] = [
       STATION_UUIDS.BUBBLE_TOWN, // 버블시티
       STATION_UUIDS.NEW_KELP_CITY, // 뉴 켈프 시티
       STATION_UUIDS.GLOVE_WORLD, // 글러브월드
-      STATION_UUIDS.BIKINI_CITY, // 비키니 시티로 순환 (종점)
     ],
     baseFare: 10.0, // 기본요금 10₴
     extraFarePerStop: 2.0, // 정거장당 추가 요금 2₴
@@ -56,7 +60,6 @@ export const lines: Line[] = [
       STATION_UUIDS.BUBBLE_TOWN, // 버블시티
       STATION_UUIDS.BIKINI_ATOLL, // 비키니 환초
       STATION_UUIDS.TENTACLE_ACRES, // 징징빌라
-      STATION_UUIDS.BIKINI_CITY, // 비키니 시티로 복귀 (종점, 단방향)
     ],
     baseFare: 25.0, // 기본요금 25₴
     extraFarePerStop: 8.0, // 정거장당 추가 요금 8₴
@@ -79,7 +82,6 @@ export const lines: Line[] = [
       STATION_UUIDS.KELP_FOREST, // 다시마숲
       STATION_UUIDS.GOO_LAGOON, // 구-라군
       STATION_UUIDS.JELLYFISH_FIELDS, // 해파리 초원
-      STATION_UUIDS.BIKINI_CITY, // 비키니 시티로 복귀 (종점)
     ],
     baseFare: 15.0, // 기본요금 15₴
     extraFarePerStop: 5.0, // 정거장당 추가 요금 5₴
@@ -94,10 +96,40 @@ export const lines: Line[] = [
 ];
 
 /**
+ * 노선의 운행 방향 타입
+ * - BIDIRECTIONAL: 양방향 운행 (시티선, 투어선)
+ * - UNIDIRECTIONAL: 단방향 운행 (외곽선)
+ */
+type LineDirection = 'BIDIRECTIONAL' | 'UNIDIRECTIONAL';
+
+/**
+ * 노선별 운행 방향 매핑
+ */
+const LINE_DIRECTIONS: Record<string, LineDirection> = {
+  [LINE_UUIDS.CITY_LINE]: 'BIDIRECTIONAL',
+  [LINE_UUIDS.SUBURBAN_LINE]: 'UNIDIRECTIONAL',
+  [LINE_UUIDS.TOUR_LINE]: 'BIDIRECTIONAL',
+};
+
+/**
  * 노선 ID로 노선 정보 조회
  */
 export function getLineById(lineId: string): Line | undefined {
   return lines.find((line) => line.lineId === lineId);
+}
+
+/**
+ * 노선의 운행 방향 조회
+ */
+export function getLineDirection(lineId: string): LineDirection {
+  return LINE_DIRECTIONS[lineId] || 'UNIDIRECTIONAL';
+}
+
+/**
+ * 노선이 양방향 운행하는지 확인
+ */
+export function isBidirectional(lineId: string): boolean {
+  return LINE_DIRECTIONS[lineId] === 'BIDIRECTIONAL';
 }
 
 /**
@@ -109,13 +141,37 @@ export function getLinesByStation(stationId: string): Line[] {
 
 /**
  * 두 역을 모두 포함하는 노선 찾기
+ * 모든 노선이 순환하므로 두 역이 포함되면 항상 경로 존재
  */
 export function findDirectLine(fromStationId: string, toStationId: string): Line | undefined {
-  return lines.find((line) => line.stationIds.includes(fromStationId) && line.stationIds.includes(toStationId));
+  return lines.find((line) => {
+    const hasFrom = line.stationIds.includes(fromStationId);
+    const hasTo = line.stationIds.includes(toStationId);
+
+    if (!hasFrom || !hasTo) return false;
+    if (fromStationId === toStationId) return false; // 같은 역 제외
+
+    // 모든 노선이 순환하므로 두 역이 있으면 항상 경로 존재
+    return true;
+  });
 }
 
 /**
- * 노선 내에서 두 역 사이의 정거장 수 계산
+ * 노선 내에서 두 역 사이의 정거장 수 계산 (순환 노선 고려)
+ *
+ * 양방향 순환 노선: 두 방향 중 짧은 경로 자동 선택
+ * 단방향 순환 노선: 한 방향으로만 순환하여 계산
+ *
+ * @example
+ * // 시티선 (5개 정거장, 양방향 순환): GLOVE_WORLD(4) → BIKINI_CITY(0)
+ * getStopsCount(cityLine, "GLOVE_WORLD", "BIKINI_CITY")
+ * // → 1 (순환 경로: 4→0, 역방향 4→3→2→1→0보다 짧음)
+ *
+ * // 외곽선 (5개 정거장, 단방향 순환): TENTACLE_ACRES(4) → BIKINI_CITY(0)
+ * getStopsCount(suburbanLine, "TENTACLE_ACRES", "BIKINI_CITY")
+ * // → 1 (순환 경로: 4→0)
+ *
+ * @throws {Error} 역을 찾을 수 없는 경우
  */
 export function getStopsCount(line: Line, fromStationId: string, toStationId: string): number {
   const fromIndex = line.stationIds.indexOf(fromStationId);
@@ -125,5 +181,26 @@ export function getStopsCount(line: Line, fromStationId: string, toStationId: st
     throw new Error('Station not found in line');
   }
 
-  return Math.abs(toIndex - fromIndex);
+  if (fromIndex === toIndex) {
+    return 0; // 같은 역
+  }
+
+  const totalStations = line.stationIds.length;
+
+  if (isBidirectional(line.lineId)) {
+    // 양방향 순환: 두 방향 중 짧은 경로 선택
+    const forwardDistance = toIndex >= fromIndex ? toIndex - fromIndex : totalStations - fromIndex + toIndex;
+
+    const backwardDistance = fromIndex >= toIndex ? fromIndex - toIndex : totalStations - toIndex + fromIndex;
+
+    return Math.min(forwardDistance, backwardDistance);
+  } else {
+    // 단방향 순환: 한 방향으로만 (순방향 또는 순환)
+    if (toIndex >= fromIndex) {
+      return toIndex - fromIndex;
+    } else {
+      // 순환 경로: 마지막까지 가서 처음으로
+      return totalStations - fromIndex + toIndex;
+    }
+  }
 }

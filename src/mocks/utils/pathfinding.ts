@@ -1,6 +1,6 @@
 import type { components } from '@/generated/api-types';
 import { stations, getStationById } from '../data/stations';
-import { lines, LINE_UUIDS } from '../data/lines';
+import { lines, getStopsCount, isBidirectional } from '../data/lines';
 import { getDuration } from '../data/duration-map';
 import { calculateLegsWithTransferDiscount, calculateItineraryPricing } from './pricing';
 
@@ -10,6 +10,7 @@ type Itinerary = components['schemas']['Itinerary'];
 
 /**
  * 구간(Leg) 생성 헬퍼
+ * 순환 노선의 최단 경로를 자동으로 계산
  */
 function createLeg(legId: string, line: Line, fromStationId: string, toStationId: string): Leg {
   const fromStation = getStationById(fromStationId);
@@ -26,15 +27,49 @@ function createLeg(legId: string, line: Line, fromStationId: string, toStationId
     throw new Error('Station not in line');
   }
 
-  const stopsCount = Math.abs(toIndex - fromIndex);
+  // ✅ 순환 노선 고려한 정거장 수 계산
+  const stopsCount = getStopsCount(line, fromStationId, toStationId);
 
-  // 구간별 정확한 소요시간 조회
-  const duration = getDuration(fromStationId, toStationId);
-  const durationMinutes = duration !== null ? duration : stopsCount * 5;
+  // 구간별 정확한 소요시간 계산: 경로상의 모든 인접 구간을 합산
+  let durationMinutes = 0;
+  const totalStations = line.stationIds.length;
 
-  // 요금 계산: 기본 요금 + ((정거장 수 - 1) × 정거장당 추가 요금)
-  // 출발지는 요금에 포함되지 않으므로 -1
-  const baseFare = line.baseFare + (stopsCount - 1) * (line.extraFarePerStop || 0);
+  // 순환 노선에서 최단 경로 결정 (양방향 vs 단방향)
+  const forwardDistance = toIndex >= fromIndex
+    ? toIndex - fromIndex
+    : totalStations - fromIndex + toIndex;
+
+  const backwardDistance = fromIndex >= toIndex
+    ? fromIndex - toIndex
+    : totalStations - toIndex + fromIndex;
+
+  const useForward = isBidirectional(line.lineId)
+    ? forwardDistance <= backwardDistance
+    : true; // 단방향은 항상 순방향
+
+  // 경로상의 모든 구간 시간을 합산
+  if (useForward) {
+    // 순방향: fromIndex → toIndex
+    let currentIndex = fromIndex;
+    for (let i = 0; i < forwardDistance; i++) {
+      const nextIndex = (currentIndex + 1) % totalStations;
+      const segmentDuration = getDuration(line.stationIds[currentIndex], line.stationIds[nextIndex]);
+      durationMinutes += segmentDuration !== null ? segmentDuration : 5;
+      currentIndex = nextIndex;
+    }
+  } else {
+    // 역방향: fromIndex → toIndex (역순)
+    let currentIndex = fromIndex;
+    for (let i = 0; i < backwardDistance; i++) {
+      const nextIndex = currentIndex === 0 ? totalStations - 1 : currentIndex - 1;
+      const segmentDuration = getDuration(line.stationIds[currentIndex], line.stationIds[nextIndex]);
+      durationMinutes += segmentDuration !== null ? segmentDuration : 5;
+      currentIndex = nextIndex;
+    }
+  }
+
+  // 요금 계산: 기본 요금 + (정거장 수 × 정거장당 추가 요금)
+  const baseFare = line.baseFare + stopsCount * (line.extraFarePerStop || 0);
 
   return {
     legId,
@@ -58,27 +93,17 @@ function createLeg(legId: string, line: Line, fromStationId: string, toStationId
 /**
  * 직행 경로 찾기 (환승 없음)
  *
- * 외곽선은 단방향 노선이므로 순방향만 허용
+ * 모든 노선이 순환하므로 두 역이 같은 노선에 있으면 항상 경로 존재
  */
 function findDirectPath(fromStationId: string, toStationId: string): Leg[] | null {
   for (const line of lines) {
     const fromIndex = line.stationIds.indexOf(fromStationId);
     const toIndex = line.stationIds.indexOf(toStationId);
 
-    if (fromIndex !== -1 && toIndex !== -1) {
-      // 외곽선은 단방향만 허용
-      if (line.lineId === LINE_UUIDS.SUBURBAN_LINE) {
-        if (fromIndex < toIndex) {
-          const leg = createLeg(`leg-${line.lineId}-0`, line, fromStationId, toStationId);
-          return [leg];
-        }
-      } else {
-        // 시티선, 투어선은 양방향 허용
-        if (fromIndex < toIndex) {
-          const leg = createLeg(`leg-${line.lineId}-0`, line, fromStationId, toStationId);
-          return [leg];
-        }
-      }
+    if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
+      // ✅ 순환 노선: 두 역이 있으면 항상 경로 존재
+      const leg = createLeg(`leg-${line.lineId}-0`, line, fromStationId, toStationId);
+      return [leg];
     }
   }
 
@@ -88,7 +113,7 @@ function findDirectPath(fromStationId: string, toStationId: string): Leg[] | nul
 /**
  * 1회 환승 경로 찾기
  *
- * 외곽선은 단방향이므로 순방향만 허용
+ * 순환 노선이므로 두 역이 노선에 있으면 항상 경로 존재
  */
 function findOneTransferPaths(fromStationId: string, toStationId: string): Leg[][] {
   const paths: Leg[][] = [];
@@ -112,13 +137,10 @@ function findOneTransferPaths(fromStationId: string, toStationId: string): Leg[]
       const transferIndex = line.stationIds.indexOf(transferId);
 
       if (fromIndex === -1 || transferIndex === -1) return false;
+      if (fromIndex === transferIndex) return false;
 
-      // 외곽선은 단방향
-      if (line.lineId === LINE_UUIDS.SUBURBAN_LINE) {
-        return fromIndex < transferIndex;
-      }
-      // 다른 노선은 양방향
-      return fromIndex < transferIndex;
+      // ✅ 순환 노선: 두 역이 있으면 항상 경로 존재
+      return true;
     });
 
     if (!firstLine) continue;
@@ -129,14 +151,11 @@ function findOneTransferPaths(fromStationId: string, toStationId: string): Leg[]
       const toIndex = line.stationIds.indexOf(toStationId);
 
       if (transferIndex === -1 || toIndex === -1) return false;
+      if (transferIndex === toIndex) return false;
       if (line.lineId === firstLine.lineId) return false; // 다른 노선이어야 함
 
-      // 외곽선은 단방향
-      if (line.lineId === LINE_UUIDS.SUBURBAN_LINE) {
-        return transferIndex < toIndex;
-      }
-      // 다른 노선은 양방향
-      return transferIndex < toIndex;
+      // ✅ 순환 노선: 두 역이 있으면 항상 경로 존재
+      return true;
     });
 
     if (!secondLine) continue;

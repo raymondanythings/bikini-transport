@@ -56,9 +56,9 @@ const searchItineraryHandler = http.post('/api/itineraries/search', async ({ req
  * POST /api/itineraries/:itineraryId/calculate-fare
  * 요금 계산 (결제 전 미리보기)
  */
-const calculateFareHandler = http.post(
+const calculateFareHandler = http.post<{ itineraryId: string }, { couponCode?: string | null }>(
   '/api/itineraries/:itineraryId/calculate-fare',
-  async ({ request, params }: { request: Request; params: Record<string, string | undefined> }) => {
+  async ({ request, params }) => {
     await delay(200);
 
     const itineraryId = params.itineraryId as string | undefined;
@@ -83,11 +83,7 @@ const calculateFareHandler = http.post(
       );
     }
 
-    const body = (await request.json()) as {
-      couponCode?: string | null;
-    };
-
-    const { couponCode } = body;
+    const { couponCode } = await request.json();
 
     // 쿠폰 적용 요금 계산
     const linesMap = new Map(lines.map((line) => [line.lineId, line]));
