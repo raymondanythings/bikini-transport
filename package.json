@@ -8,7 +8,8 @@
     "openapi:generate": "openapi-typescript openapi.yaml -o src/generated/api-types.ts",
     "dev": "vite",
     "build": "yarn openapi:generate && tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "biome lint",
+    "format": "biome format",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -52,6 +53,8 @@
   },
   "packageManager": "yarn@4.11.0",
   "msw": {
-    "workerDirectory": ["public"]
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
