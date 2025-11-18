@@ -1,0 +1,1045 @@
+openapi: 3.0.0
+info:
+  title: Bikini Transport API
+  description: |
+    비키니시티 해저 버스 예약 시스템 API
+
+    스폰지밥 테마의 버스 예약 애플리케이션을 위한 RESTful API입니다.
+  version: 1.0.0
+  contact:
+    name: Bikini Transport Team
+
+servers:
+  - url: http://localhost:5173/api
+    description: Development server (with MSW)
+  - url: /api
+    description: Relative path for production
+
+tags:
+  - name: stations
+    description: 역(정류장) 관련 API
+  - name: lines
+    description: 노선 관련 API
+  - name: itineraries
+    description: 경로 검색 및 추천 API
+  - name: seats
+    description: 좌석 조회 API
+  - name: coupons
+    description: 쿠폰 관련 API
+  - name: bookings
+    description: 예약 관련 API
+
+paths:
+  /stations:
+    get:
+      tags: [stations]
+      summary: 전체 역 목록 조회 및 검색
+      description: |
+        비키니시티의 모든 버스 정류장 목록을 반환합니다.
+
+        **검색 기능:**
+        - 쿼리 파라미터 `q`를 사용하여 정류장 이름으로 검색 가능
+        - 부분 일치 검색 지원 (대소문자 무시)
+        - `q` 파라미터가 없으면 전체 목록 반환
+      operationId: getStations
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 검색어 (정류장 이름 부분 일치)
+          example: 비키니
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - stations
+                properties:
+                  stations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Station'
+
+  /lines:
+    get:
+      tags: [lines]
+      summary: 전체 노선 목록 조회
+      description: 시티선, 외곽선, 투어선 등 모든 노선 정보를 반환합니다.
+      operationId: getLines
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - lines
+                properties:
+                  lines:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Line'
+
+  /itineraries/search:
+    post:
+      tags: [itineraries]
+      summary: 경로 검색
+      description: |
+        출발지, 도착지, 출발 시간을 기준으로 최적의 경로를 검색합니다.
+        최단시간, 최소환승, 최저요금 기준으로 추천 경로를 반환합니다.
+
+        **환승 할인 정책:**
+        - 환승 시 갈아타는 노선의 요금에만 할인 적용
+        - 1회 환승: 노선별 설정된 할인율
+        - 2회 이상 환승: 노선별 설정된 할인율
+      operationId: searchItineraries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fromStationId
+                - toStationId
+                - departureTime
+              properties:
+                fromStationId:
+                  type: string
+                  description: 출발역 ID
+                  example: bikini-city
+                toStationId:
+                  type: string
+                  description: 도착역 ID
+                  example: bubble-city
+                departureTime:
+                  type: string
+                  format: date-time
+                  description: 출발 시간 (ISO 8601)
+                  example: '2025-01-15T09:00:00Z'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - itineraries
+                properties:
+                  itineraries:
+                    type: array
+                    description: 추천 경로 목록 (최대 3개, 경로가 없으면 빈 배열)
+                    items:
+                      $ref: '#/components/schemas/Itinerary'
+
+  /itineraries/{itineraryId}/calculate-fare:
+    post:
+      tags: [itineraries]
+      summary: 요금 계산 (결제 전 미리보기)
+      description: |
+        선택한 경로에 대해 쿠폰을 적용한 최종 요금을 계산합니다.
+
+        **계산 순서:**
+        1. 각 구간의 기본 요금 계산
+        2. 환승 할인 적용 (환승된 구간만)
+        3. 쿠폰 할인 적용
+           - PEARL_PASS: 첫 탑승 노선 기본요금에서 2₴ 차감
+           - GARY_NIGHT/TOUR_FUN: 각 구간에서 환승할인과 비교하여 큰 값 적용
+
+        **주의사항:**
+        - 같은 노선을 계속 타면 환승으로 계산되지 않음
+        - 쿠폰은 1개만 적용 가능
+      operationId: calculateFare
+      parameters:
+        - name: itineraryId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: itinerary-1
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                couponCode:
+                  type: string
+                  nullable: true
+                  description: 적용할 쿠폰 코드 (선택)
+                  enum:
+                    - PEARL_PASS
+                    - GARY_NIGHT
+                    - TOUR_FUN
+                  example: PEARL_PASS
+      responses:
+        '200':
+          description: 요금 계산 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - itinerary
+                  - pricing
+                properties:
+                  itinerary:
+                    $ref: '#/components/schemas/Itinerary'
+                    description: 쿠폰이 적용된 경로 정보 (각 구간별 할인 금액 포함)
+                  pricing:
+                    type: object
+                    required:
+                      - subtotal
+                      - transferDiscount
+                      - couponDiscount
+                      - totalDiscount
+                      - finalTotal
+                    properties:
+                      subtotal:
+                        type: number
+                        description: 할인 전 총액 (모든 구간 baseFare 합계)
+                        example: 17.0
+                      transferDiscount:
+                        type: number
+                        description: 환승 할인 총액
+                        example: 1.05
+                      couponDiscount:
+                        type: number
+                        description: 쿠폰 할인 총액
+                        example: 2.0
+                      totalDiscount:
+                        type: number
+                        description: 총 할인 금액 (환승 + 쿠폰)
+                        example: 3.05
+                      finalTotal:
+                        type: number
+                        description: 최종 결제 금액
+                        example: 13.95
+                  appliedCoupon:
+                    allOf:
+                      - $ref: '#/components/schemas/UserCoupon'
+                      - nullable: true
+                    description: 적용된 쿠폰 정보 (없으면 null)
+        '404':
+          description: 경로를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: 잘못된 요청 (쿠폰 조건 불일치 등)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /legs/{legId}/seats:
+    get:
+      tags: [seats]
+      summary: 구간별 좌석 조회
+      description: 특정 구간의 좌석 배치 및 예약 상태를 조회합니다.
+      operationId: getSeatsByLeg
+      parameters:
+        - name: legId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: leg-city-line-1
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeatLayout'
+        '404':
+          description: 구간을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /coupons/random-popup:
+    get:
+      tags: [coupons]
+      summary: 랜덤 쿠폰 팝업 조회
+      description: |
+        확률 기반으로 랜덤 쿠폰을 반환합니다.
+        쿠폰이 출현하지 않으면 null을 반환합니다.
+
+        **출현 조건:**
+        - 약 10% 확률로 쿠폰 출현
+        - 1초마다 리패치 권장
+      operationId: getRandomCouponPopup
+      responses:
+        '200':
+          description: 성공 (쿠폰이 있거나 없음)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  coupon:
+                    allOf:
+                      - $ref: '#/components/schemas/CouponDefinition'
+                      - nullable: true
+                example:
+                  coupon:
+                    couponCode: PEARL_PASS
+                    name: 진주패스
+                    description: 모든 노선 기본요금 2₴ 할인
+                    emoji: 🦪
+                    discountType: FIXED_AMOUNT
+                    discountValue: 2.0
+                    maxOwnedCount: 3
+
+  /coupons/claim:
+    post:
+      tags: [coupons]
+      summary: 쿠폰 받기
+      description: |
+        랜덤 쿠폰을 획득합니다.
+        최대 소지 개수를 초과하면 에러를 반환합니다.
+      operationId: claimCoupon
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - couponCode
+              properties:
+                couponCode:
+                  type: string
+                  enum:
+                    - PEARL_PASS
+                    - GARY_NIGHT
+                    - TOUR_FUN
+                  example: PEARL_PASS
+      responses:
+        '200':
+          description: 쿠폰 받기 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - coupon
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  coupon:
+                    $ref: '#/components/schemas/UserCoupon'
+        '400':
+          description: 최대 소지 개수 초과 또는 잘못된 요청
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: MAX_COUPON_EXCEEDED
+                message: 이미 최대 개수를 보유 중입니다
+
+  /coupons/my:
+    get:
+      tags: [coupons]
+      summary: 내 보유 쿠폰 목록 조회
+      description: 현재 사용자가 보유한 모든 쿠폰 목록을 반환합니다.
+      operationId: getMyCoupons
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - coupons
+                properties:
+                  coupons:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserCoupon'
+
+  /bookings:
+    post:
+      tags: [bookings]
+      summary: 예약 생성
+      description: |
+        경로, 좌석, 쿠폰 정보를 기반으로 예약을 생성합니다.
+
+        **할인 계산 순서:**
+        1. 각 구간의 기본 요금 계산 (baseFare만 사용)
+        2. 환승 할인 적용 (갈아타는 노선에만)
+        3. 쿠폰 할인 적용
+           - PEARL_PASS: 첫 탑승 노선 기본요금에서 2₴ 차감
+           - GARY_NIGHT/TOUR_FUN: 환승할인과 비교하여 큰 값 적용
+
+        **주의사항:**
+        - 같은 노선을 계속 타면 환승으로 계산되지 않음
+        - 쿠폰은 1개만 적용 가능
+        - 좌석이 이미 예약된 경우 에러 반환
+      operationId: createBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - itineraryId
+                - seatSelections
+                - departureTime
+              properties:
+                itineraryId:
+                  type: string
+                  description: 선택한 경로 ID
+                  example: itinerary-1
+                seatSelections:
+                  type: array
+                  description: 구간별 선택한 좌석
+                  items:
+                    type: object
+                    required:
+                      - legId
+                      - seatNumber
+                    properties:
+                      legId:
+                        type: string
+                        example: leg-city-line-1
+                      seatNumber:
+                        type: string
+                        example: A1
+                couponCode:
+                  type: string
+                  enum:
+                    - PEARL_PASS
+                    - GARY_NIGHT
+                    - TOUR_FUN
+                  nullable: true
+                  description: 적용할 쿠폰 코드 (선택)
+                  example: PEARL_PASS
+                departureTime:
+                  type: string
+                  format: date-time
+                  description: 출발 시간 (ISO 8601)
+                  example: '2025-01-15T09:00:00Z'
+      responses:
+        '201':
+          description: 예약 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: 잘못된 요청 (좌석 중복, 쿠폰 오류 등)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags: [bookings]
+      summary: 내 예약 목록 조회
+      description: |
+        현재 사용자의 모든 예약 목록을 반환합니다.
+
+        **정렬 옵션:**
+        - date_desc: 출발 날짜 내림차순 (기본)
+        - date_asc: 출발 날짜 오름차순
+        - price_desc: 금액 높은 순
+        - price_asc: 금액 낮은 순
+      operationId: getMyBookings
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum:
+              - date_desc
+              - date_asc
+              - price_desc
+              - price_asc
+            default: date_desc
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - CONFIRMED
+              - CANCELLED
+          description: 예약 상태 필터
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - bookings
+                properties:
+                  bookings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Booking'
+
+  /bookings/{bookingId}:
+    get:
+      tags: [bookings]
+      summary: 예약 상세 조회
+      operationId: getBookingById
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: booking-123
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '404':
+          description: 예약을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Station:
+      type: object
+      required:
+        - stationId
+        - name
+      properties:
+        stationId:
+          type: string
+          description: 역 고유 ID
+          example: bikini-city
+        name:
+          type: string
+          description: 역 이름
+          example: 비키니시티
+
+    Line:
+      type: object
+      required:
+        - lineId
+        - name
+        - type
+        - color
+        - stationIds
+        - baseFare
+        - extraFarePerStop
+        - transferDiscount1st
+        - transferDiscount2nd
+        - schedule
+      properties:
+        lineId:
+          type: string
+          description: 노선 고유 ID
+          example: city-line
+        name:
+          type: string
+          description: 노선 이름
+          example: 시티선
+        type:
+          type: string
+          enum:
+            - CITY
+            - SUBURBAN
+            - TOUR
+          description: 노선 타입
+          example: CITY
+        color:
+          type: string
+          description: 노선 색상 (Hex)
+          example: '#FFC107'
+        stationIds:
+          type: array
+          description: 노선이 경유하는 역 ID 목록 (순서대로)
+          items:
+            type: string
+          example:
+            - new-kelp-city
+            - glove-world
+            - jellyfish-fields
+            - bikini-city
+        baseFare:
+          type: number
+          description: 기본 요금 (₴)
+          example: 10.0
+        extraFarePerStop:
+          type: number
+          description: 정거장당 추가 요금 (₴)
+          example: 2.0
+        transferDiscount1st:
+          type: number
+          description: 1회 환승 할인율 (0-1)
+          example: 0.1
+        transferDiscount2nd:
+          type: number
+          description: 2회 이상 환승 할인율 (0-1)
+          example: 0.2
+        schedule:
+          type: object
+          required:
+            - firstDeparture
+            - lastDeparture
+            - intervalMinutes
+          properties:
+            firstDeparture:
+              type: string
+              description: 첫차 시간 (HH:mm)
+              example: '06:30'
+            lastDeparture:
+              type: string
+              description: 막차 시간 (HH:mm)
+              example: '23:30'
+            intervalMinutes:
+              type: integer
+              description: 배차 간격 (분)
+              example: 15
+
+    Leg:
+      type: object
+      required:
+        - legId
+        - lineId
+        - lineName
+        - lineColor
+        - fromStation
+        - toStation
+        - fromStationIndex
+        - toStationIndex
+        - durationMinutes
+        - stopsCount
+        - baseFare
+        - transferNumber
+        - transferDiscount
+        - couponDiscount
+        - finalFare
+      properties:
+        legId:
+          type: string
+          description: 구간 고유 ID
+          example: leg-city-line-1
+        lineId:
+          type: string
+          description: 이 구간이 속한 노선 ID
+          example: city-line
+        lineName:
+          type: string
+          description: 노선 이름
+          example: 시티선
+        lineColor:
+          type: string
+          description: 노선 색상
+          example: '#FFC107'
+        fromStation:
+          $ref: '#/components/schemas/Station'
+        toStation:
+          $ref: '#/components/schemas/Station'
+        fromStationIndex:
+          type: integer
+          description: 노선 내 출발역 인덱스
+          example: 0
+        toStationIndex:
+          type: integer
+          description: 노선 내 도착역 인덱스
+          example: 3
+        durationMinutes:
+          type: integer
+          description: 소요 시간 (분)
+          example: 25
+        waitTimeMinutes:
+          type: integer
+          description: 이 구간 탑승 전 대기 시간 (분) - 환승 시에만 값 존재
+          example: 0
+        stopsCount:
+          type: integer
+          description: 정거장 수 (출발역 포함)
+          example: 4
+        baseFare:
+          type: number
+          description: 기본 요금 (₴)
+          example: 5.0
+        transferNumber:
+          type: integer
+          description: 환승 순서 (0=환승 없음/첫 탑승, 1=1회 환승, 2=2회 이상 환승)
+          example: 0
+        transferDiscount:
+          type: number
+          description: 이 구간에 적용된 환승 할인 금액 (₴)
+          example: 0
+        couponDiscount:
+          type: number
+          description: 이 구간에 적용된 쿠폰 할인 금액 (₴)
+          example: 0
+        finalFare:
+          type: number
+          description: 이 구간의 최종 요금 (baseFare - transferDiscount - couponDiscount)
+          example: 5.0
+
+    Itinerary:
+      type: object
+      required:
+        - itineraryId
+        - recommendationTypes
+        - totalDurationMinutes
+        - transferCount
+        - legs
+        - pricing
+      properties:
+        itineraryId:
+          type: string
+          description: 경로 고유 ID
+          example: itinerary-1
+        recommendationTypes:
+          type: array
+          description: 추천 타입 (하나의 경로가 여러 타입일 수 있음)
+          items:
+            type: string
+            enum:
+              - SHORTEST_TIME
+              - MIN_TRANSFER
+              - LOWEST_FARE
+          example:
+            - SHORTEST_TIME
+            - MIN_TRANSFER
+        totalDurationMinutes:
+          type: integer
+          description: 총 소요 시간 (분)
+          example: 45
+        transferCount:
+          type: integer
+          description: 환승 횟수
+          example: 1
+        legs:
+          type: array
+          description: 구간 목록
+          items:
+            $ref: '#/components/schemas/Leg'
+        pricing:
+          type: object
+          required:
+            - subtotal
+            - transferDiscount
+            - totalBeforeCoupon
+          properties:
+            subtotal:
+              type: number
+              description: 할인 전 총액 (모든 구간 baseFare 합계)
+              example: 17.0
+            transferDiscount:
+              type: number
+              description: 환승 할인 총액
+              example: 1.05
+            totalBeforeCoupon:
+              type: number
+              description: 쿠폰 적용 전 금액 (환승 할인 후)
+              example: 15.95
+
+    Seat:
+      type: object
+      required:
+        - seatNumber
+        - row
+        - column
+        - position
+        - isAvailable
+        - isReserved
+      properties:
+        seatNumber:
+          type: string
+          description: 좌석 번호 (1A~6D)
+          example: 2C
+        row:
+          type: integer
+          description: 행 번호 (0부터 시작, 0~5)
+          example: 1
+        column:
+          type: integer
+          description: 열 번호 (0=A, 1=B, 2=C, 3=D)
+          example: 2
+        position:
+          type: string
+          enum:
+            - WINDOW
+            - AISLE
+          description: |
+            좌석 위치
+            - WINDOW: A열(왼쪽 창), D열(오른쪽 창)
+            - AISLE: B열, C열
+          example: AISLE
+        isAvailable:
+          type: boolean
+          description: 선택 가능 여부
+          example: true
+        isReserved:
+          type: boolean
+          description: 예약된 좌석 여부
+          example: false
+
+    SeatLayout:
+      type: object
+      required:
+        - legId
+        - rows
+        - columns
+        - seats
+      properties:
+        legId:
+          type: string
+          description: 구간 ID
+          example: leg-city-line-1
+        rows:
+          type: integer
+          description: 총 행 수 (고정값 6)
+          example: 6
+        columns:
+          type: integer
+          description: 총 열 수 (고정값 4)
+          example: 4
+        seats:
+          type: array
+          description: |
+            전체 좌석 목록 (1A~6D, 총 24개)
+
+            좌석 배치:
+            1A  1B  [통로]  1C  1D
+            2A  2B  [통로]  2C  2D
+            3A  3B  [통로]  3C  3D
+            4A  4B  [통로]  4C  4D
+            5A  5B  [통로]  5C  5D
+            6A  6B  [통로]  6C  6D
+          items:
+            $ref: '#/components/schemas/Seat'
+
+    CouponDefinition:
+      type: object
+      description: 쿠폰 기본 정보 (사용자 독립적)
+      required:
+        - couponCode
+        - name
+        - description
+        - emoji
+        - discountType
+        - discountValue
+        - maxOwnedCount
+      properties:
+        couponCode:
+          type: string
+          enum:
+            - PEARL_PASS
+            - GARY_NIGHT
+            - TOUR_FUN
+          description: 쿠폰 코드
+          example: PEARL_PASS
+        name:
+          type: string
+          description: 쿠폰 이름
+          example: 진주패스
+        description:
+          type: string
+          description: 쿠폰 설명
+          example: 모든 노선 기본요금 2₴ 할인
+        emoji:
+          type: string
+          description: 쿠폰 이모지
+          example: 🦪
+        discountType:
+          type: string
+          enum:
+            - FIXED_AMOUNT
+            - PERCENTAGE
+          description: |
+            할인 타입
+            - FIXED_AMOUNT: 고정 금액 할인 (PEARL_PASS)
+            - PERCENTAGE: 비율 할인 (GARY_NIGHT, TOUR_FUN)
+          example: FIXED_AMOUNT
+        discountValue:
+          type: number
+          description: |
+            할인 값
+            - PEARL_PASS: 2.0 (₴)
+            - GARY_NIGHT: 0.4 (40%)
+            - TOUR_FUN: 0.3 (30%)
+          example: 2.0
+        maxOwnedCount:
+          type: integer
+          description: 최대 소지 가능 개수
+          example: 3
+        applicableLineTypes:
+          type: array
+          description: 적용 가능한 노선 타입 (없으면 전체)
+          items:
+            type: string
+            enum:
+              - CITY
+              - SUBURBAN
+              - TOUR
+          nullable: true
+          example: [TOUR]
+        timeCondition:
+          type: object
+          description: 시간 조건 (없으면 제한 없음)
+          nullable: true
+          properties:
+            afterHour:
+              type: integer
+              description: 이 시간 이후부터 적용 (24시간 기준)
+              example: 21
+
+    UserCoupon:
+      type: object
+      description: 사용자가 보유한 쿠폰 정보
+      allOf:
+        - $ref: '#/components/schemas/CouponDefinition'
+        - type: object
+          required:
+            - ownedCount
+          properties:
+            ownedCount:
+              type: integer
+              description: 현재 사용자가 보유한 개수
+              example: 1
+
+    Booking:
+      type: object
+      required:
+        - bookingId
+        - bookingNumber
+        - itinerary
+        - seatSelections
+        - departureTime
+        - pricing
+        - status
+        - createdAt
+      properties:
+        bookingId:
+          type: string
+          description: 예약 고유 ID
+          example: booking-123
+        bookingNumber:
+          type: string
+          description: 예약 번호 (사용자용)
+          example: BKN-20250115-1234
+        itinerary:
+          $ref: '#/components/schemas/Itinerary'
+        seatSelections:
+          type: array
+          description: 구간별 선택한 좌석
+          items:
+            type: object
+            required:
+              - legId
+              - legIndex
+              - seatNumber
+            properties:
+              legId:
+                type: string
+                example: leg-city-line-1
+              legIndex:
+                type: integer
+                description: 구간 순서 (0부터 시작)
+                example: 0
+              seatNumber:
+                type: string
+                example: A1
+        appliedCoupon:
+          allOf:
+            - $ref: '#/components/schemas/UserCoupon'
+            - nullable: true
+          description: 적용된 쿠폰 (없으면 null)
+        departureTime:
+          type: string
+          format: date-time
+          description: 출발 시간 (ISO 8601)
+          example: '2025-01-15T09:00:00Z'
+        pricing:
+          type: object
+          required:
+            - subtotal
+            - transferDiscount
+            - couponDiscount
+            - totalDiscount
+            - finalTotal
+            - currency
+          properties:
+            subtotal:
+              type: number
+              description: 할인 전 총액 (모든 구간 baseFare 합계)
+              example: 17.0
+            transferDiscount:
+              type: number
+              description: 환승 할인 금액
+              example: 1.05
+            couponDiscount:
+              type: number
+              description: 쿠폰 할인 금액
+              example: 2.0
+            totalDiscount:
+              type: number
+              description: 총 할인 금액 (환승 + 쿠폰)
+              example: 3.05
+            finalTotal:
+              type: number
+              description: 최종 결제 금액
+              example: 13.95
+            currency:
+              type: string
+              enum:
+                - SHELL
+              description: 화폐 단위
+              example: SHELL
+        status:
+          type: string
+          enum:
+            - CONFIRMED
+            - CANCELLED
+          description: 예약 상태
+          example: CONFIRMED
+        createdAt:
+          type: string
+          format: date-time
+          description: 예약 생성 시간
+          example: '2025-01-15T08:30:00Z'
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: 에러 코드
+          example: SEAT_ALREADY_RESERVED
+        message:
+          type: string
+          description: 에러 메시지
+          example: 이미 예약된 좌석입니다
+        details:
+          type: object
+          description: 추가 에러 정보
+          additionalProperties: true
+          nullable: true
