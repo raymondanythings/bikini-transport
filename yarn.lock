@@ -296,7 +296,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:^2.2.5":
+"@biomejs/biome@npm:2.2.5":
   version: 2.2.5
   resolution: "@biomejs/biome@npm:2.2.5"
   dependencies:
@@ -3735,7 +3735,7 @@ __metadata:
   resolution: "deus-ex-machina@workspace:."
   dependencies:
     "@ark-ui/react": "npm:^5.27.0"
-    "@biomejs/biome": "npm:^2.2.5"
+    "@biomejs/biome": "npm:2.2.5"
     "@pandacss/dev": "npm:^1.4.3"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
