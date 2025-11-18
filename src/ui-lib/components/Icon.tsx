@@ -230,6 +230,7 @@ export const SearchOutlined = ({ size = 24, color = 'label.normal' }: IconProps)
 
 export const CalendarOutlined = ({ size = 24, color = 'label.alternative' }: IconProps) => (
   <svg
+    data-test-id="calendar-outlined"
     width={size}
     height={size}
     viewBox="0 0 24 24"

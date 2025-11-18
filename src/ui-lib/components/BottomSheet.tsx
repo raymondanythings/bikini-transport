@@ -106,7 +106,7 @@ export const BottomSheet = ({ open, onDimmerClick, header, cta, children }: Bott
     <Dialog.Root open={open} onOpenChange={({ open }) => !open && onDimmerClick?.()}>
       <Portal>
         <Backdrop />
-        <Positioner>
+        <Positioner data-testid="bottom-sheet" data-state={open ? 'open' : 'closed'}>
           <Content>
             <Handle />
             {header}
