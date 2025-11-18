@@ -1,8 +1,8 @@
-import { HStack, VStack } from 'styled-system/jsx'
-import { BottomSheet } from '@/ui-lib/components/BottomSheet'
-import { Button } from '@/ui-lib/components/Button'
-import { ExclamationCircleFilled } from '@/ui-lib/components/Icon'
-import { Typography } from '@/ui-lib/components/Typography'
+import { HStack, VStack } from 'styled-system/jsx';
+import { BottomSheet } from '@/ui-lib/components/BottomSheet';
+import { Button } from '@/ui-lib/components/Button';
+import { ExclamationCircleFilled } from '@/ui-lib/components/Icon';
+import { Typography } from '@/ui-lib/components/Typography';
 
 export const PaymentCancelBottomSheet = () => {
   return (
@@ -31,5 +31,5 @@ export const PaymentCancelBottomSheet = () => {
         지금 나가면 예매한 내용들이 모두 초기화돼요
       </Typography>
     </BottomSheet>
-  )
-}
+  );
+};

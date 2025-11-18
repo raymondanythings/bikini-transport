@@ -59,7 +59,7 @@ function generateSeats(): Seat[] {
  * @param reservedSeats - 이미 예약된 좌석 번호 목록
  */
 export function createSeatLayout(legId: string, reservedSeats: string[] = []): SeatLayout {
-  const seats = generateSeats().map((seat) => ({
+  const seats = generateSeats().map(seat => ({
     ...seat,
     isReserved: reservedSeats.includes(seat.seatNumber),
     isAvailable: !reservedSeats.includes(seat.seatNumber),
@@ -81,5 +81,5 @@ export function createSeatLayout(legId: string, reservedSeats: string[] = []): S
 export function simulateRandomReservations(count: number = 5): string[] {
   const allSeats = generateSeats();
   const shuffled = [...allSeats].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count).map((seat) => seat.seatNumber);
+  return shuffled.slice(0, count).map(seat => seat.seatNumber);
 }

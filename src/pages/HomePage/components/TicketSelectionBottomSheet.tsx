@@ -1,10 +1,10 @@
-import { Box, Divider, Flex, HStack, VStack } from 'styled-system/jsx'
-import { BottomSheet } from '@/ui-lib/components/BottomSheet'
-import { Button } from '@/ui-lib/components/Button'
-import { CircleOutlined, ExclamationCircleFilled, SwapRightOutlined } from '@/ui-lib/components/Icon'
-import { Tabs } from '@/ui-lib/components/Tabs'
-import { Tag } from '@/ui-lib/components/Tag'
-import { Typography } from '@/ui-lib/components/Typography'
+import { Box, Divider, Flex, HStack, VStack } from 'styled-system/jsx';
+import { BottomSheet } from '@/ui-lib/components/BottomSheet';
+import { Button } from '@/ui-lib/components/Button';
+import { CircleOutlined, ExclamationCircleFilled, SwapRightOutlined } from '@/ui-lib/components/Icon';
+import { Tabs } from '@/ui-lib/components/Tabs';
+import { Tag } from '@/ui-lib/components/Tag';
+import { Typography } from '@/ui-lib/components/Typography';
 
 export const TicketSelectionBottomSheet = () => {
   return (
@@ -51,8 +51,8 @@ export const TicketSelectionBottomSheet = () => {
         ]}
       />
     </BottomSheet>
-  )
-}
+  );
+};
 
 const DepartureArrivalCard = () => {
   return (
@@ -80,8 +80,8 @@ const DepartureArrivalCard = () => {
         </Typography>
       </HStack>
     </VStack>
-  )
-}
+  );
+};
 
 const TicketDetailCard = () => {
   return (
@@ -173,8 +173,8 @@ const TicketDetailCard = () => {
         구-라군
       </Typography>
     </Box>
-  )
-}
+  );
+};
 
 const TicketSoldOut = () => {
   return (
@@ -187,5 +187,5 @@ const TicketSoldOut = () => {
         다른 날짜나 시간대를 선택해주세요
       </Typography>
     </VStack>
-  )
-}
+  );
+};

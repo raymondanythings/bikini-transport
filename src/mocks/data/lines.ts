@@ -115,7 +115,7 @@ const LINE_DIRECTIONS: Record<string, LineDirection> = {
  * 노선 ID로 노선 정보 조회
  */
 export function getLineById(lineId: string): Line | undefined {
-  return lines.find((line) => line.lineId === lineId);
+  return lines.find(line => line.lineId === lineId);
 }
 
 /**
@@ -136,7 +136,7 @@ export function isBidirectional(lineId: string): boolean {
  * 특정 역을 경유하는 모든 노선 조회
  */
 export function getLinesByStation(stationId: string): Line[] {
-  return lines.filter((line) => line.stationIds.includes(stationId));
+  return lines.filter(line => line.stationIds.includes(stationId));
 }
 
 /**
@@ -144,7 +144,7 @@ export function getLinesByStation(stationId: string): Line[] {
  * 모든 노선이 순환하므로 두 역이 포함되면 항상 경로 존재
  */
 export function findDirectLine(fromStationId: string, toStationId: string): Line | undefined {
-  return lines.find((line) => {
+  return lines.find(line => {
     const hasFrom = line.stationIds.includes(fromStationId);
     const hasTo = line.stationIds.includes(toStationId);
 

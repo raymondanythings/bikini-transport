@@ -11,4 +11,11 @@ import { seatHandlers } from './seats';
 import { couponHandlers } from './coupons';
 import { bookingHandlers } from './bookings';
 
-export const handlers = [...stationHandlers, ...lineHandlers, ...itineraryHandlers, ...seatHandlers, ...couponHandlers, ...bookingHandlers];
+export const handlers = [
+  ...stationHandlers,
+  ...lineHandlers,
+  ...itineraryHandlers,
+  ...seatHandlers,
+  ...couponHandlers,
+  ...bookingHandlers,
+];

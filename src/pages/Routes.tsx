@@ -1,8 +1,8 @@
-import { createBrowserRouter, RouterProvider } from 'react-router'
-import { HomePage } from './HomePage'
-import { PaymentPage } from './PaymentPage'
-import { PaymentSuccessPage } from './PaymentSuccessPage'
-import { SeatSelectionPage } from './SeatSelectionPage'
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import { HomePage } from './HomePage';
+import { PaymentPage } from './PaymentPage';
+import { PaymentSuccessPage } from './PaymentSuccessPage';
+import { SeatSelectionPage } from './SeatSelectionPage';
 
 export const Routes = () => {
   return (
@@ -26,5 +26,5 @@ export const Routes = () => {
         },
       ])}
     />
-  )
-}
+  );
+};

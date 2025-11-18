@@ -1,10 +1,10 @@
-import { ark } from '@ark-ui/react'
-import { Box, Divider, Flex, HStack, Spacer, VStack } from 'styled-system/jsx'
-import { Button } from '@/ui-lib/components/Button'
-import { CaretUpOutlined, LeftOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon'
-import { Header } from '../../layout/Header'
-import { Typography } from '../../ui-lib/components/Typography'
-import { SeatButton } from './components/SeatButton'
+import { ark } from '@ark-ui/react';
+import { Box, Divider, Flex, HStack, Spacer, VStack } from 'styled-system/jsx';
+import { Button } from '@/ui-lib/components/Button';
+import { CaretUpOutlined, LeftOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon';
+import { Header } from '../../layout/Header';
+import { Typography } from '../../ui-lib/components/Typography';
+import { SeatButton } from './components/SeatButton';
 
 export const SeatSelectionPage = () => {
   return (
@@ -113,5 +113,5 @@ export const SeatSelectionPage = () => {
         <Button fullWidth>선택 완료 1/3</Button>
       </Box>
     </Flex>
-  )
-}
+  );
+};

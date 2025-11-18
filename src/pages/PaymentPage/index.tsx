@@ -1,14 +1,14 @@
-import { ark } from '@ark-ui/react'
-import { Box, Divider, Flex, Grid, HStack, VStack } from 'styled-system/jsx'
-import { Accordion } from '@/ui-lib/components/Accordion'
-import { Button } from '@/ui-lib/components/Button'
-import { CircleOutlined, CloseOutlined, DownOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon'
-import { Tag } from '@/ui-lib/components/Tag'
-import { Header } from '../../layout/Header'
-import { Typography } from '../../ui-lib/components/Typography'
-import { DiscountBottomSheet } from './components/DiscountBottomSheet'
-import { PaymentCancelBottomSheet } from './components/PaymentCancelBottomSheet'
-import { PaymentConfirmBottomSheet } from './components/PaymentConfirmBottomSheet'
+import { ark } from '@ark-ui/react';
+import { Box, Divider, Flex, Grid, HStack, VStack } from 'styled-system/jsx';
+import { Accordion } from '@/ui-lib/components/Accordion';
+import { Button } from '@/ui-lib/components/Button';
+import { CircleOutlined, CloseOutlined, DownOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon';
+import { Tag } from '@/ui-lib/components/Tag';
+import { Header } from '../../layout/Header';
+import { Typography } from '../../ui-lib/components/Typography';
+import { DiscountBottomSheet } from './components/DiscountBottomSheet';
+import { PaymentCancelBottomSheet } from './components/PaymentCancelBottomSheet';
+import { PaymentConfirmBottomSheet } from './components/PaymentConfirmBottomSheet';
 
 export const PaymentPage = () => {
   return (
@@ -121,8 +121,8 @@ export const PaymentPage = () => {
       <PaymentConfirmBottomSheet />
       <PaymentCancelBottomSheet />
     </Flex>
-  )
-}
+  );
+};
 
 const TicketDetailCard = () => {
   return (
@@ -196,5 +196,5 @@ const TicketDetailCard = () => {
         구-라군
       </Typography>
     </Grid>
-  )
-}
+  );
+};

@@ -52,12 +52,12 @@ const createBookingHandler = http.post('/api/bookings', async ({ request }) => {
     );
   }
 
-  const linesMap = new Map(lines.map((line) => [line.lineId, line]));
+  const linesMap = new Map(lines.map(line => [line.lineId, line]));
 
   // 선택된 좌석이 경로의 구간과 일치하는지 확인
   const seatSelectionsWithIndex = [];
   for (const sel of seatSelections) {
-    const legIndex = itinerary.legs.findIndex((leg) => leg.legId === sel.legId);
+    const legIndex = itinerary.legs.findIndex(leg => leg.legId === sel.legId);
     if (legIndex === -1) {
       return HttpResponse.json(
         {
@@ -74,13 +74,18 @@ const createBookingHandler = http.post('/api/bookings', async ({ request }) => {
   }
 
   // 가격 계산
-  const pricing = calculateFinalBookingPrice(itinerary.legs, couponCode || undefined, new Date(departureTime), linesMap);
+  const pricing = calculateFinalBookingPrice(
+    itinerary.legs,
+    couponCode || undefined,
+    new Date(departureTime),
+    linesMap
+  );
 
   // 예약 생성
   const booking = createBooking({
     itinerary,
     seatSelections: seatSelectionsWithIndex,
-    appliedCoupon: couponCode ? getMyCoupons().find((c) => c.couponCode === couponCode) || undefined : undefined,
+    appliedCoupon: couponCode ? getMyCoupons().find(c => c.couponCode === couponCode) || undefined : undefined,
     departureTime,
     pricing: {
       subtotal: pricing.subtotal,

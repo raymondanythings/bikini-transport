@@ -1,13 +1,13 @@
-import { ark } from '@ark-ui/react'
-import { forwardRef, type ReactNode } from 'react'
-import { css } from 'styled-system/css'
-import { Box, type HTMLStyledProps, styled } from 'styled-system/jsx'
-import { CloseCircleFilled } from './Icon'
+import { ark } from '@ark-ui/react';
+import { forwardRef, type ReactNode } from 'react';
+import { css } from 'styled-system/css';
+import { Box, type HTMLStyledProps, styled } from 'styled-system/jsx';
+import { CloseCircleFilled } from './Icon';
 
 const inputWrapperStyles = css({
   position: 'relative',
   w: 'full',
-})
+});
 
 const inputStyles = css({
   w: 'full',
@@ -36,7 +36,7 @@ const inputStyles = css({
     color: 'label.disable',
     cursor: 'not-allowed',
   },
-})
+});
 
 const iconWrapperStyles = css({
   position: 'absolute',
@@ -44,7 +44,7 @@ const iconWrapperStyles = css({
   top: '50%',
   transform: 'translateY(-50%)',
   color: 'label.disable',
-})
+});
 
 const clearButtonStyles = css({
   position: 'absolute',
@@ -66,23 +66,23 @@ const clearButtonStyles = css({
     bg: 'background.neutral',
     color: 'label.normal',
   },
-})
+});
 
 type InputProps = Omit<HTMLStyledProps<'input'>, 'onChange'> & {
-  value: string
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-  icon?: ReactNode
-  allowClear?: boolean
-}
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  icon?: ReactNode;
+  allowClear?: boolean;
+};
 
-const StyledInput = styled(ark.input)
-const StyledButton = styled(ark.button)
+const StyledInput = styled(ark.input);
+const StyledButton = styled(ark.button);
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { icon, allowClear = false, value, onChange, ...rest } = props
+  const { icon, allowClear = false, value, onChange, ...rest } = props;
 
-  const showClearButton = allowClear && value && value.length > 0
-  const showIcon = icon && !showClearButton
+  const showClearButton = allowClear && value && value.length > 0;
+  const showIcon = icon && !showClearButton;
 
   return (
     <Box className={inputWrapperStyles}>
@@ -103,15 +103,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           onClick={() => {
             const event = {
               target: { value: '' },
-            } as React.ChangeEvent<HTMLInputElement>
-            onChange(event)
+            } as React.ChangeEvent<HTMLInputElement>;
+            onChange(event);
           }}
         >
           <CloseCircleFilled />
         </StyledButton>
       )}
     </Box>
-  )
-})
+  );
+});
 
-Input.displayName = 'Input'
+Input.displayName = 'Input';

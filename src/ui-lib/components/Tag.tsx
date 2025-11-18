@@ -1,9 +1,9 @@
-import { ark } from '@ark-ui/react'
-import { forwardRef } from 'react'
-import { cva, type RecipeVariantProps } from 'styled-system/css'
-import { styled, type HTMLStyledProps } from 'styled-system/jsx'
+import { ark } from '@ark-ui/react';
+import { forwardRef } from 'react';
+import { cva, type RecipeVariantProps } from 'styled-system/css';
+import { styled, type HTMLStyledProps } from 'styled-system/jsx';
 
-type TagVariantProps = RecipeVariantProps<typeof tagRecipe>
+type TagVariantProps = RecipeVariantProps<typeof tagRecipe>;
 
 const tagRecipe = cva({
   base: {
@@ -51,25 +51,25 @@ const tagRecipe = cva({
   defaultVariants: {
     color: 'default',
   },
-})
+});
 
-type BaseTagProps = TagVariantProps
+type BaseTagProps = TagVariantProps;
 
 type TagProps = {
-  ref?: React.Ref<HTMLSpanElement>
+  ref?: React.Ref<HTMLSpanElement>;
 } & BaseTagProps &
-  HTMLStyledProps<'span'>
+  HTMLStyledProps<'span'>;
 
 export const Tag = forwardRef<HTMLSpanElement, TagProps>((props, ref) => {
-  const { children, color = 'default', ...rest } = props
+  const { children, color = 'default', ...rest } = props;
 
-  const TagComponent = styled(ark.span, tagRecipe)
+  const TagComponent = styled(ark.span, tagRecipe);
 
   return (
     <TagComponent ref={ref} color={color} {...rest}>
       {children}
     </TagComponent>
-  )
-})
+  );
+});
 
-Tag.displayName = 'Tag'
+Tag.displayName = 'Tag';

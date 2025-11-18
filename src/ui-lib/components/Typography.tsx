@@ -1,6 +1,6 @@
-import { type ElementType, forwardRef } from 'react'
-import { cva, type RecipeVariantProps } from 'styled-system/css'
-import { type HTMLStyledProps, styled } from 'styled-system/jsx'
+import { type ElementType, forwardRef } from 'react';
+import { cva, type RecipeVariantProps } from 'styled-system/css';
+import { type HTMLStyledProps, styled } from 'styled-system/jsx';
 
 /**
  * Typography recipe variants
@@ -39,20 +39,20 @@ const typographyRecipe = cva({
   defaultVariants: {
     variant: 'B1_Regular',
   },
-})
+});
 
 // Pre-created styled components for better performance
-const StyledH1 = styled('h1', typographyRecipe)
-const StyledH2 = styled('h2', typographyRecipe)
-const StyledP = styled('p', typographyRecipe)
-const StyledSpan = styled('span', typographyRecipe)
+const StyledH1 = styled('h1', typographyRecipe);
+const StyledH2 = styled('h2', typographyRecipe);
+const StyledP = styled('p', typographyRecipe);
+const StyledSpan = styled('span', typographyRecipe);
 
-type TypographyVariantProps = RecipeVariantProps<typeof typographyRecipe>
+type TypographyVariantProps = RecipeVariantProps<typeof typographyRecipe>;
 
 /**
  * Semantic HTML tag options for Text component
  */
-type TypographyTag = 'h1' | 'h2' | 'p' | 'span'
+type TypographyTag = 'h1' | 'h2' | 'p' | 'span';
 
 /**
  * Mapping of variant prefix to default HTML tag
@@ -66,7 +66,7 @@ const VARIANT_TO_TAG_MAP: Record<string, TypographyTag> = {
   C1: 'span',
   C2: 'span',
   SpongeBob: 'span',
-}
+};
 
 /**
  * Mapping of HTML tag to styled component
@@ -76,7 +76,7 @@ const TAG_TO_COMPONENT_MAP: Record<TypographyTag, ElementType> = {
   h2: StyledH2,
   p: StyledP,
   span: StyledSpan,
-}
+};
 
 export type TypographyProps = Omit<HTMLStyledProps<'p'>, 'as'> &
   TypographyVariantProps & {
@@ -84,16 +84,16 @@ export type TypographyProps = Omit<HTMLStyledProps<'p'>, 'as'> &
      * Override the default HTML tag
      * @default Auto-selected based on variant (H1 → h1, B1 → p, C1 → span)
      */
-    as?: TypographyTag
-  }
+    as?: TypographyTag;
+  };
 
 /**
  * Extract variant prefix (e.g., "H1_Bold" → "H1")
  */
 function getVariantPrefix(variant?: string): string {
-  if (!variant) return 'B1'
-  const prefix = variant.split('_')[0]
-  return prefix || 'B1'
+  if (!variant) return 'B1';
+  const prefix = variant.split('_')[0];
+  return prefix || 'B1';
 }
 
 /**
@@ -101,24 +101,24 @@ function getVariantPrefix(variant?: string): string {
  */
 function resolveTag(variant?: string, as?: TypographyTag): TypographyTag {
   // Explicit 'as' prop takes priority
-  if (as) return as
+  if (as) return as;
 
   // Otherwise, infer from variant prefix
-  const prefix = getVariantPrefix(variant)
-  return VARIANT_TO_TAG_MAP[prefix] || 'p'
+  const prefix = getVariantPrefix(variant);
+  return VARIANT_TO_TAG_MAP[prefix] || 'p';
 }
 
 export const Typography = forwardRef<HTMLElement, TypographyProps>((props, ref) => {
-  const { variant, as, children, ...rest } = props
+  const { variant, as, children, ...rest } = props;
 
-  const tag = resolveTag(variant, as)
-  const Component = TAG_TO_COMPONENT_MAP[tag]
+  const tag = resolveTag(variant, as);
+  const Component = TAG_TO_COMPONENT_MAP[tag];
 
   return (
     <Component ref={ref} variant={variant} {...rest}>
       {children}
     </Component>
-  )
-})
+  );
+});
 
-Typography.displayName = 'Typography'
+Typography.displayName = 'Typography';

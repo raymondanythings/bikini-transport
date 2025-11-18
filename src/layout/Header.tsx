@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { Box } from 'styled-system/jsx'
+import type { ReactNode } from 'react';
+import { Box } from 'styled-system/jsx';
 
 export const Header = ({ children }: { children: ReactNode }) => {
   return (
@@ -15,14 +15,14 @@ export const Header = ({ children }: { children: ReactNode }) => {
     >
       {children}
     </Box>
-  )
-}
+  );
+};
 
 Header.Left = ({ children }: { children: ReactNode }) => (
   <Box display="flex" alignItems="center" position="absolute" left="5" top="0" h="100%" zIndex="1">
     {children}
   </Box>
-)
+);
 
 Header.Center = ({ children }: { children: ReactNode }) => (
   <Box
@@ -38,10 +38,10 @@ Header.Center = ({ children }: { children: ReactNode }) => (
   >
     {children}
   </Box>
-)
+);
 
 Header.Right = ({ children }: { children: ReactNode }) => (
   <Box display="flex" alignItems="center" position="absolute" right="5" top="0" h="100%" zIndex="1">
     {children}
   </Box>
-)
+);

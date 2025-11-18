@@ -1,10 +1,10 @@
-import { type RenderOptions, render } from '@testing-library/react'
-import type { ReactElement, ReactNode } from 'react'
-import { createMemoryRouter, RouterProvider } from 'react-router'
+import { type RenderOptions, render } from '@testing-library/react';
+import type { ReactElement, ReactNode } from 'react';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  route?: string
-  withPageLayout?: boolean
+  route?: string;
+  withPageLayout?: boolean;
 }
 
 function PageWrapper({ children, route = '/' }: { children: ReactNode; route?: string }) {
@@ -31,16 +31,16 @@ function PageWrapper({ children, route = '/' }: { children: ReactNode; route?: s
       initialEntries: [route],
       initialIndex: 0,
     }
-  )
+  );
 
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }
 
 export function renderWith(ui: ReactElement, options: CustomRenderOptions = {}) {
-  const { route = '/', ...renderOptions } = options
+  const { route = '/', ...renderOptions } = options;
 
   return render(ui, {
     wrapper: ({ children }: { children: ReactNode }) => <PageWrapper route={route}>{children}</PageWrapper>,
     ...renderOptions,
-  })
+  });
 }

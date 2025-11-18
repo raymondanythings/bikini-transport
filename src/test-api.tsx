@@ -70,11 +70,11 @@ export function TestApiPage() {
 
   const startLoading = (action: string) => {
     setLoadingAction(action);
-    setLoadingCount((prev) => prev + 1);
+    setLoadingCount(prev => prev + 1);
   };
 
   const endLoading = () => {
-    setLoadingCount((prev) => {
+    setLoadingCount(prev => {
       const next = Math.max(0, prev - 1);
       if (next === 0) {
         setLoadingAction(null);
@@ -90,7 +90,7 @@ export function TestApiPage() {
     if (!selectedItineraryId) {
       return itineraries[0];
     }
-    return itineraries.find((itinerary) => itinerary.itineraryId === selectedItineraryId) || itineraries[0];
+    return itineraries.find(itinerary => itinerary.itineraryId === selectedItineraryId) || itineraries[0];
   }, [itineraries, selectedItineraryId]);
 
   const formatItineraryLabel = (itinerary: Itinerary) => {
@@ -101,17 +101,17 @@ export function TestApiPage() {
     return `${fromName} → ${toName}`;
   };
 
-  const stationMap = useMemo(() => new Map(stations.map((station) => [station.stationId, station])), [stations]);
+  const stationMap = useMemo(() => new Map(stations.map(station => [station.stationId, station])), [stations]);
 
   const filteredFromStations = useMemo(() => {
     const keyword = customFromSearch.trim().toLowerCase();
-    const list = keyword ? stations.filter((station) => station.name.toLowerCase().includes(keyword)) : stations;
+    const list = keyword ? stations.filter(station => station.name.toLowerCase().includes(keyword)) : stations;
     return list.slice(0, 30);
   }, [stations, customFromSearch]);
 
   const filteredToStations = useMemo(() => {
     const keyword = customToSearch.trim().toLowerCase();
-    const list = keyword ? stations.filter((station) => station.name.toLowerCase().includes(keyword)) : stations;
+    const list = keyword ? stations.filter(station => station.name.toLowerCase().includes(keyword)) : stations;
     return list.slice(0, 30);
   }, [stations, customToSearch]);
 
@@ -325,7 +325,9 @@ export function TestApiPage() {
       startLoading('예약 생성');
 
       const departureInput = bookingDepartureTime ? new Date(bookingDepartureTime) : new Date();
-      const departureTime = Number.isNaN(departureInput.getTime()) ? new Date().toISOString() : departureInput.toISOString();
+      const departureTime = Number.isNaN(departureInput.getTime())
+        ? new Date().toISOString()
+        : departureInput.toISOString();
       const payload: {
         itineraryId: string;
         seatSelections: Array<{ legId: string; seatNumber: string }>;
@@ -333,7 +335,7 @@ export function TestApiPage() {
         departureTime: string;
       } = {
         itineraryId: selectedItinerary.itineraryId,
-        seatSelections: selectedItinerary.legs.map((leg) => ({
+        seatSelections: selectedItinerary.legs.map(leg => ({
           legId: leg.legId,
           seatNumber: bookingSeatNumber.trim().toUpperCase(),
         })),
@@ -425,7 +427,9 @@ export function TestApiPage() {
     }
 
     const departureInput = customDepartureTime ? new Date(customDepartureTime) : new Date();
-    const departureIso = Number.isNaN(departureInput.getTime()) ? new Date().toISOString() : departureInput.toISOString();
+    const departureIso = Number.isNaN(departureInput.getTime())
+      ? new Date().toISOString()
+      : departureInput.toISOString();
 
     await searchRoute({
       fromStationId: customFromStationId,
@@ -447,8 +451,8 @@ export function TestApiPage() {
       return;
     }
 
-    setSelectedItineraryId((prev) => {
-      if (prev && itineraries.some((itinerary) => itinerary.itineraryId === prev)) {
+    setSelectedItineraryId(prev => {
+      if (prev && itineraries.some(itinerary => itinerary.itineraryId === prev)) {
         return prev;
       }
       return itineraries[0].itineraryId;
@@ -463,7 +467,7 @@ export function TestApiPage() {
       return;
     }
 
-    if (!seatLegId || !selectedItinerary.legs.some((leg) => leg.legId === seatLegId)) {
+    if (!seatLegId || !selectedItinerary.legs.some(leg => leg.legId === seatLegId)) {
       setSeatLegId(selectedItinerary.legs[0]?.legId ?? '');
       setSeatLayout(null);
     }
@@ -477,7 +481,7 @@ export function TestApiPage() {
       return;
     }
 
-    if (!filteredFromStations.some((station) => station.stationId === customFromStationId)) {
+    if (!filteredFromStations.some(station => station.stationId === customFromStationId)) {
       const fallback = filteredFromStations[0]?.stationId ?? '';
       if (fallback !== customFromStationId) {
         setCustomFromStationId(fallback);
@@ -493,7 +497,7 @@ export function TestApiPage() {
       return;
     }
 
-    if (!filteredToStations.some((station) => station.stationId === customToStationId)) {
+    if (!filteredToStations.some(station => station.stationId === customToStationId)) {
       const fallback = filteredToStations[0]?.stationId ?? '';
       if (fallback !== customToStationId) {
         setCustomToStationId(fallback);
@@ -515,8 +519,8 @@ export function TestApiPage() {
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px' }}>
           <input
             value={stationSearchQuery}
-            onChange={(event) => setStationSearchQuery(event.target.value)}
-            placeholder='검색어 (예: 비키)'
+            onChange={event => setStationSearchQuery(event.target.value)}
+            placeholder="검색어 (예: 비키)"
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <button
@@ -550,7 +554,7 @@ export function TestApiPage() {
           </button>
         </div>
         <ul>
-          {stations.map((station) => (
+          {stations.map(station => (
             <li key={station.stationId}>
               {station.name} ({station.stationId})
             </li>
@@ -562,7 +566,7 @@ export function TestApiPage() {
       <section style={{ marginTop: '20px' }}>
         <h2>🚌 노선 목록 ({lines.length}개)</h2>
         <ul>
-          {lines.map((line) => (
+          {lines.map(line => (
             <li key={line.lineId}>
               <span style={{ color: line.color }}>●</span> {line.name} ({line.type}) - 기본요금: {line.baseFare}₴
             </li>
@@ -657,25 +661,39 @@ export function TestApiPage() {
           </button>
         </div>
 
-        <div style={{ marginTop: '25px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px', background: '#fcfcfc' }}>
+        <div
+          style={{
+            marginTop: '25px',
+            padding: '20px',
+            border: '1px solid #ddd',
+            borderRadius: '8px',
+            background: '#fcfcfc',
+          }}
+        >
           <h3>🧭 맞춤 경로 검색</h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
             <div style={{ minWidth: '220px', flex: 1 }}>
               <label style={{ display: 'block', marginBottom: '6px', fontWeight: 'bold' }}>출발역 검색</label>
               <input
                 value={customFromSearch}
-                onChange={(event) => setCustomFromSearch(event.target.value)}
-                placeholder='출발역 이름 검색'
-                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', marginBottom: '8px' }}
+                onChange={event => setCustomFromSearch(event.target.value)}
+                placeholder="출발역 이름 검색"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  marginBottom: '8px',
+                }}
               />
               <select
                 value={customFromStationId}
-                onChange={(event) => setCustomFromStationId(event.target.value)}
+                onChange={event => setCustomFromStationId(event.target.value)}
                 disabled={filteredFromStations.length === 0}
                 style={{ width: '100%', padding: '8px', borderRadius: '4px' }}
               >
-                {filteredFromStations.length === 0 && <option value=''>검색 결과가 없습니다</option>}
-                {filteredFromStations.map((station) => (
+                {filteredFromStations.length === 0 && <option value="">검색 결과가 없습니다</option>}
+                {filteredFromStations.map(station => (
                   <option key={station.stationId} value={station.stationId}>
                     {station.name}
                   </option>
@@ -687,18 +705,24 @@ export function TestApiPage() {
               <label style={{ display: 'block', marginBottom: '6px', fontWeight: 'bold' }}>도착역 검색</label>
               <input
                 value={customToSearch}
-                onChange={(event) => setCustomToSearch(event.target.value)}
-                placeholder='도착역 이름 검색'
-                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', marginBottom: '8px' }}
+                onChange={event => setCustomToSearch(event.target.value)}
+                placeholder="도착역 이름 검색"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  marginBottom: '8px',
+                }}
               />
               <select
                 value={customToStationId}
-                onChange={(event) => setCustomToStationId(event.target.value)}
+                onChange={event => setCustomToStationId(event.target.value)}
                 disabled={filteredToStations.length === 0}
                 style={{ width: '100%', padding: '8px', borderRadius: '4px' }}
               >
-                {filteredToStations.length === 0 && <option value=''>검색 결과가 없습니다</option>}
-                {filteredToStations.map((station) => (
+                {filteredToStations.length === 0 && <option value="">검색 결과가 없습니다</option>}
+                {filteredToStations.map(station => (
                   <option key={station.stationId} value={station.stationId}>
                     {station.name}
                   </option>
@@ -709,9 +733,9 @@ export function TestApiPage() {
             <div style={{ minWidth: '220px' }}>
               <label style={{ display: 'block', marginBottom: '6px', fontWeight: 'bold' }}>출발 시간</label>
               <input
-                type='datetime-local'
+                type="datetime-local"
                 value={customDepartureTime}
-                onChange={(event) => setCustomDepartureTime(event.target.value)}
+                onChange={event => setCustomDepartureTime(event.target.value)}
                 style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
               />
             </div>
@@ -744,10 +768,10 @@ export function TestApiPage() {
             <strong>현재 선택된 경로:</strong>
             <select
               value={selectedItinerary?.itineraryId ?? ''}
-              onChange={(event) => setSelectedItineraryId(event.target.value)}
+              onChange={event => setSelectedItineraryId(event.target.value)}
               style={{ padding: '6px 8px', borderRadius: '4px' }}
             >
-              {itineraries.map((itinerary) => (
+              {itineraries.map(itinerary => (
                 <option key={itinerary.itineraryId} value={itinerary.itineraryId}>
                   {formatItineraryLabel(itinerary)} ({itinerary.recommendationTypes.join(', ')})
                 </option>
@@ -759,7 +783,7 @@ export function TestApiPage() {
         {itineraries.length > 0 && (
           <div style={{ marginTop: '20px' }}>
             <h3>추천 경로 ({itineraries.length}개)</h3>
-            {itineraries.map((itinerary) => (
+            {itineraries.map(itinerary => (
               <div
                 key={itinerary.itineraryId}
                 style={{
@@ -783,7 +807,7 @@ export function TestApiPage() {
                     {itinerary.pricing.totalBeforeCoupon}₴
                   </div>
                   <div style={{ marginTop: '8px' }}>
-                    {itinerary.recommendationTypes.map((type) => {
+                    {itinerary.recommendationTypes.map(type => {
                       const labels: Record<string, string> = {
                         SHORTEST_TIME: '최단시간',
                         MIN_TRANSFER: '최소환승',
@@ -824,7 +848,10 @@ export function TestApiPage() {
                   />
 
                   {itinerary.legs.map((leg, idx) => (
-                    <div key={leg.legId} style={{ position: 'relative', marginBottom: idx < itinerary.legs.length - 1 ? '20px' : '0' }}>
+                    <div
+                      key={leg.legId}
+                      style={{ position: 'relative', marginBottom: idx < itinerary.legs.length - 1 ? '20px' : '0' }}
+                    >
                       {/* 노선 라벨 (원형) */}
                       <div
                         style={{
@@ -896,11 +923,11 @@ export function TestApiPage() {
             구간 선택:{' '}
             <select
               value={seatLegId}
-              onChange={(event) => setSeatLegId(event.target.value)}
+              onChange={event => setSeatLegId(event.target.value)}
               disabled={!selectedItinerary || selectedItinerary.legs.length === 0}
               style={{ padding: '6px 8px', borderRadius: '4px' }}
             >
-              {selectedItinerary?.legs.map((leg) => (
+              {selectedItinerary?.legs.map(leg => (
                 <option key={leg.legId} value={leg.legId}>
                   {leg.fromStation.name} → {leg.toStation.name}
                 </option>
@@ -926,11 +953,11 @@ export function TestApiPage() {
         {seatLayout && (
           <div style={{ marginTop: '15px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
             <div style={{ marginBottom: '10px' }}>
-              <strong>구간 ID:</strong> {seatLayout.legId} | 예약 좌석 {seatLayout.seats.filter((seat) => seat.isReserved).length}/
-              {seatLayout.seats.length}
+              <strong>구간 ID:</strong> {seatLayout.legId} | 예약 좌석{' '}
+              {seatLayout.seats.filter(seat => seat.isReserved).length}/{seatLayout.seats.length}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', maxWidth: '420px' }}>
-              {seatLayout.seats.map((seat) => (
+              {seatLayout.seats.map(seat => (
                 <span
                   key={seat.seatNumber}
                   style={{
@@ -961,8 +988,8 @@ export function TestApiPage() {
           </div>
           <input
             value={fareCouponCode}
-            onChange={(event) => setFareCouponCode(event.target.value)}
-            placeholder='쿠폰 코드 (선택)'
+            onChange={event => setFareCouponCode(event.target.value)}
+            placeholder="쿠폰 코드 (선택)"
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <button
@@ -1020,8 +1047,8 @@ export function TestApiPage() {
           </button>
           <input
             value={claimCouponCode}
-            onChange={(event) => setClaimCouponCode(event.target.value)}
-            placeholder='쿠폰 코드 입력'
+            onChange={event => setClaimCouponCode(event.target.value)}
+            placeholder="쿠폰 코드 입력"
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <button
@@ -1081,7 +1108,7 @@ export function TestApiPage() {
             <p style={{ color: '#666' }}>보유 중인 쿠폰이 없습니다.</p>
           ) : (
             <ul>
-              {myCoupons.map((coupon) => (
+              {myCoupons.map(coupon => (
                 <li key={coupon.couponCode}>
                   {coupon.emoji} {coupon.name} ({coupon.couponCode}) - {coupon.ownedCount}개 보유
                 </li>
@@ -1097,20 +1124,20 @@ export function TestApiPage() {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
           <input
             value={bookingSeatNumber}
-            onChange={(event) => setBookingSeatNumber(event.target.value)}
-            placeholder='좌석 번호 (예: 1A)'
+            onChange={event => setBookingSeatNumber(event.target.value)}
+            placeholder="좌석 번호 (예: 1A)"
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <input
             value={bookingCouponCode}
-            onChange={(event) => setBookingCouponCode(event.target.value)}
-            placeholder='쿠폰 코드 (선택)'
+            onChange={event => setBookingCouponCode(event.target.value)}
+            placeholder="쿠폰 코드 (선택)"
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <input
-            type='datetime-local'
+            type="datetime-local"
             value={bookingDepartureTime}
-            onChange={(event) => setBookingDepartureTime(event.target.value)}
+            onChange={event => setBookingDepartureTime(event.target.value)}
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <button
@@ -1136,9 +1163,10 @@ export function TestApiPage() {
             </div>
             <div>예약 ID: {createdBooking.bookingId}</div>
             <div>
-              출발 시간: {new Date(createdBooking.departureTime).toLocaleString('ko-KR')} | 총액: {createdBooking.pricing.finalTotal}₴
+              출발 시간: {new Date(createdBooking.departureTime).toLocaleString('ko-KR')} | 총액:{' '}
+              {createdBooking.pricing.finalTotal}₴
             </div>
-            <div>좌석 선택: {createdBooking.seatSelections.map((seat) => seat.seatNumber).join(', ')}</div>
+            <div>좌석 선택: {createdBooking.seatSelections.map(seat => seat.seatNumber).join(', ')}</div>
           </div>
         )}
 
@@ -1147,13 +1175,13 @@ export function TestApiPage() {
             정렬:
             <select
               value={bookingSort}
-              onChange={(event) => setBookingSort(event.target.value as typeof bookingSort)}
+              onChange={event => setBookingSort(event.target.value as typeof bookingSort)}
               style={{ marginLeft: '6px', padding: '6px 8px', borderRadius: '4px' }}
             >
-              <option value='date_desc'>출발 최신순</option>
-              <option value='date_asc'>출발 오래된순</option>
-              <option value='price_desc'>가격 높은순</option>
-              <option value='price_asc'>가격 낮은순</option>
+              <option value="date_desc">출발 최신순</option>
+              <option value="date_asc">출발 오래된순</option>
+              <option value="price_desc">가격 높은순</option>
+              <option value="price_asc">가격 낮은순</option>
             </select>
           </label>
 
@@ -1161,12 +1189,12 @@ export function TestApiPage() {
             상태:
             <select
               value={bookingStatusFilter}
-              onChange={(event) => setBookingStatusFilter(event.target.value as typeof bookingStatusFilter)}
+              onChange={event => setBookingStatusFilter(event.target.value as typeof bookingStatusFilter)}
               style={{ marginLeft: '6px', padding: '6px 8px', borderRadius: '4px' }}
             >
-              <option value=''>전체</option>
-              <option value='CONFIRMED'>CONFIRMED</option>
-              <option value='CANCELLED'>CANCELLED</option>
+              <option value="">전체</option>
+              <option value="CONFIRMED">CONFIRMED</option>
+              <option value="CANCELLED">CANCELLED</option>
             </select>
           </label>
 
@@ -1191,10 +1219,10 @@ export function TestApiPage() {
             <p style={{ color: '#666' }}>조회된 예약이 없습니다.</p>
           ) : (
             <ul>
-              {bookings.map((booking) => (
+              {bookings.map(booking => (
                 <li key={booking.bookingId}>
-                  [{booking.status}] {booking.bookingNumber} - {new Date(booking.departureTime).toLocaleString('ko-KR')} /{' '}
-                  {booking.pricing.finalTotal}₴
+                  [{booking.status}] {booking.bookingNumber} - {new Date(booking.departureTime).toLocaleString('ko-KR')}{' '}
+                  / {booking.pricing.finalTotal}₴
                 </li>
               ))}
             </ul>
@@ -1204,8 +1232,8 @@ export function TestApiPage() {
         <div style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
           <input
             value={bookingDetailId}
-            onChange={(event) => setBookingDetailId(event.target.value)}
-            placeholder='예약 ID (예: booking-1)'
+            onChange={event => setBookingDetailId(event.target.value)}
+            placeholder="예약 ID (예: booking-1)"
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <button

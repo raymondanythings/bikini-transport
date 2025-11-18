@@ -1,3 +1,3 @@
 export const breakpoints = {
-  xs: "320px",
+  xs: '320px',
 };

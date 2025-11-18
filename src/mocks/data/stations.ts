@@ -84,12 +84,12 @@ export const stations: Station[] = [
  * 역 ID로 역 정보 조회
  */
 export function getStationById(stationId: string): Station | undefined {
-  return stations.find((station) => station.stationId === stationId);
+  return stations.find(station => station.stationId === stationId);
 }
 
 /**
  * 여러 역 ID로 역 정보 목록 조회
  */
 export function getStationsByIds(stationIds: string[]): Station[] {
-  return stationIds.map((id) => getStationById(id)).filter((station): station is Station => station !== undefined);
+  return stationIds.map(id => getStationById(id)).filter((station): station is Station => station !== undefined);
 }

@@ -111,7 +111,8 @@ export function calculateCouponDiscount(
     case 'PERCENTAGE': {
       if (requiresPerLegTimeCheck) {
         const couponRate = couponDef.discountValue;
-        const startTimes = legStartTimes && legStartTimes.length === legs.length ? legStartTimes : legs.map(() => departureTime);
+        const startTimes =
+          legStartTimes && legStartTimes.length === legs.length ? legStartTimes : legs.map(() => departureTime);
         discount = legs.reduce((sum, leg, index) => {
           if (leg.baseFare <= 0) {
             return sum;
@@ -132,7 +133,7 @@ export function calculateCouponDiscount(
       // 달팽이패스 외의 퍼센트 할인 (투어패스 등)
       if (couponDef.applicableLineTypes && couponDef.applicableLineTypes.length > 0) {
         // 투어패스: 특정 노선만 할인
-        const applicableLegs = legs.filter((leg) => {
+        const applicableLegs = legs.filter(leg => {
           const line = linesMap.get(leg.lineId);
           if (!line) return false;
           return checkLineTypeCondition(couponDef, line.type);

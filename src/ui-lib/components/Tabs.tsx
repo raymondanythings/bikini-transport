@@ -1,11 +1,11 @@
-import { Tabs as ArkTabs } from '@ark-ui/react'
-import { styled } from 'styled-system/jsx'
+import { Tabs as ArkTabs } from '@ark-ui/react';
+import { styled } from 'styled-system/jsx';
 
 const Root = styled(ArkTabs.Root, {
   base: {
     w: 'full',
   },
-})
+});
 
 const List = styled(ArkTabs.List, {
   base: {
@@ -15,7 +15,7 @@ const List = styled(ArkTabs.List, {
     borderBottomColor: 'line.normal',
     bgColor: 'background.normal',
   },
-})
+});
 
 const Trigger = styled(ArkTabs.Trigger, {
   base: {
@@ -49,25 +49,25 @@ const Trigger = styled(ArkTabs.Trigger, {
       outlineOffset: '-2px',
     },
   },
-})
+});
 
 const Indicator = styled(ArkTabs.Indicator, {
   base: {
     display: 'none',
   },
-})
+});
 
-const Content = styled(ArkTabs.Content)
+const Content = styled(ArkTabs.Content);
 
 interface TabItem {
-  key: string
-  label: React.ReactNode
-  children: React.ReactNode
+  key: string;
+  label: React.ReactNode;
+  children: React.ReactNode;
 }
 
 interface TabsProps {
-  items: TabItem[]
-  defaultActiveKey?: string
+  items: TabItem[];
+  defaultActiveKey?: string;
 }
 
 export const Tabs = ({ items, defaultActiveKey }: TabsProps) => {
@@ -87,5 +87,5 @@ export const Tabs = ({ items, defaultActiveKey }: TabsProps) => {
       ))}
       <Indicator />
     </Root>
-  )
-}
+  );
+};

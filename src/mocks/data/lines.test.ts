@@ -62,7 +62,7 @@ describe('노선 유틸리티 (Lines)', () => {
       const stationLines = getLinesByStation(STATION_UUIDS.BIKINI_CITY);
       expect(stationLines).toHaveLength(3);
 
-      const lineNames = stationLines.map((l) => l.name).sort();
+      const lineNames = stationLines.map(l => l.name).sort();
       expect(lineNames).toEqual(['시티선', '외곽선', '투어선']);
     });
 
@@ -70,7 +70,7 @@ describe('노선 유틸리티 (Lines)', () => {
       const stationLines = getLinesByStation(STATION_UUIDS.BUBBLE_TOWN);
       expect(stationLines).toHaveLength(2);
 
-      const lineNames = stationLines.map((l) => l.name).sort();
+      const lineNames = stationLines.map(l => l.name).sort();
       expect(lineNames).toEqual(['시티선', '외곽선']);
     });
 
@@ -78,7 +78,7 @@ describe('노선 유틸리티 (Lines)', () => {
       const stationLines = getLinesByStation(STATION_UUIDS.GLOVE_WORLD);
       expect(stationLines).toHaveLength(2);
 
-      const lineNames = stationLines.map((l) => l.name).sort();
+      const lineNames = stationLines.map(l => l.name).sort();
       expect(lineNames).toEqual(['시티선', '투어선']);
     });
 
@@ -119,9 +119,9 @@ describe('노선 유틸리티 (Lines)', () => {
   });
 
   describe('getStopsCount - 정거장 수 계산', () => {
-    const cityLine = lines.find((l) => l.lineId === LINE_UUIDS.CITY_LINE)!;
-    const suburbanLine = lines.find((l) => l.lineId === LINE_UUIDS.SUBURBAN_LINE)!;
-    const tourLine = lines.find((l) => l.lineId === LINE_UUIDS.TOUR_LINE)!;
+    const cityLine = lines.find(l => l.lineId === LINE_UUIDS.CITY_LINE)!;
+    const suburbanLine = lines.find(l => l.lineId === LINE_UUIDS.SUBURBAN_LINE)!;
+    const tourLine = lines.find(l => l.lineId === LINE_UUIDS.TOUR_LINE)!;
 
     describe('양방향 순환 (시티선)', () => {
       it('순방향: 비키니시티(0) → 버블타운(2) = 2구간', () => {

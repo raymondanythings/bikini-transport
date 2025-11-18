@@ -1,13 +1,13 @@
-import { ark } from '@ark-ui/react'
-import { useState } from 'react'
-import { Box, Divider, Flex, Spacer } from 'styled-system/jsx'
-import { BottomSheet } from '@/ui-lib/components/BottomSheet'
-import { SearchOutlined } from '@/ui-lib/components/Icon'
-import { Input } from '@/ui-lib/components/Input'
-import { Typography } from '@/ui-lib/components/Typography'
+import { ark } from '@ark-ui/react';
+import { useState } from 'react';
+import { Box, Divider, Flex, Spacer } from 'styled-system/jsx';
+import { BottomSheet } from '@/ui-lib/components/BottomSheet';
+import { SearchOutlined } from '@/ui-lib/components/Icon';
+import { Input } from '@/ui-lib/components/Input';
+import { Typography } from '@/ui-lib/components/Typography';
 
 export const StationSearchBottomSheet = () => {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <BottomSheet
@@ -25,7 +25,7 @@ export const StationSearchBottomSheet = () => {
           allowClear
           value={searchQuery}
           onChange={event => {
-            setSearchQuery(event.target.value)
+            setSearchQuery(event.target.value);
           }}
         />
 
@@ -79,5 +79,5 @@ export const StationSearchBottomSheet = () => {
         </Flex>
       </Box>
     </BottomSheet>
-  )
-}
+  );
+};

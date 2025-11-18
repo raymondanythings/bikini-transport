@@ -52,17 +52,11 @@ export function calculateTimeToStation(line: Line, fromStationId: string, toStat
   const totalStations = line.stationIds.length;
 
   // 순환 노선의 최단 경로 계산
-  const forwardDistance = toIndex >= fromIndex
-    ? toIndex - fromIndex
-    : totalStations - fromIndex + toIndex;
+  const forwardDistance = toIndex >= fromIndex ? toIndex - fromIndex : totalStations - fromIndex + toIndex;
 
-  const backwardDistance = fromIndex >= toIndex
-    ? fromIndex - toIndex
-    : totalStations - toIndex + fromIndex;
+  const backwardDistance = fromIndex >= toIndex ? fromIndex - toIndex : totalStations - toIndex + fromIndex;
 
-  const useForward = isBidirectional(line.lineId)
-    ? forwardDistance <= backwardDistance
-    : true; // 단방향은 항상 순방향
+  const useForward = isBidirectional(line.lineId) ? forwardDistance <= backwardDistance : true; // 단방향은 항상 순방향
 
   let totalDuration = 0;
 

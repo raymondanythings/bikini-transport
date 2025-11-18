@@ -1,8 +1,8 @@
-import { Dialog, Portal } from '@ark-ui/react'
-import type React from 'react'
-import type { ReactNode } from 'react'
-import { styled } from 'styled-system/jsx'
-import { Button } from './Button'
+import { Dialog, Portal } from '@ark-ui/react';
+import type React from 'react';
+import type { ReactNode } from 'react';
+import { styled } from 'styled-system/jsx';
+import { Button } from './Button';
 
 const Backdrop = styled(Dialog.Backdrop, {
   base: {
@@ -12,7 +12,7 @@ const Backdrop = styled(Dialog.Backdrop, {
     opacity: 0.5,
     zIndex: 1000,
   },
-})
+});
 
 const Positioner = styled(Dialog.Positioner, {
   base: {
@@ -23,7 +23,7 @@ const Positioner = styled(Dialog.Positioner, {
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
-})
+});
 
 const Content = styled(Dialog.Content, {
   base: {
@@ -37,7 +37,7 @@ const Content = styled(Dialog.Content, {
     flexDirection: 'column',
     outline: 'none',
   },
-})
+});
 
 const Handle = styled('div', {
   base: {
@@ -50,7 +50,7 @@ const Handle = styled('div', {
     mb: 2.5,
     flexShrink: 0,
   },
-})
+});
 
 const Header = styled(Dialog.Title, {
   base: {
@@ -61,14 +61,14 @@ const Header = styled(Dialog.Title, {
     textAlign: 'center',
     flexShrink: 0,
   },
-})
+});
 
 const ContentWrapper = styled('div', {
   base: {
     flex: 1,
     overflowY: 'auto',
   },
-})
+});
 
 const CTAWrapper = styled('div', {
   base: {
@@ -76,29 +76,29 @@ const CTAWrapper = styled('div', {
     py: 4,
     flexShrink: 0,
   },
-})
+});
 
 export interface BottomSheetProps {
   /**
    * BottomSheet 열림 상태
    */
-  open: boolean
+  open: boolean;
   /**
    * Backdrop 클릭 핸들러
    */
-  onDimmerClick?: () => void
+  onDimmerClick?: () => void;
   /**
    * BottomSheet 헤더 영역
    */
-  header?: ReactNode
+  header?: ReactNode;
   /**
    * BottomSheet CTA 버튼 영역
    */
-  cta?: ReactNode
+  cta?: ReactNode;
   /**
    * BottomSheet 컨텐츠
    */
-  children: ReactNode
+  children: ReactNode;
 }
 
 export const BottomSheet = ({ open, onDimmerClick, header, cta, children }: BottomSheetProps) => {
@@ -116,13 +116,13 @@ export const BottomSheet = ({ open, onDimmerClick, header, cta, children }: Bott
         </Positioner>
       </Portal>
     </Dialog.Root>
-  )
-}
+  );
+};
 
 BottomSheet.Header = function BottomSheetHeader({ children }: { children: ReactNode }) {
-  return <Header>{children}</Header>
-}
+  return <Header>{children}</Header>;
+};
 
 BottomSheet.CTA = function BottomSheetCTA(props: React.ComponentProps<typeof Button>) {
-  return <Button {...props} />
-}
+  return <Button {...props} />;
+};

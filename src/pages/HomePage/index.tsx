@@ -1,14 +1,14 @@
-import { ark } from '@ark-ui/react'
-import { forwardRef } from 'react'
-import { css } from 'styled-system/css'
-import { Box, Flex, HStack, VStack } from 'styled-system/jsx'
-import { Header } from '@/layout/Header'
-import { Button } from '@/ui-lib/components/Button'
-import { CalendarOutlined, SyncOutlined } from '@/ui-lib/components/Icon'
-import { Typography } from '@/ui-lib/components/Typography'
-import { DepartureTimeBottomSheet } from './components/DepartureTimeBottomSheet'
-import { StationSearchBottomSheet } from './components/StationSearchBottomSheet'
-import { TicketSelectionBottomSheet } from './components/TicketSelectionBottomSheet'
+import { ark } from '@ark-ui/react';
+import { forwardRef } from 'react';
+import { css } from 'styled-system/css';
+import { Box, Flex, HStack, VStack } from 'styled-system/jsx';
+import { Header } from '@/layout/Header';
+import { Button } from '@/ui-lib/components/Button';
+import { CalendarOutlined, SyncOutlined } from '@/ui-lib/components/Icon';
+import { Typography } from '@/ui-lib/components/Typography';
+import { DepartureTimeBottomSheet } from './components/DepartureTimeBottomSheet';
+import { StationSearchBottomSheet } from './components/StationSearchBottomSheet';
+import { TicketSelectionBottomSheet } from './components/TicketSelectionBottomSheet';
 
 export const HomePage = () => {
   return (
@@ -86,8 +86,8 @@ export const HomePage = () => {
       <DepartureTimeBottomSheet />
       <StationSearchBottomSheet />
     </Flex>
-  )
-}
+  );
+};
 
 const ChangeButton = forwardRef<HTMLButtonElement>((props, ref) => {
   return (
@@ -117,8 +117,8 @@ const ChangeButton = forwardRef<HTMLButtonElement>((props, ref) => {
     >
       <SyncOutlined size={24} />
     </ark.button>
-  )
-})
+  );
+});
 
 const BackgroundImage = () => (
   <ark.img
@@ -134,7 +134,7 @@ const BackgroundImage = () => (
       pointerEvents: 'none',
     })}
   />
-)
+);
 
 const SpongeBobImage = () => (
   <ark.img
@@ -153,4 +153,4 @@ const SpongeBobImage = () => (
       zIndex: 2,
     })}
   />
-)
+);

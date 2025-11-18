@@ -76,7 +76,8 @@ export function calculateTotalDuration(stationIds: string[]): number {
 
     if (duration === null) {
       throw new Error(
-        `Duration not found for route: ${stationIds[i]} → ${stationIds[i + 1]}. ` + 'Please check durationMap data integrity.'
+        `Duration not found for route: ${stationIds[i]} → ${stationIds[i + 1]}. ` +
+          'Please check durationMap data integrity.'
       );
     }
 

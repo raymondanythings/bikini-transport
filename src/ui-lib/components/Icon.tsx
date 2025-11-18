@@ -1,9 +1,9 @@
-import { css } from 'styled-system/css'
-import type { ColorToken } from 'styled-system/tokens'
+import { css } from 'styled-system/css';
+import type { ColorToken } from 'styled-system/tokens';
 
 interface IconProps {
-  size?: number
-  color?: ColorToken
+  size?: number;
+  color?: ColorToken;
 }
 
 export const CheckCircleFilled = ({ size = 24, color = 'primary.normal' }: IconProps) => (
@@ -18,7 +18,7 @@ export const CheckCircleFilled = ({ size = 24, color = 'primary.normal' }: IconP
     <circle cx="12" cy="12" r="8.5" fill="currentColor" stroke="currentColor" />
     <path d="M8 11.5L11 14.5L16 9.5" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
-)
+);
 
 export const CheckCircleOutlined = ({ size = 24, color = 'line.neutral' }: IconProps) => (
   <svg
@@ -32,7 +32,7 @@ export const CheckCircleOutlined = ({ size = 24, color = 'line.neutral' }: IconP
     <circle cx="12" cy="12" r="8.5" stroke="currentColor" />
     <path d="M8 11.5L11 14.5L16 9.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
-)
+);
 
 export const RightOutlined = ({ size = 24, color = 'static.lightGray' }: IconProps) => (
   <svg
@@ -51,7 +51,7 @@ export const RightOutlined = ({ size = 24, color = 'static.lightGray' }: IconPro
       stroke-linejoin="round"
     />
   </svg>
-)
+);
 
 export const SwapRightOutlined = ({ size = 16, color = 'label.normal' }: IconProps) => (
   <svg
@@ -65,7 +65,7 @@ export const SwapRightOutlined = ({ size = 16, color = 'label.normal' }: IconPro
     <path d="M8 6L14 10H8V6Z" fill="currentColor" />
     <path d="M8 9V10H2V9H8Z" fill="currentColor" />
   </svg>
-)
+);
 
 export const LeftOutlined = ({ size = 24, color = 'label.normal' }: IconProps) => (
   <svg
@@ -84,7 +84,7 @@ export const LeftOutlined = ({ size = 24, color = 'label.normal' }: IconProps) =
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
 export const CloseOutlined = ({ size = 24, color = 'label.normal' }: IconProps) => (
   <svg
@@ -98,7 +98,7 @@ export const CloseOutlined = ({ size = 24, color = 'label.normal' }: IconProps) 
     <path d="M18 6L6 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     <path d="M18 18L6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
-)
+);
 
 export const CloseCircleFilled = ({ size = 24, color = 'label.normal' }: IconProps) => (
   <svg
@@ -116,7 +116,7 @@ export const CloseCircleFilled = ({ size = 24, color = 'label.normal' }: IconPro
       fill="#B0B0B0"
     />
   </svg>
-)
+);
 
 export const CircleOutlined = ({ size = 10, color = 'label.normal' }: IconProps) => (
   <svg
@@ -129,7 +129,7 @@ export const CircleOutlined = ({ size = 10, color = 'label.normal' }: IconProps)
   >
     <circle cx="5" cy="5" r="4" fill="white" stroke="currentColor" strokeWidth="2" />
   </svg>
-)
+);
 
 export const CircleFilled = ({ size = 2, color = 'label.alternative' }: IconProps) => (
   <svg
@@ -142,7 +142,7 @@ export const CircleFilled = ({ size = 2, color = 'label.alternative' }: IconProp
   >
     <circle cx="1" cy="1" r="1" fill="currentColor" />
   </svg>
-)
+);
 
 export const ExclamationCircleFilled = ({ size = 36, color = 'primary.normal' }: IconProps) => (
   <svg
@@ -166,7 +166,7 @@ export const ExclamationCircleFilled = ({ size = 36, color = 'primary.normal' }:
     />
     <path d="M18 12V18" stroke="white" strokeWidth="2" strokeLinecap="round" />
   </svg>
-)
+);
 
 export const UpOutlined = ({ size = 16, color = 'label.normal' }: IconProps) => (
   <svg
@@ -185,7 +185,7 @@ export const UpOutlined = ({ size = 16, color = 'label.normal' }: IconProps) => 
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
 export const DownOutlined = ({ size = 16, color = 'label.normal' }: IconProps) => (
   <svg
@@ -204,7 +204,7 @@ export const DownOutlined = ({ size = 16, color = 'label.normal' }: IconProps) =
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
 export const SearchOutlined = ({ size = 24, color = 'label.normal' }: IconProps) => (
   <svg
@@ -226,7 +226,7 @@ export const SearchOutlined = ({ size = 24, color = 'label.normal' }: IconProps)
       fill="currentColor"
     />
   </svg>
-)
+);
 
 export const CalendarOutlined = ({ size = 24, color = 'label.alternative' }: IconProps) => (
   <svg
@@ -243,7 +243,7 @@ export const CalendarOutlined = ({ size = 24, color = 'label.alternative' }: Ico
     <path d="M7 4V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M17 4V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
-)
+);
 
 export const SyncOutlined = ({ size = 24, color = 'label.neutral' }: IconProps) => (
   <svg
@@ -271,7 +271,7 @@ export const SyncOutlined = ({ size = 24, color = 'label.neutral' }: IconProps) 
       fill="currentColor"
     />
   </svg>
-)
+);
 
 export const SuccessCircleFilled = ({ size = 90, color = 'primary.normal' }: IconProps) => (
   <svg
@@ -285,7 +285,7 @@ export const SuccessCircleFilled = ({ size = 90, color = 'primary.normal' }: Ico
     <circle cx="45" cy="45" r="45" fill="currentColor" />
     <path d="M25 43L40 58L65 33" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
-)
+);
 
 export const CaretUpOutlined = ({ color = 'static.darkGray' }: Omit<IconProps, 'size'>) => (
   <svg
@@ -298,4 +298,4 @@ export const CaretUpOutlined = ({ color = 'static.darkGray' }: Omit<IconProps, '
   >
     <path d="M7.5 0L0 13H15L7.5 0Z" fill="currentColor" />
   </svg>
-)
+);

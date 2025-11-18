@@ -36,17 +36,11 @@ function createLeg(legId: string, line: Line, fromStationId: string, toStationId
   const totalStations = line.stationIds.length;
 
   // 순환 노선에서 최단 경로 결정 (양방향 vs 단방향)
-  const forwardDistance = toIndex >= fromIndex
-    ? toIndex - fromIndex
-    : totalStations - fromIndex + toIndex;
+  const forwardDistance = toIndex >= fromIndex ? toIndex - fromIndex : totalStations - fromIndex + toIndex;
 
-  const backwardDistance = fromIndex >= toIndex
-    ? fromIndex - toIndex
-    : totalStations - toIndex + fromIndex;
+  const backwardDistance = fromIndex >= toIndex ? fromIndex - toIndex : totalStations - toIndex + fromIndex;
 
-  const useForward = isBidirectional(line.lineId)
-    ? forwardDistance <= backwardDistance
-    : true; // 단방향은 항상 순방향
+  const useForward = isBidirectional(line.lineId) ? forwardDistance <= backwardDistance : true; // 단방향은 항상 순방향
 
   // 경로상의 모든 구간 시간을 합산
   if (useForward) {
@@ -123,8 +117,8 @@ function findOneTransferPaths(fromStationId: string, toStationId: string): Leg[]
   const paths: Leg[][] = [];
 
   // 모든 환승역 찾기 (비키니시티가 주요 환승역)
-  const transferStations = stations.filter((station) => {
-    return lines.filter((line) => line.stationIds.includes(station.stationId)).length >= 2;
+  const transferStations = stations.filter(station => {
+    return lines.filter(line => line.stationIds.includes(station.stationId)).length >= 2;
   });
 
   for (const transferStation of transferStations) {
@@ -136,7 +130,7 @@ function findOneTransferPaths(fromStationId: string, toStationId: string): Leg[]
     }
 
     // 첫 번째 구간 찾기
-    const firstLine = lines.find((line) => {
+    const firstLine = lines.find(line => {
       const fromIndex = line.stationIds.indexOf(fromStationId);
       const transferIndex = line.stationIds.indexOf(transferId);
 
@@ -150,7 +144,7 @@ function findOneTransferPaths(fromStationId: string, toStationId: string): Leg[]
     if (!firstLine) continue;
 
     // 두 번째 구간 찾기
-    const secondLine = lines.find((line) => {
+    const secondLine = lines.find(line => {
       const transferIndex = line.stationIds.indexOf(transferId);
       const toIndex = line.stationIds.indexOf(toStationId);
 
@@ -289,7 +283,7 @@ export function searchItineraries(fromStationId: string, toStationId: string, de
   }
 
   // 노선 맵 생성
-  const linesMap = new Map(lines.map((line) => [line.lineId, line]));
+  const linesMap = new Map(lines.map(line => [line.lineId, line]));
 
   // Itinerary 객체 생성
   const allItineraries = allPathsLegs.map((legs, index) =>
@@ -313,7 +307,7 @@ export function searchItineraries(fromStationId: string, toStationId: string, de
   if (minTransfer) {
     if (addedIds.has(minTransfer.itineraryId)) {
       // 이미 추가된 경로라면 타입만 추가
-      const existing = recommendations.find((r) => r.itineraryId === minTransfer.itineraryId);
+      const existing = recommendations.find(r => r.itineraryId === minTransfer.itineraryId);
       if (existing && !existing.recommendationTypes.includes('MIN_TRANSFER')) {
         existing.recommendationTypes.push('MIN_TRANSFER');
       }
@@ -329,7 +323,7 @@ export function searchItineraries(fromStationId: string, toStationId: string, de
   if (lowestFare) {
     if (addedIds.has(lowestFare.itineraryId)) {
       // 이미 추가된 경로라면 타입만 추가
-      const existing = recommendations.find((r) => r.itineraryId === lowestFare.itineraryId);
+      const existing = recommendations.find(r => r.itineraryId === lowestFare.itineraryId);
       if (existing && !existing.recommendationTypes.includes('LOWEST_FARE')) {
         existing.recommendationTypes.push('LOWEST_FARE');
       }

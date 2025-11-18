@@ -1,8 +1,8 @@
-import { Box, HStack, VStack } from 'styled-system/jsx'
-import { BottomSheet } from '@/ui-lib/components/BottomSheet'
-import { Button } from '@/ui-lib/components/Button'
-import { CheckCircleFilled, CheckCircleOutlined, CircleFilled } from '@/ui-lib/components/Icon'
-import { Typography } from '@/ui-lib/components/Typography'
+import { Box, HStack, VStack } from 'styled-system/jsx';
+import { BottomSheet } from '@/ui-lib/components/BottomSheet';
+import { Button } from '@/ui-lib/components/Button';
+import { CheckCircleFilled, CheckCircleOutlined, CircleFilled } from '@/ui-lib/components/Icon';
+import { Typography } from '@/ui-lib/components/Typography';
 
 export const DiscountBottomSheet = () => {
   return (
@@ -38,14 +38,14 @@ export const DiscountBottomSheet = () => {
         </VStack>
       </Box>
     </BottomSheet>
-  )
-}
+  );
+};
 
 interface CouponOptionProps {
-  discountAmount: string
-  passName: string
-  conditions: string[]
-  isSelected: boolean
+  discountAmount: string;
+  passName: string;
+  conditions: string[];
+  isSelected: boolean;
 }
 const CouponOption = ({ discountAmount, passName, conditions, isSelected }: CouponOptionProps) => {
   return (
@@ -81,5 +81,5 @@ const CouponOption = ({ discountAmount, passName, conditions, isSelected }: Coup
       </VStack>
       {isSelected ? <CheckCircleFilled size={28} /> : <CheckCircleOutlined size={28} />}
     </HStack>
-  )
-}
+  );
+};

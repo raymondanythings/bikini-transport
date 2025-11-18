@@ -1,13 +1,13 @@
-import { Accordion as ArkAccordion } from '@ark-ui/react'
-import { styled } from 'styled-system/jsx'
+import { Accordion as ArkAccordion } from '@ark-ui/react';
+import { styled } from 'styled-system/jsx';
 
 const Root = styled(ArkAccordion.Root, {
   base: {
     w: 'full',
   },
-})
+});
 
-const Item = styled(ArkAccordion.Item)
+const Item = styled(ArkAccordion.Item);
 
 const ItemTrigger = styled(ArkAccordion.ItemTrigger, {
   base: {
@@ -23,7 +23,7 @@ const ItemTrigger = styled(ArkAccordion.ItemTrigger, {
       outlineOffset: '-2px',
     },
   },
-})
+});
 
 const ItemIndicator = styled(ArkAccordion.ItemIndicator, {
   base: {
@@ -36,24 +36,24 @@ const ItemIndicator = styled(ArkAccordion.ItemIndicator, {
       transform: 'rotate(-180deg)',
     },
   },
-})
+});
 
 const ItemContent = styled(ArkAccordion.ItemContent, {
   base: { pt: 4 },
-})
+});
 
 interface AccordionItem {
-  key: string
-  label: React.ReactNode
-  children: React.ReactNode
-  indicator?: React.ReactNode
+  key: string;
+  label: React.ReactNode;
+  children: React.ReactNode;
+  indicator?: React.ReactNode;
 }
 
 interface AccordionProps {
-  items: AccordionItem[]
-  defaultValue?: string[]
-  multiple?: boolean
-  collapsible?: boolean
+  items: AccordionItem[];
+  defaultValue?: string[];
+  multiple?: boolean;
+  collapsible?: boolean;
 }
 
 export const Accordion = ({ items, defaultValue, multiple = false, collapsible = true }: AccordionProps) => {
@@ -69,5 +69,5 @@ export const Accordion = ({ items, defaultValue, multiple = false, collapsible =
         </Item>
       ))}
     </Root>
-  )
-}
+  );
+};

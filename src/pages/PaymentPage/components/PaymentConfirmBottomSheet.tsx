@@ -1,7 +1,7 @@
-import { Box, Divider, Grid, HStack } from 'styled-system/jsx'
-import { BottomSheet } from '@/ui-lib/components/BottomSheet'
-import { Button } from '@/ui-lib/components/Button'
-import { Typography } from '@/ui-lib/components/Typography'
+import { Box, Divider, Grid, HStack } from 'styled-system/jsx';
+import { BottomSheet } from '@/ui-lib/components/BottomSheet';
+import { Button } from '@/ui-lib/components/Button';
+import { Typography } from '@/ui-lib/components/Typography';
 
 export const PaymentConfirmBottomSheet = () => {
   return (
@@ -71,5 +71,5 @@ export const PaymentConfirmBottomSheet = () => {
         </Grid>
       </Box>
     </BottomSheet>
-  )
-}
+  );
+};

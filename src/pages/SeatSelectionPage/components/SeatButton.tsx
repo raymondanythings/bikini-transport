@@ -1,43 +1,43 @@
-import { ark } from '@ark-ui/react'
-import { Box, styled } from 'styled-system/jsx'
-import { Typography } from '@/ui-lib/components/Typography'
-import { tokens } from '@/ui-lib/theme/tokens'
+import { ark } from '@ark-ui/react';
+import { Box, styled } from 'styled-system/jsx';
+import { Typography } from '@/ui-lib/components/Typography';
+import { tokens } from '@/ui-lib/theme/tokens';
 
-type SeatSize = 'small' | 'large'
-type SeatStatus = 'available' | 'disabled' | 'selected'
+type SeatSize = 'small' | 'large';
+type SeatStatus = 'available' | 'disabled' | 'selected';
 
 const SEAT_SIZE: Record<SeatSize, number> = {
   small: 21,
   large: 62,
-} as const
+} as const;
 
 const SEAT_COLORS: Record<SeatStatus, { fill: string; stroke: string }> = {
   available: { fill: tokens.colors.static.white.value, stroke: tokens.colors.label.alternative.value },
   disabled: { fill: tokens.colors.background.alternative.value, stroke: '#CECECF' },
   selected: { fill: tokens.colors.primary.normal.value, stroke: '#1957c2' },
-} as const
+} as const;
 
 const SEAT_TEXT_COLORS: Record<SeatStatus, string> = {
   available: 'label.normal',
   disabled: 'label.disable',
   selected: 'label.inverse',
-} as const
+} as const;
 
-const Button = styled(ark.button)
+const Button = styled(ark.button);
 
 interface SeatIconProps {
-  size: SeatSize
-  status: SeatStatus
+  size: SeatSize;
+  status: SeatStatus;
 }
 
 interface SeatButtonProps extends SeatIconProps {
-  seatNumber?: string
-  onClick?: () => void
+  seatNumber?: string;
+  onClick?: () => void;
 }
 
 export const SeatButton = ({ size, status, seatNumber, onClick }: SeatButtonProps) => {
-  const sizeValue = SEAT_SIZE[size]
-  const textColor = SEAT_TEXT_COLORS[status]
+  const sizeValue = SEAT_SIZE[size];
+  const textColor = SEAT_TEXT_COLORS[status];
 
   return (
     <Button
@@ -61,12 +61,12 @@ export const SeatButton = ({ size, status, seatNumber, onClick }: SeatButtonProp
         </Box>
       )}
     </Button>
-  )
-}
+  );
+};
 
 const SeatIcon = ({ size, status }: SeatIconProps) => {
-  const sizeValue = SEAT_SIZE[size]
-  const { fill, stroke } = SEAT_COLORS[status]
+  const sizeValue = SEAT_SIZE[size];
+  const { fill, stroke } = SEAT_COLORS[status];
 
   return (
     <svg width={sizeValue} height={sizeValue} viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,5 +89,5 @@ const SeatIcon = ({ size, status }: SeatIconProps) => {
         strokeLinejoin="round"
       />
     </svg>
-  )
-}
+  );
+};

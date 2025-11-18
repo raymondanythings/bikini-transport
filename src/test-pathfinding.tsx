@@ -109,7 +109,7 @@ export default function TestPathfinding() {
   const [loading, setLoading] = useState<Record<string, boolean>>({});
 
   const runTest = async (testCase: TestCase, index: number) => {
-    setLoading((prev) => ({ ...prev, [index]: true }));
+    setLoading(prev => ({ ...prev, [index]: true }));
 
     try {
       const response = await fetch('/api/itineraries/search', {
@@ -123,12 +123,12 @@ export default function TestPathfinding() {
       });
 
       const data = await response.json();
-      setResults((prev) => ({ ...prev, [index]: data }));
+      setResults(prev => ({ ...prev, [index]: data }));
     } catch (error) {
       console.error(`Test ${index} failed:`, error);
-      setResults((prev) => ({ ...prev, [index]: { error: String(error) } }));
+      setResults(prev => ({ ...prev, [index]: { error: String(error) } }));
     } finally {
-      setLoading((prev) => ({ ...prev, [index]: false }));
+      setLoading(prev => ({ ...prev, [index]: false }));
     }
   };
 
@@ -136,7 +136,7 @@ export default function TestPathfinding() {
     for (let i = 0; i < TEST_CASES.length; i++) {
       await runTest(TEST_CASES[i], i);
       // 각 테스트 사이에 약간의 지연
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
   };
 
@@ -185,9 +185,7 @@ export default function TestPathfinding() {
   return (
     <div style={{ padding: '40px', maxWidth: '1400px', margin: '0 auto', fontFamily: 'monospace' }}>
       <h1>🧪 경로 계산 검증 테스트</h1>
-      <p style={{ color: '#666', marginBottom: '30px' }}>
-        요금 및 시간 계산 로직이 올바르게 작동하는지 검증합니다.
-      </p>
+      <p style={{ color: '#666', marginBottom: '30px' }}>요금 및 시간 계산 로직이 올바르게 작동하는지 검증합니다.</p>
 
       <button
         onClick={runAllTests}
@@ -216,7 +214,9 @@ export default function TestPathfinding() {
               backgroundColor: '#f9f9f9',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}
+            >
               <h3 style={{ margin: 0 }}>{testCase.name}</h3>
               <button
                 onClick={() => runTest(testCase, index)}

@@ -1,7 +1,7 @@
-import { HStack } from 'styled-system/jsx'
-import { BottomSheet } from '@/ui-lib/components/BottomSheet'
-import { Button } from '@/ui-lib/components/Button'
-import { DateTimePicker } from './DateTimePicker'
+import { HStack } from 'styled-system/jsx';
+import { BottomSheet } from '@/ui-lib/components/BottomSheet';
+import { Button } from '@/ui-lib/components/Button';
+import { DateTimePicker } from './DateTimePicker';
 
 export const DepartureTimeBottomSheet = () => {
   return (
@@ -22,9 +22,9 @@ export const DepartureTimeBottomSheet = () => {
       <DateTimePicker
         initialValue={new Date()}
         onChange={(date: Date) => {
-          console.log('Selected date:', date)
+          console.log('Selected date:', date);
         }}
       />
     </BottomSheet>
-  )
-}
+  );
+};

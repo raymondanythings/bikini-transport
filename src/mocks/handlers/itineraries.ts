@@ -89,7 +89,7 @@ const calculateFareHandler = http.post<{ itineraryId: string }, { couponCode?: s
     const { couponCode } = await request.json();
 
     // 쿠폰 적용 요금 계산
-    const linesMap = new Map(lines.map((line) => [line.lineId, line]));
+    const linesMap = new Map(lines.map(line => [line.lineId, line]));
     const pricing = calculateFinalBookingPrice(storedItinerary.legs, couponCode || undefined, new Date(), linesMap);
 
     // 적용된 쿠폰 정보
@@ -98,7 +98,7 @@ const calculateFareHandler = http.post<{ itineraryId: string }, { couponCode?: s
       const couponDef = getCouponDefinition(couponCode);
       if (couponDef) {
         const myCoupons = getMyCoupons();
-        const ownedCoupon = myCoupons.find((c) => c.couponCode === couponCode);
+        const ownedCoupon = myCoupons.find(c => c.couponCode === couponCode);
         appliedCoupon = ownedCoupon || {
           ...couponDef,
           ownedCount: 0,

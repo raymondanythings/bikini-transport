@@ -19,7 +19,7 @@ export const stationHandlers = [
 
     // 검색어가 있으면 필터링
     if (query) {
-      filteredStations = stations.filter((station) => station.name.toLowerCase().includes(query.toLowerCase()));
+      filteredStations = stations.filter(station => station.name.toLowerCase().includes(query.toLowerCase()));
     }
 
     return HttpResponse.json({

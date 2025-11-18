@@ -1,9 +1,9 @@
-import { ark } from '@ark-ui/react'
-import { forwardRef } from 'react'
-import { cva, type RecipeVariantProps } from 'styled-system/css'
-import { type HTMLStyledProps, styled } from 'styled-system/jsx'
+import { ark } from '@ark-ui/react';
+import { forwardRef } from 'react';
+import { cva, type RecipeVariantProps } from 'styled-system/css';
+import { type HTMLStyledProps, styled } from 'styled-system/jsx';
 
-type ButtonVariantProps = RecipeVariantProps<typeof buttonRecipe>
+type ButtonVariantProps = RecipeVariantProps<typeof buttonRecipe>;
 
 const buttonRecipe = cva({
   base: {
@@ -127,7 +127,7 @@ const buttonRecipe = cva({
     fullWidth: false,
     loading: false,
   },
-})
+});
 
 const LoadingSpinner = ({ size = 16 }: { size?: number }) => (
   <svg
@@ -164,36 +164,36 @@ const LoadingSpinner = ({ size = 16 }: { size?: number }) => (
     />
     <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
   </svg>
-)
+);
 
 type BaseButtonProps = ButtonVariantProps & {
   /**
    * 버튼의 로딩 상태
    */
-  loading?: boolean
+  loading?: boolean;
   /**
    * 버튼과 함께 표시할 아이콘
    */
-  icon?: React.ReactNode
+  icon?: React.ReactNode;
   /**
    * 아이콘의 위치
    */
-  iconPosition?: 'start' | 'end'
-}
+  iconPosition?: 'start' | 'end';
+};
 
 type ButtonProps = {
   // 기존 props
-  ref?: React.Ref<HTMLButtonElement>
+  ref?: React.Ref<HTMLButtonElement>;
 } & BaseButtonProps &
-  HTMLStyledProps<'button'>
+  HTMLStyledProps<'button'>;
 
-const ButtonComponent = styled(ark.button, buttonRecipe)
+const ButtonComponent = styled(ark.button, buttonRecipe);
 
 const SPINNER_SIZE = {
   small: 12,
   medium: 16,
   large: 24,
-} as const
+} as const;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const {
@@ -206,7 +206,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
     iconPosition = 'start',
     disabled,
     ...rest
-  } = props
+  } = props;
 
   return (
     <ButtonComponent
@@ -229,7 +229,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
         {iconPosition === 'end' && icon}
       </styled.span>
     </ButtonComponent>
-  )
-})
+  );
+});
 
-Button.displayName = 'Button'
+Button.displayName = 'Button';

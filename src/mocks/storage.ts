@@ -32,11 +32,11 @@ export function initializeCoupons(): void {
  */
 export function getMyCoupons(): UserCoupon[] {
   return couponDefinitions
-    .map((def) => ({
+    .map(def => ({
       ...def,
       ownedCount: userCoupons.get(def.couponCode) || 0,
     }))
-    .filter((coupon) => coupon.ownedCount > 0);
+    .filter(coupon => coupon.ownedCount > 0);
 }
 
 /**
@@ -56,7 +56,7 @@ export function claimCoupon(couponCode: string): {
   error?: string;
   coupon?: UserCoupon;
 } {
-  const couponDef = couponDefinitions.find((c) => c.couponCode === couponCode);
+  const couponDef = couponDefinitions.find(c => c.couponCode === couponCode);
   if (!couponDef) {
     return {
       success: false,
@@ -105,7 +105,7 @@ export function useCoupon(couponCode: string): boolean {
 const itineraryStore = new Map<string, Itinerary>();
 
 export function saveItineraries(itineraries: Itinerary[]): void {
-  itineraries.forEach((itinerary) => {
+  itineraries.forEach(itinerary => {
     itineraryStore.set(itinerary.itineraryId, itinerary);
   });
 }
@@ -204,7 +204,7 @@ export function filterBookingsByStatus(bookingsList: Booking[], status?: 'CONFIR
   if (!status) {
     return bookingsList;
   }
-  return bookingsList.filter((b) => b.status === status);
+  return bookingsList.filter(b => b.status === status);
 }
 
 // ===== 좌석 예약 관리 =====
@@ -239,7 +239,10 @@ export function reserveSeat(legId: string, seatNumber: string): boolean {
 /**
  * 여러 좌석 예약
  */
-export function reserveSeats(seatSelections: Array<{ legId: string; seatNumber: string }>): { success: boolean; error?: string } {
+export function reserveSeats(seatSelections: Array<{ legId: string; seatNumber: string }>): {
+  success: boolean;
+  error?: string;
+} {
   // 먼저 모든 좌석이 예약 가능한지 확인
   for (const { legId, seatNumber } of seatSelections) {
     const seats = reservedSeats.get(legId) || new Set();

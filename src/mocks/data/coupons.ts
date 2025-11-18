@@ -67,7 +67,7 @@ export const couponDefinitions: AppCouponDefinition[] = [
  * 쿠폰 코드로 쿠폰 정의 조회
  */
 export function getCouponDefinition(couponCode: string): AppCouponDefinition | undefined {
-  return couponDefinitions.find((c) => c.couponCode === couponCode);
+  return couponDefinitions.find(c => c.couponCode === couponCode);
 }
 
 /**
