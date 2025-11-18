@@ -1,59 +1,57 @@
 {
-	"name": "deus-ex-machina",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"postinstall": "panda codegen && yarn openapi:generate",
-		"openapi:generate": "openapi-typescript openapi.yaml -o src/generated/api-types.ts",
-		"dev": "vite",
-		"build": "yarn openapi:generate && tsc -b && vite build",
-		"lint": "eslint .",
-		"preview": "vite preview",
-		"test": "vitest",
-		"test:ui": "vitest --ui",
-		"test:run": "vitest run",
-		"test:coverage": "vitest run --coverage",
-		"test:watch": "vitest"
-	},
-	"dependencies": {
-		"@ark-ui/react": "^5.27.0",
-		"@biomejs/biome": "^2.2.5",
-		"react": "^19.1.1",
-		"react-dom": "^19.1.1",
-		"react-mobile-picker": "^1.2.0",
-		"react-router": "^7.9.5",
-		"styled-system": "^5.1.5"
-	},
-	"devDependencies": {
-		"@pandacss/dev": "^1.4.3",
-		"@testing-library/dom": "^10.4.1",
-		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^16.3.0",
-		"@testing-library/user-event": "^14.6.1",
-		"@types/jsdom": "21",
-		"@types/node": "^24.6.0",
-		"@types/react": "^19.1.16",
-		"@types/react-dom": "^19.1.9",
-		"@types/styled-system": "^5",
-		"@vitejs/plugin-react": "^5.0.4",
-		"@vitest/ui": "^4.0.9",
-		"globals": "^16.4.0",
-		"happy-dom": "^20.0.10",
-		"jsdom": "22.1.0",
-		"msw": "^2.12.1",
-		"openapi-msw": "^2.0.0",
-		"openapi-typescript": "^7.10.1",
-		"swagger-ui-watcher": "^2.1.14",
-		"typescript": "~5.9.3",
-		"vite": "^7.1.7",
-		"vite-tsconfig-paths": "^5.1.4",
-		"vitest": "^4.0.9"
-	},
-	"packageManager": "yarn@4.11.0",
-	"msw": {
-		"workerDirectory": [
-			"public"
-		]
-	}
+  "name": "deus-ex-machina",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "postinstall": "panda codegen && yarn openapi:generate",
+    "openapi:generate": "openapi-typescript openapi.yaml -o src/generated/api-types.ts",
+    "dev": "vite",
+    "build": "yarn openapi:generate && tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@ark-ui/react": "^5.27.0",
+    "@biomejs/biome": "^2.2.5",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-mobile-picker": "^1.2.0",
+    "react-router": "^7.9.5",
+    "styled-system": "^5.1.5"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^1.4.3",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jsdom": "21",
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@types/styled-system": "^5",
+    "@vitejs/plugin-react": "^5.0.4",
+    "@vitest/ui": "^4.0.9",
+    "globals": "^16.4.0",
+    "happy-dom": "^20.0.10",
+    "jsdom": "22.1.0",
+    "msw": "^2.12.1",
+    "openapi-msw": "^2.0.0",
+    "openapi-typescript": "^7.10.1",
+    "swagger-ui-watcher": "^2.1.14",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.0.9"
+  },
+  "packageManager": "yarn@4.11.0",
+  "msw": {
+    "workerDirectory": ["public"]
+  }
 }

@@ -183,7 +183,14 @@ export default function TestPathfinding() {
   };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1400px', margin: '0 auto', fontFamily: 'monospace' }}>
+    <div
+      style={{
+        padding: '40px',
+        maxWidth: '1400px',
+        margin: '0 auto',
+        fontFamily: 'monospace',
+      }}
+    >
       <h1>🧪 경로 계산 검증 테스트</h1>
       <p style={{ color: '#666', marginBottom: '30px' }}>요금 및 시간 계산 로직이 올바르게 작동하는지 검증합니다.</p>
 
@@ -215,7 +222,12 @@ export default function TestPathfinding() {
             }}
           >
             <div
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '12px',
+              }}
             >
               <h3 style={{ margin: 0 }}>{testCase.name}</h3>
               <button
@@ -257,7 +269,15 @@ export default function TestPathfinding() {
                 </div>
 
                 <details>
-                  <summary style={{ cursor: 'pointer', color: '#007bff', fontSize: '14px' }}>📋 상세 결과 보기</summary>
+                  <summary
+                    style={{
+                      cursor: 'pointer',
+                      color: '#007bff',
+                      fontSize: '14px',
+                    }}
+                  >
+                    📋 상세 결과 보기
+                  </summary>
                   <pre
                     style={{
                       marginTop: '12px',
@@ -279,7 +299,14 @@ export default function TestPathfinding() {
         ))}
       </div>
 
-      <div style={{ marginTop: '40px', padding: '20px', backgroundColor: '#e7f3ff', borderRadius: '8px' }}>
+      <div
+        style={{
+          marginTop: '40px',
+          padding: '20px',
+          backgroundColor: '#e7f3ff',
+          borderRadius: '8px',
+        }}
+      >
         <h3>📊 검증 기준</h3>
         <ul style={{ lineHeight: '1.8' }}>
           <li>
