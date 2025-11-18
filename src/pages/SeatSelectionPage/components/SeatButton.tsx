@@ -14,13 +14,13 @@ const SEAT_SIZE: Record<SeatSize, number> = {
 const SEAT_COLORS: Record<SeatStatus, { fill: string; stroke: string }> = {
   available: { fill: tokens.colors.static.white.value, stroke: tokens.colors.label.alternative.value },
   disabled: { fill: tokens.colors.background.alternative.value, stroke: '#CECECF' },
-  selected: { fill: tokens.colors.primary.normal.value, stroke: '#F2C113' },
+  selected: { fill: tokens.colors.primary.normal.value, stroke: '#1957c2' },
 } as const
 
 const SEAT_TEXT_COLORS: Record<SeatStatus, string> = {
   available: 'label.normal',
   disabled: 'label.disable',
-  selected: 'label.normal',
+  selected: 'label.inverse',
 } as const
 
 const Button = styled(ark.button)

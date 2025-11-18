@@ -16,7 +16,7 @@ export const CheckCircleFilled = ({ size = 24, color = 'primary.normal' }: IconP
     className={css({ color })}
   >
     <circle cx="12" cy="12" r="8.5" fill="currentColor" stroke="currentColor" />
-    <path d="M8 11.5L11 14.5L16 9.5" stroke="#171717" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 11.5L11 14.5L16 9.5" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
 
@@ -31,6 +31,25 @@ export const CheckCircleOutlined = ({ size = 24, color = 'line.neutral' }: IconP
   >
     <circle cx="12" cy="12" r="8.5" stroke="currentColor" />
     <path d="M8 11.5L11 14.5L16 9.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+export const RightOutlined = ({ size = 24, color = 'static.lightGray' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path
+      d="M7.99976 20.0005L15.9998 12.0005L7.99976 4.00049"
+      stroke="currentColor"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
   </svg>
 )
 
@@ -143,9 +162,9 @@ export const ExclamationCircleFilled = ({ size = 36, color = 'primary.normal' }:
     />
     <path
       d="M18 22.5C17.175 22.5 16.5 23.175 16.5 24C16.5 24.825 17.175 25.5 18 25.5C18.825 25.5 19.5 24.825 19.5 24C19.5 23.175 18.825 22.5 18 22.5Z"
-      fill="black"
+      fill="white"
     />
-    <path d="M18 12V18" stroke="black" strokeWidth="2" strokeLinecap="round" />
+    <path d="M18 12V18" stroke="white" strokeWidth="2" strokeLinecap="round" />
   </svg>
 )
 
@@ -250,5 +269,32 @@ export const SyncOutlined = ({ size = 24, color = 'label.neutral' }: IconProps) 
       d="M9.26688 19.2773C9.11785 19.1225 9.11785 18.8775 9.26688 18.7227L12.0618 15.8181C12.3114 15.5586 12.75 15.7354 12.75 16.0955L12.75 21.9045C12.75 22.2646 12.3114 22.4414 12.0618 22.1819L9.26688 19.2773Z"
       fill="currentColor"
     />
+  </svg>
+)
+
+export const SuccessCircleFilled = ({ size = 90, color = 'primary.normal' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 90 90"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <circle cx="45" cy="45" r="45" fill="currentColor" />
+    <path d="M25 43L40 58L65 33" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+export const CaretUpOutlined = ({ color = 'static.darkGray' }: Omit<IconProps, 'size'>) => (
+  <svg
+    width="15"
+    height="13"
+    viewBox="0 0 15 13"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({ color })}
+  >
+    <path d="M7.5 0L0 13H15L7.5 0Z" fill="currentColor" />
   </svg>
 )

@@ -1,7 +1,7 @@
 import { ark } from '@ark-ui/react'
 import { Box, Divider, Flex, HStack, Spacer, VStack } from 'styled-system/jsx'
 import { Button } from '@/ui-lib/components/Button'
-import { LeftOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon'
+import { CaretUpOutlined, LeftOutlined, SwapRightOutlined } from '@/ui-lib/components/Icon'
 import { Header } from '../../layout/Header'
 import { Typography } from '../../ui-lib/components/Typography'
 import { SeatButton } from './components/SeatButton'
@@ -69,7 +69,7 @@ export const SeatSelectionPage = () => {
             <SeatButton size="large" status="available" seatNumber="2A" />
             <SeatButton size="large" status="disabled" seatNumber="2B" />
             <Box display="flex" justifyContent="center" alignItems="center">
-              <BusExitArrow />
+              <CaretUpOutlined />
             </Box>
             <SeatButton size="large" status="available" seatNumber="2C" />
             <SeatButton size="large" status="available" seatNumber="2D" />
@@ -80,7 +80,7 @@ export const SeatSelectionPage = () => {
             <SeatButton size="large" status="available" seatNumber="3A" />
             <SeatButton size="large" status="available" seatNumber="3B" />
             <Box display="flex" justifyContent="center" alignItems="center">
-              <BusExitArrow />
+              <CaretUpOutlined />
             </Box>
             <SeatButton size="large" status="selected" seatNumber="3C" />
             <SeatButton size="large" status="available" seatNumber="3D" />
@@ -91,7 +91,7 @@ export const SeatSelectionPage = () => {
             <SeatButton size="large" status="available" seatNumber="4A" />
             <SeatButton size="large" status="available" seatNumber="4B" />
             <Box display="flex" justifyContent="center" alignItems="center">
-              <BusExitArrow />
+              <CaretUpOutlined />
             </Box>
             <SeatButton size="large" status="available" seatNumber="4C" />
             <SeatButton size="large" status="available" seatNumber="4D" />
@@ -102,7 +102,7 @@ export const SeatSelectionPage = () => {
             <SeatButton size="large" status="available" seatNumber="5A" />
             <SeatButton size="large" status="available" seatNumber="5B" />
             <Box display="flex" justifyContent="center" alignItems="center">
-              <BusExitArrow />
+              <CaretUpOutlined />
             </Box>
             <SeatButton size="large" status="available" seatNumber="5C" />
             <SeatButton size="large" status="available" seatNumber="5D" />
@@ -115,9 +115,3 @@ export const SeatSelectionPage = () => {
     </Flex>
   )
 }
-
-export const BusExitArrow = () => (
-  <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M7.5 0L0 13H15L7.5 0Z" fill="#4B4B4B" />
-  </svg>
-)

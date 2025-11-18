@@ -154,7 +154,7 @@ const pickerStyles = css({
     whiteSpace: 'nowrap',
   },
   '& .picker-item.picker-item-selected': {
-    color: 'primary.heavy',
+    color: 'primary.normal',
     textStyle: 'H1_Bold',
   },
   '& .picker-highlight': {

@@ -49,7 +49,7 @@ const buttonRecipe = cva({
     color: {
       primary: {
         bgColor: 'primary.normal',
-        color: 'label.normal',
+        color: 'label.inverse',
         _active: {
           bgColor: 'primary.strong',
         },
@@ -161,10 +161,6 @@ const LoadingSpinner = ({ size = 16 }: { size?: number }) => (
       strokeLinecap="round"
       strokeDasharray="32"
       strokeDashoffset="32"
-      style={{
-        animation: 'spin 1s linear infinite',
-        opacity: 0.25,
-      }}
     />
     <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
   </svg>
@@ -175,10 +171,6 @@ type BaseButtonProps = ButtonVariantProps & {
    * 버튼의 로딩 상태
    */
   loading?: boolean
-  /**
-   * 로딩 상태일 때 표시할 텍스트
-   */
-  loadingText?: string
   /**
    * 버튼과 함께 표시할 아이콘
    */
@@ -199,8 +191,8 @@ const ButtonComponent = styled(ark.button, buttonRecipe)
 
 const SPINNER_SIZE = {
   small: 12,
-  medium: 14,
-  large: 16,
+  medium: 16,
+  large: 24,
 } as const
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
@@ -210,15 +202,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
     size = 'large',
     fullWidth = false,
     loading = false,
-    loadingText,
     icon,
     iconPosition = 'start',
     disabled,
     ...rest
   } = props
-
-  const isDisabled = disabled || loading
-  const displayIcon = loading ? <LoadingSpinner size={SPINNER_SIZE[size]} /> : icon ? icon : null
 
   return (
     <ButtonComponent
@@ -227,12 +215,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
       size={size}
       fullWidth={fullWidth}
       loading={loading}
-      disabled={isDisabled}
+      disabled={disabled}
       {...rest}
     >
-      {iconPosition === 'start' && displayIcon}
-      {loading ? loadingText || children : children}
-      {iconPosition === 'end' && displayIcon}
+      {loading && (
+        <styled.span pos="absolute" display="flex" alignItems="center" justifyContent="center">
+          <LoadingSpinner size={SPINNER_SIZE[size]} />
+        </styled.span>
+      )}
+      <styled.span visibility={loading ? 'hidden' : 'visible'} display="flex" alignItems="center" gap="inherit">
+        {iconPosition === 'start' && icon}
+        {children}
+        {iconPosition === 'end' && icon}
+      </styled.span>
     </ButtonComponent>
   )
 })

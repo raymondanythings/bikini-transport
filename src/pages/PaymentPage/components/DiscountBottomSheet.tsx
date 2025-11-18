@@ -15,7 +15,7 @@ export const DiscountBottomSheet = () => {
         </Button>
       }
     >
-      <Box p={5} height="568px">
+      <Box p={5}>
         <VStack gap={4}>
           <CouponOption
             discountAmount="기본요금 2₴"

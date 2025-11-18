@@ -30,6 +30,7 @@ const Content = styled(Dialog.Content, {
     bgColor: 'background.normal',
     w: 'full',
     maxW: '100vw',
+    maxH: '90vh',
     roundedTop: '20px',
     pb: 'env(safe-area-inset-bottom, 0px)',
     display: 'flex',
@@ -47,6 +48,7 @@ const Handle = styled('div', {
     mx: 'auto',
     mt: 3,
     mb: 2.5,
+    flexShrink: 0,
   },
 })
 
@@ -57,6 +59,7 @@ const Header = styled(Dialog.Title, {
     textStyle: 'H2_Bold',
     color: 'label.normal',
     textAlign: 'center',
+    flexShrink: 0,
   },
 })
 
@@ -71,6 +74,7 @@ const CTAWrapper = styled('div', {
   base: {
     px: 5,
     py: 4,
+    flexShrink: 0,
   },
 })
 
