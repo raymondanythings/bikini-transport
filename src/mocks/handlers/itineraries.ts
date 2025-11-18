@@ -18,7 +18,7 @@ const searchItineraryHandler = http.post('/api/itineraries/search', async ({ req
     departureTime: string;
   };
 
-  const { fromStationId, toStationId } = body;
+  const { fromStationId, toStationId, departureTime } = body;
 
   if (!fromStationId || !toStationId) {
     return HttpResponse.json(
@@ -40,8 +40,11 @@ const searchItineraryHandler = http.post('/api/itineraries/search', async ({ req
     );
   }
 
+  // 출발 시각 파싱 (기본값: 현재 시각)
+  const parsedDepartureTime = departureTime ? new Date(departureTime) : new Date();
+
   // 경로 검색
-  const itineraries = searchItineraries(fromStationId, toStationId);
+  const itineraries = searchItineraries(fromStationId, toStationId, parsedDepartureTime);
 
   // 조회된 경로를 인메모리에 저장 (쿠폰/예약 단계에서 참조)
   saveItineraries(itineraries);

@@ -192,6 +192,14 @@ Content-Type: application/json
 }
 ```
 
+**파라미터 설명:**
+
+- `fromStationId` (필수): 출발 역 ID
+- `toStationId` (필수): 도착 역 ID
+- `departureTime` (선택): 출발 시각 (ISO 8601 형식). 미입력 시 현재 시각 사용
+  - 환승 시 대기 시간 계산에 사용됩니다
+  - 배차 시간표를 고려하여 실제 버스 도착 시간을 계산합니다
+
 **응답 예시:**
 
 ```json
@@ -211,6 +219,7 @@ Content-Type: application/json
           "fromStation": { "stationId": "new-kelp-city", "name": "뉴캘프시티", "location": [37.5665, 126.978] },
           "toStation": { "stationId": "bubble-city", "name": "버블시티", "location": [37.5902, 127.0042] },
           "durationMinutes": 25,
+          "waitTimeMinutes": 0,
           "baseFare": 5.0,
           "extraFare": 1.0,
           "fareBeforeDiscount": 6.0,
@@ -235,6 +244,27 @@ Content-Type: application/json
 - `LOWEST_FARE` - 최저 요금 경로
 
 하나의 경로가 여러 타입을 동시에 만족할 수 있습니다.
+
+**환승 대기 시간 계산:**
+
+환승이 포함된 경로의 경우, 각 구간(`leg`)의 `waitTimeMinutes` 필드에 대기 시간이 포함됩니다.
+
+- 첫 번째 구간: `waitTimeMinutes: 0` (즉시 탑승)
+- 환승 구간: 실제 버스 배차 시간표를 기반으로 계산된 대기 시간
+  - 이전 구간의 도착 시각 계산
+  - 다음 노선의 배차 간격 고려
+  - 환승역에서의 실제 버스 도착 시간 반영
+
+**예시:**
+
+```
+시티선 06:30 비키니시티 출발
+→ 플로터스묘지(25분) → 버블타운(20분) = 07:15 도착
+→ 외곽선 대기 (배차간격 90분, 다음 버스 07:45) = 30분 대기
+→ 외곽선 07:45 탑승
+```
+
+이 경우 환승 구간의 `waitTimeMinutes: 30`으로 표시됩니다.
 
 ---
 

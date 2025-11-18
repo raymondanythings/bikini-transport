@@ -376,6 +376,11 @@ export interface components {
              */
             durationMinutes: number;
             /**
+             * @description 이 구간 탑승 전 대기 시간 (분) - 환승 시에만 값 존재
+             * @example 0
+             */
+            waitTimeMinutes?: number;
+            /**
              * @description 정거장 수 (출발역 포함)
              * @example 4
              */

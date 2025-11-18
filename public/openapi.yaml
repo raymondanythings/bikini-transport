@@ -572,6 +572,10 @@ components:
           type: integer
           description: 소요 시간 (분)
           example: 25
+        waitTimeMinutes:
+          type: integer
+          description: 이 구간 탑승 전 대기 시간 (분) - 환승 시에만 값 존재
+          example: 0
         stopsCount:
           type: integer
           description: 정거장 수 (출발역 포함)

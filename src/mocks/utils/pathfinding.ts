@@ -3,6 +3,7 @@ import { stations, getStationById } from '../data/stations';
 import { lines, getStopsCount, isBidirectional } from '../data/lines';
 import { getDuration } from '../data/duration-map';
 import { calculateLegsWithTransferDiscount, calculateItineraryPricing } from './pricing';
+import { getNextDeparture, calculateWaitTime, addMinutesToTime } from './schedule-utils';
 
 type Line = components['schemas']['Line'];
 type Leg = components['schemas']['Leg'];
@@ -83,6 +84,7 @@ function createLeg(legId: string, line: Line, fromStationId: string, toStationId
     fromStationIndex: fromIndex,
     toStationIndex: toIndex,
     durationMinutes,
+    waitTimeMinutes: 0, // 나중에 계산 (환승 시에만)
     stopsCount,
     baseFare,
     transferNumber: 0, // 나중에 계산
@@ -176,6 +178,11 @@ function findOneTransferPaths(fromStationId: string, toStationId: string): Leg[]
  * 모든 가능한 경로 찾기
  */
 export function findAllPaths(fromStationId: string, toStationId: string): Leg[][] {
+  // 출발지와 도착지가 같은 경우 빈 배열 반환
+  if (fromStationId === toStationId) {
+    return [];
+  }
+
   const allPaths: Leg[][] = [];
 
   // 1. 직행 경로
@@ -197,26 +204,69 @@ export function findAllPaths(fromStationId: string, toStationId: string): Leg[][
 
 /**
  * Leg 배열을 Itinerary로 변환
+ *
+ * @param itineraryId - 여정 ID
+ * @param legs - 구간 목록
+ * @param linesMap - 노선 정보 맵
+ * @param departureTime - 출발 시각 (대기 시간 계산용)
  */
-export function createItinerary(itineraryId: string, legs: Leg[], linesMap: Map<string, Line>): Itinerary {
+export function createItinerary(
+  itineraryId: string,
+  legs: Leg[],
+  linesMap: Map<string, Line>,
+  departureTime: Date
+): Itinerary {
   // 환승 할인 적용
   const legsWithDiscount = calculateLegsWithTransferDiscount(legs, linesMap);
 
-  // 요금 계산
-  const pricing = calculateItineraryPricing(legsWithDiscount);
+  // 각 구간의 대기 시간 계산
+  const legsWithWaitTime = legsWithDiscount.map((leg, index) => {
+    if (index === 0) {
+      // 첫 구간: 대기 시간 없음
+      return { ...leg, waitTimeMinutes: 0 };
+    }
 
-  // 총 소요 시간
-  const totalDurationMinutes = legsWithDiscount.reduce((sum, leg) => sum + leg.durationMinutes, 0);
+    // 이전 구간의 도착 시각 계산
+    let currentTime = new Date(departureTime);
+    for (let i = 0; i < index; i++) {
+      const prevLeg = legsWithDiscount[i];
+      currentTime = addMinutesToTime(currentTime, prevLeg.waitTimeMinutes || 0);
+      currentTime = addMinutesToTime(currentTime, prevLeg.durationMinutes);
+    }
+
+    // 환승역 도착 시각
+    const arrivalAtTransferStation = currentTime;
+
+    // 다음 노선의 다음 출발 시각
+    const line = linesMap.get(leg.lineId);
+    if (!line) {
+      return { ...leg, waitTimeMinutes: 0 };
+    }
+
+    const nextDeparture = getNextDeparture(line, arrivalAtTransferStation, leg.fromStation.stationId);
+    const waitTime = calculateWaitTime(arrivalAtTransferStation, nextDeparture);
+
+    return { ...leg, waitTimeMinutes: waitTime };
+  });
+
+  // 요금 계산
+  const pricing = calculateItineraryPricing(legsWithWaitTime);
+
+  // 총 소요 시간 (이동 시간 + 대기 시간)
+  const totalDurationMinutes = legsWithWaitTime.reduce(
+    (sum, leg) => sum + leg.durationMinutes + (leg.waitTimeMinutes || 0),
+    0
+  );
 
   // 환승 횟수
-  const transferCount = legsWithDiscount.length - 1;
+  const transferCount = legsWithWaitTime.length - 1;
 
   return {
     itineraryId,
     recommendationTypes: [], // 나중에 결정
     totalDurationMinutes,
     transferCount,
-    legs: legsWithDiscount,
+    legs: legsWithWaitTime,
     pricing,
   };
 }
@@ -225,8 +275,12 @@ export function createItinerary(itineraryId: string, legs: Leg[], linesMap: Map<
  * 경로 검색 및 추천
  *
  * 최단시간, 최소환승, 최저요금 기준으로 최대 3개 추천
+ *
+ * @param fromStationId - 출발 정류장 ID
+ * @param toStationId - 도착 정류장 ID
+ * @param departureTime - 출발 시각
  */
-export function searchItineraries(fromStationId: string, toStationId: string): Itinerary[] {
+export function searchItineraries(fromStationId: string, toStationId: string, departureTime: Date): Itinerary[] {
   // 모든 경로 찾기
   const allPathsLegs = findAllPaths(fromStationId, toStationId);
 
@@ -238,7 +292,9 @@ export function searchItineraries(fromStationId: string, toStationId: string): I
   const linesMap = new Map(lines.map((line) => [line.lineId, line]));
 
   // Itinerary 객체 생성
-  const allItineraries = allPathsLegs.map((legs, index) => createItinerary(`itinerary-${index}`, legs, linesMap));
+  const allItineraries = allPathsLegs.map((legs, index) =>
+    createItinerary(`itinerary-${index}`, legs, linesMap, departureTime)
+  );
 
   // 추천 경로 선정
   const recommendations: Itinerary[] = [];
