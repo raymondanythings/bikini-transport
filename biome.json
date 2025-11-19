@@ -70,7 +70,10 @@
             "noUnsafeOptionalChaining": "error",
             "noUnusedLabels": "error",
             "noUnusedPrivateClassMembers": "error",
-            "noUnusedVariables": "error",
+            "noUnusedVariables": {
+              "level": "error",
+              "fix": "none"
+            },
             "useIsNan": "error",
             "useValidForDirection": "error",
             "useValidTypeof": "error",
@@ -83,7 +86,10 @@
             "noCompareNegZero": "error",
             "noConstantBinaryExpressions": "error",
             "noControlCharactersInRegex": "error",
-            "noDebugger": "error",
+            "noDebugger": {
+              "level": "error",
+              "fix": "none"
+            },
             "noDuplicateCase": "error",
             "noDuplicateClassMembers": "error",
             "noDuplicateElseIf": "error",
