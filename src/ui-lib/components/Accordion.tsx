@@ -4,6 +4,9 @@ import { styled } from 'styled-system/jsx';
 const Root = styled(ArkAccordion.Root, {
   base: {
     w: 'full',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
   },
 });
 

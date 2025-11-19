@@ -1,7 +1,7 @@
 import { ark } from '@ark-ui/react';
 import { forwardRef } from 'react';
 import { cva, type RecipeVariantProps } from 'styled-system/css';
-import { styled, type HTMLStyledProps } from 'styled-system/jsx';
+import { type HTMLStyledProps, styled } from 'styled-system/jsx';
 
 type TagVariantProps = RecipeVariantProps<typeof tagRecipe>;
 

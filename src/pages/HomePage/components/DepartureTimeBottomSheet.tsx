@@ -1,12 +1,23 @@
+import { overlay } from 'overlay-kit';
 import { HStack } from 'styled-system/jsx';
 import { BottomSheet } from '@/ui-lib/components/BottomSheet';
 import { Button } from '@/ui-lib/components/Button';
-import { DateTimePicker } from './DateTimePicker';
+import { DateTimePicker } from '@/ui-lib/components/DateTimePicker';
 
-export const DepartureTimeBottomSheet = () => {
+interface DepartureTimeBottomSheetProps {
+  isOpen: boolean;
+  close: () => void;
+}
+
+export const openDepartureTimeBottomSheet = () => {
+  return overlay.open(({ isOpen, close }) => <DepartureTimeBottomSheet isOpen={isOpen} close={close} />);
+};
+
+export const DepartureTimeBottomSheet = ({ isOpen, close }: DepartureTimeBottomSheetProps) => {
   return (
     <BottomSheet
-      open={false}
+      open={isOpen}
+      onDimmerClick={close}
       header={<BottomSheet.Header>출발 시간 설정</BottomSheet.Header>}
       cta={
         <HStack>

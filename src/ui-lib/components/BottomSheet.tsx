@@ -30,7 +30,7 @@ const Content = styled(Dialog.Content, {
     bgColor: 'background.normal',
     w: 'full',
     maxW: '100vw',
-    maxH: '90vh',
+    maxH: '95vh',
     roundedTop: '20px',
     pb: 'env(safe-area-inset-bottom, 0px)',
     display: 'flex',
