@@ -3653,6 +3653,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "date-fns@npm:4.1.0"
+  checksum: 10c0/b79ff32830e6b7faa009590af6ae0fb8c3fd9ffad46d930548fbb5acf473773b4712ae887e156ba91a7b3dc30591ce0f517d69fd83bd9c38650fdc03b4e0bac8
+  languageName: node
+  linkType: hard
+
 "debug@npm:2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
@@ -3748,12 +3755,14 @@ __metadata:
     "@types/styled-system": "npm:^5"
     "@vitejs/plugin-react": "npm:^5.0.4"
     "@vitest/ui": "npm:^4.0.9"
+    date-fns: "npm:^4.1.0"
     globals: "npm:^16.4.0"
     happy-dom: "npm:^20.0.10"
     jsdom: "npm:22.1.0"
     msw: "npm:^2.12.1"
     openapi-msw: "npm:^2.0.0"
     openapi-typescript: "npm:^7.10.1"
+    overlay-kit: "npm:^1.8.6"
     react: "npm:^19.1.1"
     react-dom: "npm:^19.1.1"
     react-mobile-picker: "npm:^1.2.0"
@@ -5670,6 +5679,16 @@ __metadata:
   version: 1.4.3
   resolution: "outvariant@npm:1.4.3"
   checksum: 10c0/5976ca7740349cb8c71bd3382e2a762b1aeca6f33dc984d9d896acdf3c61f78c3afcf1bfe9cc633a7b3c4b295ec94d292048f83ea2b2594fae4496656eba992c
+  languageName: node
+  linkType: hard
+
+"overlay-kit@npm:^1.8.6":
+  version: 1.8.6
+  resolution: "overlay-kit@npm:1.8.6"
+  peerDependencies:
+    react: ^16.8 || ^17 || ^18 || ^19
+    react-dom: ^16.8 || ^17 || ^18 || ^19
+  checksum: 10c0/025d61133475500ccd7f07d07e346f65880feec7898ab2ad535a4f290c885dfb68d749518873ac5dd85b38b4caa4ef2b6464e249aef03707a26e0f1768fb2ef9
   languageName: node
   linkType: hard
 
