@@ -1,25 +1,31 @@
-import { http, HttpResponse, delay } from 'msw';
+import { delay, HttpResponse, http } from 'msw';
 import { getRandomCoupon } from '../data/coupons';
-import { getMyCoupons, claimCoupon } from '../storage';
+import { claimCoupon, getMyCoupons, storeCouponInstance } from '../storage';
 
 /**
  * GET /api/coupons/random-popup
- * 랜덤 쿠폰 팝업 조회
+ * 랜덤 쿠폰 팝업 조회 (UUID 생성)
  */
 const randomPopupHandler = http.get('/api/coupons/random-popup', async () => {
   await delay(50);
 
-  const couponDef = getRandomCoupon();
+  const result = getRandomCoupon();
 
-  if (!couponDef) {
+  if (!result) {
     return HttpResponse.json({
       coupon: null,
     });
   }
 
-  // CouponDefinition만 반환 (ownedCount 없음)
+  // 쿠폰 인스턴스 저장 (1분 TTL)
+  storeCouponInstance(result.uuid, result.coupon.couponCode, result.expiresAt);
+
+  // couponCode를 UUID로 변경하여 반환
   return HttpResponse.json({
-    coupon: couponDef,
+    coupon: {
+      ...result.coupon,
+      couponCode: result.uuid, // UUID를 couponCode로 반환
+    },
   });
 });
 
@@ -56,7 +62,6 @@ const claimCouponHandler = http.post('/api/coupons/claim', async ({ request }) =
   }
 
   return HttpResponse.json({
-    success: true,
     coupon: result.coupon,
   });
 });

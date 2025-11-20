@@ -1,16 +1,7 @@
-import { http, HttpResponse, delay } from 'msw';
+import { delay, HttpResponse, http } from 'msw';
 import { lines } from '../data/lines';
+import { applyCoupon, createBooking, getItineraryById, getMyCoupons, getRealCouponCode, reserveSeats } from '../storage';
 import { calculateFinalBookingPrice } from '../utils/pricing';
-import {
-  getMyCoupons,
-  createBooking,
-  getBookingById,
-  getAllBookings,
-  sortBookings,
-  filterBookingsByStatus,
-  reserveSeats,
-  getItineraryById,
-} from '../storage';
 
 /**
  * POST /api/bookings
@@ -22,11 +13,11 @@ const createBookingHandler = http.post('/api/bookings', async ({ request }) => {
   const body = (await request.json()) as {
     itineraryId: string;
     seatSelections: Array<{ legId: string; seatNumber: string }>;
-    couponCode?: string;
+    couponCode?: string; // UUID
     departureTime: string;
   };
 
-  const { itineraryId, seatSelections, couponCode, departureTime } = body;
+  const { itineraryId, seatSelections, couponCode: couponUuid, departureTime } = body;
 
   const itinerary = getItineraryById(itineraryId);
   if (!itinerary) {
@@ -37,6 +28,21 @@ const createBookingHandler = http.post('/api/bookings', async ({ request }) => {
       },
       { status: 404 }
     );
+  }
+
+  // UUID로 실제 쿠폰 코드 조회 (소유한 쿠폰)
+  let realCouponCode: string | undefined;
+  if (couponUuid) {
+    realCouponCode = getRealCouponCode(couponUuid);
+    if (!realCouponCode) {
+      return HttpResponse.json(
+        {
+          error: 'COUPON_NOT_OWNED',
+          message: '소유하지 않은 쿠폰입니다',
+        },
+        { status: 400 }
+      );
+    }
   }
 
   // 좌석 예약 가능 여부 확인
@@ -76,16 +82,36 @@ const createBookingHandler = http.post('/api/bookings', async ({ request }) => {
   // 가격 계산
   const pricing = calculateFinalBookingPrice(
     itinerary.legs,
-    couponCode || undefined,
+    realCouponCode || undefined,
     new Date(departureTime),
     linesMap
   );
+
+  // 쿠폰 정보 미리 조회 (사용 전)
+  let appliedCouponInfo: ReturnType<typeof getMyCoupons>[0] | undefined;
+  if (couponUuid) {
+    appliedCouponInfo = getMyCoupons().find(c => c.couponCode === couponUuid);
+  }
+
+  // 쿠폰 사용 처리 (UUID 기반)
+  if (couponUuid) {
+    const used = applyCoupon(couponUuid);
+    if (!used) {
+      return HttpResponse.json(
+        {
+          error: 'COUPON_USE_FAILED',
+          message: '쿠폰 사용에 실패했습니다',
+        },
+        { status: 400 }
+      );
+    }
+  }
 
   // 예약 생성
   const booking = createBooking({
     itinerary,
     seatSelections: seatSelectionsWithIndex,
-    appliedCoupon: couponCode ? getMyCoupons().find(c => c.couponCode === couponCode) || undefined : undefined,
+    appliedCoupon: appliedCouponInfo,
     departureTime,
     pricing: {
       subtotal: pricing.subtotal,
@@ -100,57 +126,4 @@ const createBookingHandler = http.post('/api/bookings', async ({ request }) => {
   return HttpResponse.json(booking, { status: 201 });
 });
 
-/**
- * GET /api/bookings
- * 내 예약 목록 조회
- */
-const getBookingsHandler = http.get('/api/bookings', async ({ request }) => {
-  await delay(200);
-
-  const url = new URL(request.url);
-  const sortParam = url.searchParams.get('sort') as 'date_desc' | 'date_asc' | 'price_desc' | 'price_asc' | null;
-  const statusParam = url.searchParams.get('status') as 'CONFIRMED' | 'CANCELLED' | null;
-
-  let bookingsList = getAllBookings();
-
-  // 상태 필터
-  if (statusParam) {
-    bookingsList = filterBookingsByStatus(bookingsList, statusParam);
-  }
-
-  // 정렬
-  if (sortParam) {
-    bookingsList = sortBookings(bookingsList, sortParam);
-  } else {
-    bookingsList = sortBookings(bookingsList, 'date_desc');
-  }
-
-  return HttpResponse.json({
-    bookings: bookingsList,
-  });
-});
-
-/**
- * GET /api/bookings/:bookingId
- * 예약 상세 조회
- */
-const getBookingByIdHandler = http.get('/api/bookings/:bookingId', async ({ params }) => {
-  await delay(100);
-
-  const { bookingId } = params;
-  const booking = getBookingById(bookingId as string);
-
-  if (!booking) {
-    return HttpResponse.json(
-      {
-        error: 'BOOKING_NOT_FOUND',
-        message: '예약을 찾을 수 없습니다',
-      },
-      { status: 404 }
-    );
-  }
-
-  return HttpResponse.json(booking);
-});
-
-export const bookingHandlers = [createBookingHandler, getBookingsHandler, getBookingByIdHandler];
+export const bookingHandlers = [createBookingHandler];

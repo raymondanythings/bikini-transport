@@ -43,7 +43,6 @@ function generateSeats(): Seat[] {
         row,
         column,
         position: getSeatPosition(column),
-        isAvailable: true,
         isReserved: false,
       });
     }
@@ -62,7 +61,6 @@ export function createSeatLayout(legId: string, reservedSeats: string[] = []): S
   const seats = generateSeats().map(seat => ({
     ...seat,
     isReserved: reservedSeats.includes(seat.seatNumber),
-    isAvailable: !reservedSeats.includes(seat.seatNumber),
   }));
 
   return {

@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  lines,
-  LINE_UUIDS,
+  findDirectLine,
   getLineById,
   getLineDirection,
-  isBidirectional,
   getLinesByStation,
-  findDirectLine,
   getStopsCount,
+  isBidirectional,
+  LINE_UUIDS,
+  lines,
 } from './lines';
 import { STATION_UUIDS } from './stations';
 

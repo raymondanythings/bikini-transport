@@ -1,13 +1,22 @@
 import type { components } from '@/generated/api-types';
-import { stations, getStationById } from '../data/stations';
-import { lines, getStopsCount, isBidirectional } from '../data/lines';
+import { getStationById, stations } from '../data/stations';
+import { getStopsCount, isBidirectional, lines } from '../data/lines';
 import { getDuration } from '../data/duration-map';
-import { calculateLegsWithTransferDiscount, calculateItineraryPricing } from './pricing';
-import { getNextDeparture, calculateWaitTime, addMinutesToTime } from './schedule-utils';
+import { saveItineraries } from '../storage';
+import { calculateItineraryPricing, calculateLegsWithTransferDiscount } from './pricing';
+import { addMinutesToTime, calculateWaitTime, getNextDeparture } from './schedule-utils';
 
 type Line = components['schemas']['Line'];
 type Leg = components['schemas']['Leg'];
+type LegSummary = components['schemas']['LegSummary'];
 type Itinerary = components['schemas']['Itinerary'];
+type ItineraryRecommendation = components['schemas']['ItineraryRecommendation'];
+
+interface SearchItinerariesResponse {
+  shortestTime: ItineraryRecommendation | null;
+  minTransfer: ItineraryRecommendation | null;
+  lowestFare: ItineraryRecommendation | null;
+}
 
 /**
  * 구간(Leg) 생성 헬퍼
@@ -266,20 +275,77 @@ export function createItinerary(
 }
 
 /**
+ * Leg를 LegSummary로 변환
+ */
+function convertToLegSummary(leg: Leg, line: Line): LegSummary {
+  return {
+    legId: leg.legId,
+    lineType: line.type,
+    lineName: leg.lineName,
+    lineColor: leg.lineColor,
+    fromStation: leg.fromStation,
+    toStation: leg.toStation,
+    durationMinutes: leg.durationMinutes,
+  };
+}
+
+/**
+ * Itinerary를 ItineraryRecommendation으로 변환
+ */
+function convertToRecommendation(
+  itinerary: Itinerary,
+  departureTime: Date,
+  linesMap: Map<string, Line>
+): ItineraryRecommendation {
+  const fromStation = itinerary.legs[0]?.fromStation;
+  const toStation = itinerary.legs[itinerary.legs.length - 1]?.toStation;
+
+  if (!fromStation || !toStation) {
+    throw new Error('Invalid itinerary: missing fromStation or toStation');
+  }
+
+  const legsSummary = itinerary.legs.map(leg => {
+    const line = linesMap.get(leg.lineId);
+    if (!line) {
+      throw new Error(`Line not found: ${leg.lineId}`);
+    }
+    return convertToLegSummary(leg, line);
+  });
+
+  return {
+    itineraryId: itinerary.itineraryId,
+    departureTime: departureTime.toISOString(),
+    fromStation,
+    toStation,
+    totalDurationMinutes: itinerary.totalDurationMinutes,
+    transferCount: itinerary.transferCount,
+    legs: legsSummary,
+  };
+}
+
+/**
  * 경로 검색 및 추천
  *
- * 최단시간, 최소환승, 최저요금 기준으로 최대 3개 추천
+ * 최단시간, 최소환승, 최저요금 기준으로 객체 형식으로 반환
  *
  * @param fromStationId - 출발 정류장 ID
  * @param toStationId - 도착 정류장 ID
  * @param departureTime - 출발 시각
  */
-export function searchItineraries(fromStationId: string, toStationId: string, departureTime: Date): Itinerary[] {
+export function searchItineraries(
+  fromStationId: string,
+  toStationId: string,
+  departureTime: Date
+): SearchItinerariesResponse {
   // 모든 경로 찾기
   const allPathsLegs = findAllPaths(fromStationId, toStationId);
 
   if (allPathsLegs.length === 0) {
-    return [];
+    return {
+      shortestTime: null,
+      minTransfer: null,
+      lowestFare: null,
+    };
   }
 
   // 노선 맵 생성
@@ -290,50 +356,25 @@ export function searchItineraries(fromStationId: string, toStationId: string, de
     createItinerary(`itinerary-${index}`, legs, linesMap, departureTime)
   );
 
-  // 추천 경로 선정
-  const recommendations: Itinerary[] = [];
-  const addedIds = new Set<string>();
+  // 생성된 모든 Itinerary를 저장 (쿠폰/예약 단계에서 참조)
+  saveItineraries(allItineraries);
 
   // 1. 최단시간 경로
-  const shortestTime = [...allItineraries].sort((a, b) => a.totalDurationMinutes - b.totalDurationMinutes)[0];
-  if (shortestTime && !addedIds.has(shortestTime.itineraryId)) {
-    shortestTime.recommendationTypes.push('SHORTEST_TIME');
-    recommendations.push(shortestTime);
-    addedIds.add(shortestTime.itineraryId);
-  }
+  const shortestTimeItinerary = [...allItineraries].sort(
+    (a, b) => a.totalDurationMinutes - b.totalDurationMinutes
+  )[0];
 
   // 2. 최소환승 경로
-  const minTransfer = [...allItineraries].sort((a, b) => a.transferCount - b.transferCount)[0];
-  if (minTransfer) {
-    if (addedIds.has(minTransfer.itineraryId)) {
-      // 이미 추가된 경로라면 타입만 추가
-      const existing = recommendations.find(r => r.itineraryId === minTransfer.itineraryId);
-      if (existing && !existing.recommendationTypes.includes('MIN_TRANSFER')) {
-        existing.recommendationTypes.push('MIN_TRANSFER');
-      }
-    } else {
-      minTransfer.recommendationTypes.push('MIN_TRANSFER');
-      recommendations.push(minTransfer);
-      addedIds.add(minTransfer.itineraryId);
-    }
-  }
+  const minTransferItinerary = [...allItineraries].sort((a, b) => a.transferCount - b.transferCount)[0];
 
   // 3. 최저요금 경로
-  const lowestFare = [...allItineraries].sort((a, b) => a.pricing.totalBeforeCoupon - b.pricing.totalBeforeCoupon)[0];
-  if (lowestFare) {
-    if (addedIds.has(lowestFare.itineraryId)) {
-      // 이미 추가된 경로라면 타입만 추가
-      const existing = recommendations.find(r => r.itineraryId === lowestFare.itineraryId);
-      if (existing && !existing.recommendationTypes.includes('LOWEST_FARE')) {
-        existing.recommendationTypes.push('LOWEST_FARE');
-      }
-    } else {
-      lowestFare.recommendationTypes.push('LOWEST_FARE');
-      recommendations.push(lowestFare);
-      addedIds.add(lowestFare.itineraryId);
-    }
-  }
+  const lowestFareItinerary = [...allItineraries].sort(
+    (a, b) => a.pricing.totalBeforeCoupon - b.pricing.totalBeforeCoupon
+  )[0];
 
-  // 최대 3개까지만 반환
-  return recommendations.slice(0, 3);
+  return {
+    shortestTime: shortestTimeItinerary ? convertToRecommendation(shortestTimeItinerary, departureTime, linesMap) : null,
+    minTransfer: minTransferItinerary ? convertToRecommendation(minTransferItinerary, departureTime, linesMap) : null,
+    lowestFare: lowestFareItinerary ? convertToRecommendation(lowestFareItinerary, departureTime, linesMap) : null,
+  };
 }

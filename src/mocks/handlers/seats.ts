@@ -1,5 +1,5 @@
-import { http, HttpResponse, delay } from 'msw';
-import { createSeatLayout, simulateRandomReservations } from '../data/seats';
+import { delay, HttpResponse, http } from 'msw';
+import { createSeatLayout } from '../data/seats';
 import { getReservedSeats } from '../storage';
 
 /**
@@ -11,13 +11,11 @@ export const seatHandlers = [
     await delay(200);
 
     const { legId } = params;
+
+    // getReservedSeats는 실제 예약 + 런타임 랜덤 예약 모두 반환
     const reserved = getReservedSeats(legId as string);
 
-    // 랜덤 예약 시뮬레이션 추가
-    const additionalReserved = simulateRandomReservations(3);
-    const allReserved = [...new Set([...reserved, ...additionalReserved])];
-
-    const seatLayout = createSeatLayout(legId as string, allReserved);
+    const seatLayout = createSeatLayout(legId as string, reserved);
 
     return HttpResponse.json(seatLayout);
   }),
