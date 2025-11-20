@@ -114,6 +114,7 @@ const SwapButton = ({ onClick }: { onClick?: () => void }) => {
           backgroundColor: 'background.neutral',
         },
       })}
+      data-testid="swap-button"
     >
       <SyncOutlined size={24} />
     </ark.button>

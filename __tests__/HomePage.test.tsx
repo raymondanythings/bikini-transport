@@ -5,242 +5,111 @@ import { HomePage } from '@/pages/HomePage';
 import { renderWith } from './render-with';
 
 describe('home', () => {
-  it('[테스트] 출발지를 누르면 정류장 리스트가 들어 있는 바텀싯이 올라온다', async () => {
+  it('출발지 바텀싯에서 정류장을 선택하면 출발지에 해당 정류장이 반영된다.', async () => {
     const user = userEvent.setup();
     renderWith(<HomePage />, { route: '/' });
 
+    const 출발Button = screen.getByRole('button', { name: /출발/i });
+    await user.click(출발Button);
+
+    // 바텀싯이 열릴 때까지 대기
     await waitFor(() => {
-      expect(screen.getByText('Departure')).toBeInTheDocument();
+      // 바텀싯의 텍스트가 나타나는지 확인
+      const stationSearchText = screen.queryByText('정류장 검색');
+      expect(stationSearchText).not.toBeNull();
+
+      // 검색 입력 필드가 나타나는지 확인
+      const searchInput = screen.queryByPlaceholderText('버스 정류장을 검색해주세요');
+      expect(searchInput).not.toBeNull();
     });
 
-    // 초기 상태에서 바텀싯이 닫혀있는지 확인
-    const allBottomSheets = screen.queryAllByTestId('bottom-sheet');
-    const stationSearchBottomSheet = allBottomSheets.find(sheet => sheet.textContent?.includes('정류장 검색'));
-    if (stationSearchBottomSheet) {
-      expect(stationSearchBottomSheet).toHaveAttribute('data-state', 'closed');
-    }
+    // 바텀싯 안의 정류장 선택
+    // 정류장 리스트가 렌더링될 때까지 기다림
+    const 메롱시티Text = await screen.findByText('메롱시티', {}, { timeout: 1000 });
 
-    const departureButton = screen.getByText('Departure').closest('button');
-    expect(departureButton).toBeInTheDocument();
+    // 버튼을 찾아서 클릭
+    const 메롱시티Button = 메롱시티Text.closest('button');
+    expect(메롱시티Button).not.toBeNull();
+    await user.click(메롱시티Button!);
 
-    await user.click(departureButton!);
-
-    // 버튼 클릭 후 바텀싯이 열리는지 확인
+    // 출발지 버튼이 업데이트될 때까지 기다림
     await waitFor(() => {
-      const allBottomSheets = screen.getAllByTestId('bottom-sheet');
-      const stationSearchBottomSheet = allBottomSheets.find(sheet => sheet.textContent?.includes('정류장 검색'));
-      expect(stationSearchBottomSheet).toBeInTheDocument();
-      expect(stationSearchBottomSheet).toHaveAttribute('data-state', 'open');
+      const departureButtonAfterSelect = screen.getByRole('button', { name: /출발/i });
+      expect(departureButtonAfterSelect.textContent).toContain('메롱시티');
     });
-
-    expect(screen.getByText('정류장 검색')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('버스 정류장을 검색해주세요')).toBeInTheDocument();
   });
 
-  it('[테스트] 도착지를 누르면 정류장 리스트가 들어 있는 바텀싯이 올라온다', async () => {
+  it('출발지와 도착지 스왑 버튼을 누르면 출발지와 도착지가 바뀐다.', async () => {
     const user = userEvent.setup();
     renderWith(<HomePage />, { route: '/' });
-
-    await waitFor(() => {
-      expect(screen.getByText('Arrival')).toBeInTheDocument();
-    });
-
-    // 초기 상태에서 바텀싯이 닫혀있는지 확인
-    const allBottomSheets = screen.queryAllByTestId('bottom-sheet');
-    const stationSearchBottomSheet = allBottomSheets.find(sheet => sheet.textContent?.includes('정류장 검색'));
-    if (stationSearchBottomSheet) {
-      expect(stationSearchBottomSheet).toHaveAttribute('data-state', 'closed');
-    }
-
-    const arrivalButton = screen.getByText('Arrival').closest('button');
-    expect(arrivalButton).toBeInTheDocument();
-
-    await user.click(arrivalButton!);
-
-    // 버튼 클릭 후 바텀싯이 열리는지 확인
-    await waitFor(() => {
-      const allBottomSheets = screen.getAllByTestId('bottom-sheet');
-      const stationSearchBottomSheet = allBottomSheets.find(sheet => sheet.textContent?.includes('정류장 검색'));
-      expect(stationSearchBottomSheet).toBeInTheDocument();
-      expect(stationSearchBottomSheet).toHaveAttribute('data-state', 'open');
-    });
-
-    expect(screen.getByText('정류장 검색')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('버스 정류장을 검색해주세요')).toBeInTheDocument();
-  });
-
-  it('[테스트] 텍스트필드에 입력한 정류장 리스트만 필터링되어야 한다', async () => {
-    const user = userEvent.setup();
-    renderWith(<HomePage />, { route: '/' });
-
-    const departureButton = screen.getByText('Departure').closest('button');
-    await user.click(departureButton!);
-
-    // 초기 상태에서 모든 정류장이 표시되는지 확인
-    // -------------------- TODO: 서버에서 정류장 받아오기 --------------------
-    expect(screen.getByText('버스 정류장 이름1')).toBeInTheDocument();
-    expect(screen.getByText('버스 정류장 이름2')).toBeInTheDocument();
-    expect(screen.getByText('버스 정류장 이름3')).toBeInTheDocument();
-    expect(screen.getByText('버스 정류장 이름4')).toBeInTheDocument();
-    expect(screen.getByText('버스 정류장 이름5')).toBeInTheDocument();
-
-    // 검색어 입력
-    const searchInput = screen.getByPlaceholderText('버스 정류장을 검색해주세요');
-    await user.type(searchInput, '이름1');
-
-    // 필터링된 결과만 표시되는지 확인
-    await waitFor(() => {
-      expect(screen.getByText('버스 정류장 이름1')).toBeInTheDocument();
-    });
-    expect(screen.queryByText('버스 정류장 이름2')).not.toBeInTheDocument();
-    expect(screen.queryByText('버스 정류장 이름3')).not.toBeInTheDocument();
-    expect(screen.queryByText('버스 정류장 이름4')).not.toBeInTheDocument();
-    expect(screen.queryByText('버스 정류장 이름5')).not.toBeInTheDocument();
-
-    // 검색어 변경
-    await user.clear(searchInput);
-    await user.type(searchInput, '이름2');
-
-    // 모든 정류장이 다시 표시되는지 확인
-    await waitFor(() => {
-      expect(screen.getByText('버스 정류장 이름2')).toBeInTheDocument();
-    });
-    expect(screen.queryByText('버스 정류장 이름1')).not.toBeInTheDocument();
-    expect(screen.queryByText('버스 정류장 이름3')).not.toBeInTheDocument();
-    expect(screen.queryByText('버스 정류장 이름4')).not.toBeInTheDocument();
-    expect(screen.queryByText('버스 정류장 이름5')).not.toBeInTheDocument();
-    // -------------------- TODO: 서버에서 정류장 받아오기 --------------------
-  });
-
-  it('[테스트] 출발지와 도착지를 올바르게 표시한다', async () => {
-    const user = userEvent.setup();
-    renderWith(<HomePage />, { route: '/' });
-
-    const departureButton = screen.getByText('Departure').closest('button');
-    await user.click(departureButton!);
-
-    // 정류장 선택
-    const allStations = screen.getAllByText('버스 정류장 이름1');
-    const stationInBottomSheet = allStations.find(station => {
-      const bottomSheet = station.closest('[data-testid="bottom-sheet"]');
-      return bottomSheet?.getAttribute('data-state') === 'open';
-    });
-    expect(stationInBottomSheet).toBeInTheDocument();
-    await user.click(stationInBottomSheet!);
-
-    // 바텀싯이 닫히고 출발지 영역에 선택한 정류장이 표시되는지 확인
-    await waitFor(() => {
-      const allBottomSheets = screen.queryAllByTestId('bottom-sheet');
-      const stationSearchBottomSheet = allBottomSheets.find(sheet => sheet.textContent?.includes('정류장 검색'));
-      if (stationSearchBottomSheet) {
-        expect(stationSearchBottomSheet).toHaveAttribute('data-state', 'closed');
-      }
-    });
-
-    const departureButtonAfterSelect = screen.getByText('Departure').closest('button');
-    expect(departureButtonAfterSelect?.textContent).toContain('버스 정류장 이름1');
-    expect(screen.getByText('BIKINI BOTTOM')).toBeInTheDocument(); // 도착지는 변경되지 않음
-
-    // 도착지 버튼 클릭
-    const arrivalButton = screen.getByText('Arrival').closest('button');
-    await user.click(arrivalButton!);
-
-    // 바텀싯이 열리는지 확인
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText('버스 정류장을 검색해주세요')).toBeInTheDocument();
-    });
-
-    // 정류장 선택
-    const allStations2 = screen.getAllByText('버스 정류장 이름2');
-    const stationInBottomSheet2 = allStations2.find(station => {
-      const bottomSheet = station.closest('[data-testid="bottom-sheet"]');
-      return bottomSheet?.getAttribute('data-state') === 'open';
-    });
-    expect(stationInBottomSheet2).toBeInTheDocument();
-    await user.click(stationInBottomSheet2!);
-
-    // 바텀싯이 닫히고 도착지 영역에 선택한 정류장이 표시되는지 확인
-    await waitFor(() => {
-      const allBottomSheets = screen.queryAllByTestId('bottom-sheet');
-      const stationSearchBottomSheet = allBottomSheets.find(sheet => sheet.textContent?.includes('정류장 검색'));
-      if (stationSearchBottomSheet) {
-        expect(stationSearchBottomSheet).toHaveAttribute('data-state', 'closed');
-      }
-    });
-
-    const arrivalButtonAfterSelect = screen.getByText('Arrival').closest('button');
-    expect(arrivalButtonAfterSelect?.textContent).toContain('버스 정류장 이름2');
-
-    // 출발지는 변경되지 않았는지 확인 (출발지 버튼 내부의 텍스트 확인)
-    expect(departureButtonAfterSelect?.textContent).toContain('버스 정류장 이름1');
-  });
-
-  it('[테스트] 출발지와 도착지 스왑 버튼을 누르면 출발지와 도착지가 바뀐다', async () => {
-    const user = userEvent.setup();
-    renderWith(<HomePage />, { route: '/' });
-
-    // 초기 상태 확인
-    expect(screen.getByText('JINGJING BILA')).toBeInTheDocument();
-    expect(screen.getByText('BIKINI BOTTOM')).toBeInTheDocument();
 
     // 스왑 전 상태 확인
-    const departureButtonBeforeSwap = screen.getByText('Departure').closest('button');
-    const arrivalButtonBeforeSwap = screen.getByText('Arrival').closest('button');
-    expect(departureButtonBeforeSwap?.textContent).toContain('JINGJING BILA');
-    expect(arrivalButtonBeforeSwap?.textContent).toContain('BIKINI BOTTOM');
+    const departureButtonBeforeSwap = screen.getByRole('button', { name: /출발/i });
+    const arrivalButtonBeforeSwap = screen.getByRole('button', { name: /도착/i });
+    expect(departureButtonBeforeSwap.textContent).toContain('비키니시티');
+    expect(arrivalButtonBeforeSwap.textContent).toContain('구-라군');
 
-    // 스왑 버튼 클릭
-    const swapButton = screen.getByLabelText('출발지와 도착지 바꾸기');
+    // 스왑 버튼 찾기
+    const swapButton = screen.getByTestId('swap-button');
     await user.click(swapButton);
 
     // 스왑 후 상태 확인
     await waitFor(() => {
-      const departureButtonAfterSwap = screen.getByText('Departure').closest('button');
-      const arrivalButtonAfterSwap = screen.getByText('Arrival').closest('button');
-      expect(departureButtonAfterSwap?.textContent).toContain('BIKINI BOTTOM');
-      expect(arrivalButtonAfterSwap?.textContent).toContain('JINGJING BILA');
+      const departureButtonAfterSwap = screen.getByRole('button', { name: /출발/i });
+      const arrivalButtonAfterSwap = screen.getByRole('button', { name: /도착/i });
+      expect(departureButtonAfterSwap.textContent).toContain('구-라군');
+      expect(arrivalButtonAfterSwap.textContent).toContain('비키니시티');
     });
   });
 
-  it('[테스트] 달력 아이콘을 클릭하면 DateTimePicker가 열린다', async () => {
+  it('DateTimePicker에서 날짜를 선택하면 선택한 날짜가 화면에 표시된다', async () => {
     const user = userEvent.setup();
     renderWith(<HomePage />, { route: '/' });
 
-    await waitFor(() => {
-      expect(screen.getByText('DATE')).toBeInTheDocument();
-    });
-
-    // 달력 아이콘 찾기
-    const calendarIcon = screen.getByTestId('calendar-outlined');
-    expect(calendarIcon).toBeInTheDocument();
-
-    // 달력 아이콘을 포함한 버튼 찾기
-    const dateButton = calendarIcon.closest('button');
-    expect(dateButton).toBeInTheDocument();
-
+    // 날짜 버튼 클릭
+    const 가는날Text = screen.getByText('가는날');
+    const dateButton = 가는날Text.closest('button');
+    expect(dateButton).not.toBeNull();
     await user.click(dateButton!);
 
-    // DateTimePicker가 렌더링되는지 확인
+    // DateTimePicker 바텀싯이 열릴 때까지 대기
     await waitFor(() => {
-      expect(screen.getByText('오늘')).toBeInTheDocument();
-      expect(screen.getByText('오전')).toBeInTheDocument();
-      expect(screen.getByText('오후')).toBeInTheDocument();
-    });
-  });
-
-  it('[테스트] DateTimePicker에서 날짜를 선택하면 선택한 날짜가 화면에 표시된다', async () => {
-    const user = userEvent.setup();
-    renderWith(<HomePage />, { route: '/' });
-
-    await waitFor(() => {
-      expect(screen.getByText('DATE')).toBeInTheDocument();
+      const headerText = screen.queryByText('출발 시간 설정');
+      expect(headerText).not.toBeNull();
     });
 
-    // 달력 아이콘 클릭
-    await user.click(dateButton!);
+    // 오늘 9:23 PM 선택하기
+    // 오후 선택
+    const 오후Elements = screen.getAllByText('오후');
+    const 오후Item = 오후Elements[0];
+    await user.click(오후Item);
 
-    // DateTimePicker가 열려있는 동안 날짜가 표시되는지 확인
-    const dateDisplayText = dateButton?.textContent;
-    expect(dateDisplayText).toMatch(/\w+ \d+ \d{2}:\d{2} (AM|PM)/);
+    // 9시 선택
+    await waitFor(() => {
+      const hour9Elements = screen.getAllByText('9');
+      expect(hour9Elements.length).toBeGreaterThan(0);
+    });
+    const hour9Elements = screen.getAllByText('9');
+    const hour9Item = hour9Elements[0];
+    await user.click(hour9Item);
+
+    // 23분 선택
+    await waitFor(() => {
+      const minute23Elements = screen.getAllByText('23');
+      expect(minute23Elements.length).toBeGreaterThan(0);
+    });
+    const minute23Elements = screen.getAllByText('23');
+    const minute23Item = minute23Elements[0];
+    await user.click(minute23Item);
+
+    // 확인 버튼 클릭
+    const confirmButton = screen.getByRole('button', { name: /확인/i });
+    await user.click(confirmButton);
+
+    // 날짜 버튼이 업데이트되었는지 확인 (오늘 09:23 PM)
+    await waitFor(() => {
+      const updatedDateButton = screen.getByRole('button', { name: /가는날/i });
+      expect(updatedDateButton.textContent).toContain('09:23 PM');
+    });
   });
 });

@@ -51,6 +51,7 @@ export const SeatButton = ({ size, status, seatNumber, onClick }: SeatButtonProp
       border="none"
       background="transparent"
       padding={0}
+      data-status={status}
     >
       <SeatIcon size={size} status={status} />
       {seatNumber !== undefined && (

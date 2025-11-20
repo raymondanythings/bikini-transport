@@ -1,4 +1,5 @@
 import { type RenderOptions, render } from '@testing-library/react';
+import { OverlayProvider } from 'overlay-kit';
 import type { ReactElement, ReactNode } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
@@ -33,7 +34,11 @@ function PageWrapper({ children, route = '/' }: { children: ReactNode; route?: s
     }
   );
 
-  return <RouterProvider router={router} />;
+  return (
+    <OverlayProvider>
+      <RouterProvider router={router} />
+    </OverlayProvider>
+  );
 }
 
 export function renderWith(ui: ReactElement, options: CustomRenderOptions = {}) {
