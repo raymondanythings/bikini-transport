@@ -5,15 +5,21 @@ import { Typography } from '@/ui-lib/components/Typography';
 
 type BusLineType = 'tour' | 'city' | 'suburb';
 
-export function RouteDetail({ children, ...props }: BoxProps) {
+const RouteDetailRoot = ({ children, ...props }: Omit<BoxProps, 'display' | 'gridTemplateColumns' | 'columnGap'>) => {
   return (
     <Box display="grid" gridTemplateColumns="auto 1fr" columnGap="3" {...props}>
       {children}
     </Box>
   );
-}
+};
 
-interface StationProps {
+const RouteDetailStation = ({
+  line,
+  stationName,
+  travelTime,
+  stopsCount,
+  waitingTime,
+}: {
   line: {
     name: string;
     type: BusLineType;
@@ -22,9 +28,7 @@ interface StationProps {
   travelTime: string;
   stopsCount: string;
   waitingTime?: string;
-}
-
-const Station = ({ line, stationName, travelTime, stopsCount, waitingTime }: StationProps) => {
+}) => {
   return (
     <>
       <Flex direction="column" alignItems="center">
@@ -54,12 +58,7 @@ const Station = ({ line, stationName, travelTime, stopsCount, waitingTime }: Sta
   );
 };
 
-interface ArrivalStationProps {
-  stationName: string;
-  lineType: BusLineType;
-}
-
-const ArrivalStation = ({ stationName, lineType }: ArrivalStationProps) => {
+const RouteDetailArrivalStation = ({ stationName, lineType }: { stationName: string; lineType: BusLineType }) => {
   return (
     <>
       <Flex direction="column" alignItems="center">
@@ -84,5 +83,8 @@ const ArrivalStation = ({ stationName, lineType }: ArrivalStationProps) => {
   );
 };
 
-RouteDetail.Station = Station;
-RouteDetail.ArrivalStation = ArrivalStation;
+export const RouteDetail = {
+  Root: RouteDetailRoot,
+  Station: RouteDetailStation,
+  ArrivalStation: RouteDetailArrivalStation,
+};

@@ -1,13 +1,24 @@
+import { overlay } from 'overlay-kit';
 import { HStack, VStack } from 'styled-system/jsx';
 import { BottomSheet } from '@/ui-lib/components/BottomSheet';
 import { Button } from '@/ui-lib/components/Button';
 import { ExclamationCircleFilled } from '@/ui-lib/components/Icon';
 import { Typography } from '@/ui-lib/components/Typography';
 
-export const PaymentCancelBottomSheet = () => {
+interface PaymentCancelBottomSheetProps {
+  isOpen: boolean;
+  close: () => void;
+}
+
+export const openPaymentCancelBottomSheet = () => {
+  return overlay.open(({ isOpen, close }) => <PaymentCancelBottomSheet isOpen={isOpen} close={close} />);
+};
+
+export const PaymentCancelBottomSheet = ({ isOpen, close }: PaymentCancelBottomSheetProps) => {
   return (
     <BottomSheet
-      open={false}
+      open={isOpen}
+      onDimmerClick={close}
       header={
         <VStack gap={3} pt={5}>
           <ExclamationCircleFilled />

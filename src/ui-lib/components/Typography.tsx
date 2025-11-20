@@ -90,23 +90,23 @@ export type TypographyProps = Omit<HTMLStyledProps<'p'>, 'as'> &
 /**
  * Extract variant prefix (e.g., "H1_Bold" → "H1")
  */
-function getVariantPrefix(variant?: string): string {
+const getVariantPrefix = (variant?: string): string => {
   if (!variant) return 'B1';
   const prefix = variant.split('_')[0];
   return prefix || 'B1';
-}
+};
 
 /**
  * Determine the HTML tag to use based on variant and as prop
  */
-function resolveTag(variant?: string, as?: TypographyTag): TypographyTag {
+const resolveTag = (variant?: string, as?: TypographyTag): TypographyTag => {
   // Explicit 'as' prop takes priority
   if (as) return as;
 
   // Otherwise, infer from variant prefix
   const prefix = getVariantPrefix(variant);
   return VARIANT_TO_TAG_MAP[prefix] || 'p';
-}
+};
 
 export const Typography = forwardRef<HTMLElement, TypographyProps>((props, ref) => {
   const { variant, as, children, ...rest } = props;

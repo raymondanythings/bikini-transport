@@ -1,5 +1,4 @@
 import { ark } from '@ark-ui/react';
-import { type ButtonHTMLAttributes, forwardRef } from 'react';
 import { css } from 'styled-system/css';
 import { Box, HStack, VStack } from 'styled-system/jsx';
 import { CalendarOutlined, SyncOutlined } from '@/ui-lib/components/Icon';
@@ -7,9 +6,9 @@ import { Typography } from '@/ui-lib/components/Typography';
 import { openDepartureTimeBottomSheet } from './DepartureTimeBottomSheet';
 import { openStationBottomSheet } from './StationBottomSheet';
 
-export function RouteSearchSection() {
+export const RouteSearchSection = () => {
   return (
-    <Box pb={3} borderRadius="xl" backgroundColor="background.normal" position="relative">
+    <Box as="section" pb={3} borderRadius="xl" backgroundColor="background.normal" position="relative">
       <SpongeBobImage />
       <Box pt={7} pb={4} px={5}>
         <HStack gap={4} justify="center" alignItems="center" flexDirection={{ base: 'column', xs: 'row' }}>
@@ -28,34 +27,46 @@ export function RouteSearchSection() {
       </Box>
     </Box>
   );
-}
+};
 
-interface ButtonFieldProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+const StationButton = ({
+  label,
+  value,
+  placeholder,
+  onClick,
+}: {
   label: string;
   value?: string;
   placeholder?: string;
-}
-
-const StationButton = forwardRef<HTMLButtonElement, ButtonFieldProps>(
-  ({ label, value, placeholder, ...props }, ref) => {
-    return (
-      <ark.button ref={ref} className={css({ w: 'full', cursor: 'pointer' })} {...props}>
-        <VStack gap={1} w="full" alignItems="center">
-          <Typography variant="B2_Medium" color="label.neutral">
-            {label}
-          </Typography>
-          <Typography variant="H1_Bold" color={value ? 'label.normal' : 'label.disable'} textAlign="center">
-            {value || placeholder}
-          </Typography>
-        </VStack>
-      </ark.button>
-    );
-  }
-);
-
-const DateButton = forwardRef<HTMLButtonElement, ButtonFieldProps>(({ label, value, placeholder, ...props }, ref) => {
+  onClick?: () => void;
+}) => {
   return (
-    <ark.button ref={ref} className={css({ w: 'full', cursor: 'pointer' })} {...props}>
+    <ark.button className={css({ w: 'full', cursor: 'pointer' })} onClick={onClick}>
+      <VStack gap={1} w="full" alignItems="center">
+        <Typography variant="B2_Medium" color="label.neutral">
+          {label}
+        </Typography>
+        <Typography variant="H1_Bold" color={value ? 'label.normal' : 'label.disable'} textAlign="center">
+          {value || placeholder}
+        </Typography>
+      </VStack>
+    </ark.button>
+  );
+};
+
+const DateButton = ({
+  label,
+  value,
+  placeholder,
+  onClick,
+}: {
+  label: string;
+  value?: string;
+  placeholder?: string;
+  onClick?: () => void;
+}) => {
+  return (
+    <ark.button className={css({ w: 'full', cursor: 'pointer' })} onClick={onClick}>
       <HStack
         gap={4}
         px={5}
@@ -78,12 +89,12 @@ const DateButton = forwardRef<HTMLButtonElement, ButtonFieldProps>(({ label, val
       </HStack>
     </ark.button>
   );
-});
+};
 
-const SwapButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>((props, ref) => {
+const SwapButton = ({ onClick }: { onClick?: () => void }) => {
   return (
     <ark.button
-      ref={ref}
+      onClick={onClick}
       className={css({
         display: 'flex',
         alignItems: 'center',
@@ -103,12 +114,11 @@ const SwapButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButton
           backgroundColor: 'background.neutral',
         },
       })}
-      {...props}
     >
       <SyncOutlined size={24} />
     </ark.button>
   );
-});
+};
 
 const SpongeBobImage = () => (
   <ark.img

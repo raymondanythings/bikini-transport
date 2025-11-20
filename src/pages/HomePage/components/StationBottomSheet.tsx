@@ -70,12 +70,7 @@ export const StationBottomSheet = ({ isOpen, close }: StationBottomSheetProps) =
   );
 };
 
-interface StationListItemProps {
-  name: string;
-  onClick?: () => void;
-}
-
-const StationListItem = ({ name, onClick }: StationListItemProps) => {
+const StationListItem = ({ name, onClick }: { name: string; onClick?: () => void }) => {
   return (
     <Box as="li">
       <ark.button

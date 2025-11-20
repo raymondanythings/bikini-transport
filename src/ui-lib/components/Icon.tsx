@@ -46,9 +46,9 @@ export const RightOutlined = ({ size = 24, color = 'static.lightGray' }: IconPro
     <path
       d="M7.99976 20.0005L15.9998 12.0005L7.99976 4.00049"
       stroke="currentColor"
-      stroke-width="3"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

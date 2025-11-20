@@ -18,6 +18,7 @@ export const PaymentSuccessPage = () => {
           </ark.button>
         </Header.Right>
       </Header>
+
       <Box flex="1" overflowY="auto" py="25vh">
         <Flex direction="column" alignItems="center" gap="20px">
           <SuccessCircleFilled />
@@ -26,6 +27,7 @@ export const PaymentSuccessPage = () => {
           </Typography>
         </Flex>
       </Box>
+
       <Box px={5} py={4} flexShrink={0}>
         <Button fullWidth>확인</Button>
       </Box>

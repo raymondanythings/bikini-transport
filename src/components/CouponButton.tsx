@@ -1,5 +1,4 @@
 import { ark } from '@ark-ui/react';
-import { forwardRef } from 'react';
 import { css } from 'styled-system/css';
 import { HStack } from 'styled-system/jsx';
 import { RightOutlined } from '@/ui-lib/components/Icon';
@@ -8,11 +7,9 @@ import { Typography } from '@/ui-lib/components/Typography';
 interface CouponButtonProps {
   onClick?: () => void;
 }
-
-export const CouponButton = forwardRef<HTMLButtonElement, CouponButtonProps>(({ onClick, ...props }, ref) => {
+export const CouponButton = ({ onClick }: CouponButtonProps) => {
   return (
     <ark.button
-      ref={ref}
       onClick={onClick}
       className={css({
         w: 'full',
@@ -30,7 +27,6 @@ export const CouponButton = forwardRef<HTMLButtonElement, CouponButtonProps>(({ 
           transform: 'scale(0.99)',
         },
       })}
-      {...props}
     >
       <HStack gap={4} alignItems="center">
         <ark.img
@@ -47,6 +43,4 @@ export const CouponButton = forwardRef<HTMLButtonElement, CouponButtonProps>(({ 
       </HStack>
     </ark.button>
   );
-});
-
-CouponButton.displayName = 'CouponButton';
+};
