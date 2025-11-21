@@ -40,18 +40,18 @@ export const PaymentConfirmBottomSheet = ({ isOpen, close }: PaymentConfirmBotto
           gap={4}
           columnGap={2}
         >
-          <Row label="노선" value="비키니항구 → 구-라군" />
-          <Row label="출발 일시" value="2025년 00월 00일 (수) 00:00" />
-          <Row label="소요 시간" value="총 00시간 00분" />
-          <Row label="환승 횟수" value="3회" />
-          <Row label="결제 금액" value="0,000원" />
+          <DetailItem label="노선" value="비키니항구 → 구-라군" />
+          <DetailItem label="출발 일시" value="2025년 00월 00일 (수) 00:00" />
+          <DetailItem label="소요 시간" value="총 00시간 00분" />
+          <DetailItem label="환승 횟수" value="3회" />
+          <DetailItem label="결제 금액" value="0,000원" />
         </Grid>
       </Box>
     </BottomSheet>
   );
 };
 
-const Row = ({ label, value }: { label: string; value: string }) => {
+const DetailItem = ({ label, value }: { label: string; value: string }) => {
   return (
     <>
       <Typography variant="B1_Bold" color="static.black">

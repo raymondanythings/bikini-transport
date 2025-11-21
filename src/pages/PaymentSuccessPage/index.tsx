@@ -3,7 +3,7 @@ import { Box, Flex } from 'styled-system/jsx';
 import { Header } from '@/layout/Header';
 import { Button } from '@/ui-lib/components/Button';
 import { CloseOutlined, SuccessCircleFilled } from '@/ui-lib/components/Icon';
-import { Typography } from '../../ui-lib/components/Typography';
+import { Typography } from '@/ui-lib/components/Typography';
 
 export const PaymentSuccessPage = () => {
   return (

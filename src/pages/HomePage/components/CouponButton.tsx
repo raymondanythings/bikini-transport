@@ -1,7 +1,7 @@
 import { ark } from '@ark-ui/react';
 import { css } from 'styled-system/css';
 import { HStack } from 'styled-system/jsx';
-import { RightOutlined } from '@/ui-lib/components/Icon';
+import { CheckCircleFilled, RightOutlined } from '@/ui-lib/components/Icon';
 import { Typography } from '@/ui-lib/components/Typography';
 
 interface CouponButtonProps {
@@ -36,11 +36,32 @@ export const CouponButton = ({ onClick }: CouponButtonProps) => {
             width: 'auto',
           })}
         />
-        <Typography variant="C1_Bold" color="static.bold" flex={1} textAlign="left">
-          랜덤 쿠폰 등장!
-        </Typography>
-        <RightOutlined />
+        <CouponAvailable />
       </HStack>
     </ark.button>
+  );
+};
+
+// 쿠폰을 발급받기 전이라면 아래 컴포넌트를 보여주세요
+const CouponAvailable = () => {
+  return (
+    <>
+      <Typography variant="C1_Bold" color="static.bold" flex={1} textAlign="left">
+        랜덤 쿠폰 등장!
+      </Typography>
+      <RightOutlined />
+    </>
+  );
+};
+
+// 쿠폰을 정상적으로 발급 받았다면 아래 컴포넌트를 보여주세요
+const CouponReceived = () => {
+  return (
+    <>
+      <Typography variant="C1_Bold" color="static.bold" flex={1} textAlign="left">
+        진주패스를 받았어요!
+      </Typography>
+      <CheckCircleFilled size={32} />
+    </>
   );
 };

@@ -2,6 +2,7 @@ import { ark } from '@ark-ui/react';
 import { css } from 'styled-system/css';
 import { Box, Flex } from 'styled-system/jsx';
 import { Header } from '@/layout/Header';
+import { CouponButton } from '@/pages/HomePage/components/CouponButton';
 import { Button } from '@/ui-lib/components/Button';
 import { openRouteOptionsBottomSheet } from './components/RouteOptionsBottomSheet';
 import { RouteSearchSection } from './components/RouteSearchSection';
@@ -16,9 +17,15 @@ export const HomePage = () => {
         </Header.Left>
       </Header>
 
-      <Box flex="1" overflowY="auto" px={5} pb={5} pt="45%" zIndex={1}>
-        <RouteSearchSection />
-      </Box>
+      <Flex direction="column" flex="1" overflowY="auto" pb="6" zIndex={1}>
+        <Box flex="1" px={5} pb={5} pt="45%">
+          <RouteSearchSection />
+        </Box>
+
+        <Box px="2.5" hidden={false}>
+          <CouponButton />
+        </Box>
+      </Flex>
 
       <Box px={5} py={4} flexShrink={0} backgroundColor="background.normal" zIndex={1}>
         <Button fullWidth onClick={openRouteOptionsBottomSheet}>

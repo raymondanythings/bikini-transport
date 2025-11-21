@@ -106,6 +106,7 @@ const AddCouponButton = () => {
   );
 };
 
+// 쿠폰을 선택했을 경우, 아래 컴포넌트를 보여주세요
 const AppliedCouponButton = () => {
   return (
     <Button color="secondary" size="small" icon={<CloseOutlined size={16} />} iconPosition="end">

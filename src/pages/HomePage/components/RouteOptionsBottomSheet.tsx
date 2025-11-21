@@ -157,6 +157,7 @@ export const RouteOptionsBottomSheet = ({ isOpen, close }: RouteOptionsBottomShe
   );
 };
 
+// 예약 가능한 버스표가 없을 경우, 아래 컴포넌트를 보여주세요
 const TicketSoldOut = () => {
   return (
     <VStack gap="3" p="5" height="540px" justifyContent="center">

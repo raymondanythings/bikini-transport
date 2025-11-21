@@ -3,8 +3,6 @@ import { forwardRef } from 'react';
 import { cva, type RecipeVariantProps } from 'styled-system/css';
 import { type HTMLStyledProps, styled } from 'styled-system/jsx';
 
-type ButtonVariantProps = RecipeVariantProps<typeof buttonRecipe>;
-
 const buttonRecipe = cva({
   base: {
     display: 'inline-flex',
@@ -129,6 +127,80 @@ const buttonRecipe = cva({
   },
 });
 
+type ButtonVariantProps = RecipeVariantProps<typeof buttonRecipe>;
+type BaseButtonProps = ButtonVariantProps & {
+  /**
+   * 버튼의 로딩 상태
+   */
+  loading?: boolean;
+  /**
+   * 버튼과 함께 표시할 아이콘
+   */
+  icon?: React.ReactNode;
+  /**
+   * 아이콘의 위치
+   */
+  iconPosition?: 'start' | 'end';
+};
+
+type ButtonProps = {
+  ref?: React.Ref<HTMLButtonElement>;
+} & BaseButtonProps &
+  HTMLStyledProps<'button'>;
+
+const ButtonComponent = styled(ark.button, buttonRecipe);
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+  const {
+    children,
+    color = 'primary',
+    size = 'large',
+    fullWidth = false,
+    loading = false,
+    icon,
+    iconPosition = 'start',
+    disabled,
+    ...rest
+  } = props;
+
+  return (
+    <ButtonComponent
+      ref={ref}
+      color={color}
+      size={size}
+      fullWidth={fullWidth}
+      loading={loading}
+      disabled={disabled}
+      {...rest}
+    >
+      {loading && (
+        <styled.span pos="absolute" display="flex" alignItems="center" justifyContent="center">
+          <LoadingSpinner
+            size={(() => {
+              switch (size) {
+                case 'small':
+                  return 12;
+                case 'medium':
+                  return 16;
+                case 'large':
+                default:
+                  return 24;
+              }
+            })()}
+          />
+        </styled.span>
+      )}
+      <styled.span visibility={loading ? 'hidden' : 'visible'} display="flex" alignItems="center" gap="inherit">
+        {iconPosition === 'start' && icon}
+        {children}
+        {iconPosition === 'end' && icon}
+      </styled.span>
+    </ButtonComponent>
+  );
+});
+
+Button.displayName = 'Button';
+
 const LoadingSpinner = ({ size = 16 }: { size?: number }) => (
   <svg
     width={size}
@@ -165,71 +237,3 @@ const LoadingSpinner = ({ size = 16 }: { size?: number }) => (
     <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
   </svg>
 );
-
-type BaseButtonProps = ButtonVariantProps & {
-  /**
-   * 버튼의 로딩 상태
-   */
-  loading?: boolean;
-  /**
-   * 버튼과 함께 표시할 아이콘
-   */
-  icon?: React.ReactNode;
-  /**
-   * 아이콘의 위치
-   */
-  iconPosition?: 'start' | 'end';
-};
-
-type ButtonProps = {
-  // 기존 props
-  ref?: React.Ref<HTMLButtonElement>;
-} & BaseButtonProps &
-  HTMLStyledProps<'button'>;
-
-const ButtonComponent = styled(ark.button, buttonRecipe);
-
-const SPINNER_SIZE = {
-  small: 12,
-  medium: 16,
-  large: 24,
-} as const;
-
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-  const {
-    children,
-    color = 'primary',
-    size = 'large',
-    fullWidth = false,
-    loading = false,
-    icon,
-    iconPosition = 'start',
-    disabled,
-    ...rest
-  } = props;
-
-  return (
-    <ButtonComponent
-      ref={ref}
-      color={color}
-      size={size}
-      fullWidth={fullWidth}
-      loading={loading}
-      disabled={disabled}
-      {...rest}
-    >
-      {loading && (
-        <styled.span pos="absolute" display="flex" alignItems="center" justifyContent="center">
-          <LoadingSpinner size={SPINNER_SIZE[size]} />
-        </styled.span>
-      )}
-      <styled.span visibility={loading ? 'hidden' : 'visible'} display="flex" alignItems="center" gap="inherit">
-        {iconPosition === 'start' && icon}
-        {children}
-        {iconPosition === 'end' && icon}
-      </styled.span>
-    </ButtonComponent>
-  );
-});
-
-Button.displayName = 'Button';
