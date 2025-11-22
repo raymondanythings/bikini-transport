@@ -3,6 +3,8 @@ import { overlay } from 'overlay-kit';
 import { Box, VStack } from 'styled-system/jsx';
 import { BottomSheet } from '@/ui-lib/components/BottomSheet';
 import { Button } from '@/ui-lib/components/Button';
+import { ExclamationCircleFilled } from '@/ui-lib/components/Icon';
+import { Typography } from '@/ui-lib/components/Typography';
 import { CouponRadioItem } from './CouponRadioItem';
 
 interface CouponBottomSheetProps {
@@ -58,5 +60,20 @@ export const CouponBottomSheet = ({ isOpen, close }: CouponBottomSheetProps) => 
         </RadioGroup.Root>
       </Box>
     </BottomSheet>
+  );
+};
+
+// 보유한 쿠폰이 없을 경우, 아래 컴포넌트를 보여주세요
+const NoCoupon = () => {
+  return (
+    <VStack gap="3" p="5" height="540px" justifyContent="center">
+      <ExclamationCircleFilled />
+      <Typography variant="H2_Bold" color="label.normal">
+        보유한 쿠폰이 없어요
+      </Typography>
+      <Typography variant="B1_Medium" color="label.alternative">
+        쿠폰은 메인 페이지에서 랜덤으로 획득할 수 있어요
+      </Typography>
+    </VStack>
   );
 };
