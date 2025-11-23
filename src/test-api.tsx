@@ -1089,10 +1089,13 @@ export function TestApiPage() {
               background: '#f3e5f5',
             }}
           >
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>{randomCoupon.emoji}</div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>{randomCoupon.name}</div>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>{randomCoupon.description}</div>
-            <div style={{ fontSize: '12px', color: '#999' }}>최대 보유: {randomCoupon.maxOwnedCount}개</div>
+            <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '4px' }}>{randomCoupon.name}</div>
+            <div style={{ fontSize: '14px', color: '#7B1FA2', marginBottom: '8px' }}>{randomCoupon.discountLabel}</div>
+            <ul style={{ margin: 0, paddingLeft: '20px', color: '#666', fontSize: '14px' }}>
+              {randomCoupon.description.map(line => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
           </div>
         )}
 
@@ -1110,7 +1113,7 @@ export function TestApiPage() {
             <ul>
               {myCoupons.map(coupon => (
                 <li key={coupon.couponCode}>
-                  {coupon.emoji} {coupon.name} ({coupon.couponCode}) - {coupon.ownedCount}개 보유
+                  {coupon.name} ({coupon.couponCode}) - {coupon.discountLabel} · {coupon.ownedCount}개 보유
                 </li>
               ))}
             </ul>

@@ -1,30 +1,36 @@
-import { http, HttpResponse, delay } from 'msw';
+import { delay, HttpResponse, http } from 'msw';
 import { lines } from '../data/lines';
+import { getItineraryById, getRealCouponCode } from '../storage';
 import { searchItineraries } from '../utils/pathfinding';
 import { calculateFinalBookingPrice } from '../utils/pricing';
-import { getMyCoupons, saveItineraries, getItineraryById } from '../storage';
-import { getCouponDefinition } from '../data/coupons';
 
 /**
- * POST /api/itineraries/search
+ * GET /api/itineraries/search
  * 경로 검색
  */
-const searchItineraryHandler = http.post('/api/itineraries/search', async ({ request }: { request: Request }) => {
+const searchItineraryHandler = http.get('/api/itineraries/search', async ({ request }: { request: Request }) => {
   await delay(300); // 경로 검색은 좀 더 시간이 걸림
 
-  const body = (await request.json()) as {
-    fromStationId: string;
-    toStationId: string;
-    departureTime: string;
-  };
-
-  const { fromStationId, toStationId, departureTime } = body;
+  const url = new URL(request.url);
+  const fromStationId = url.searchParams.get('fromStationId') || '';
+  const toStationId = url.searchParams.get('toStationId') || '';
+  const departureTimeParam = url.searchParams.get('departureTime') || '';
 
   if (!fromStationId || !toStationId) {
     return HttpResponse.json(
       {
         error: 'INVALID_REQUEST',
         message: '출발지와 도착지를 입력해주세요',
+      },
+      { status: 400 }
+    );
+  }
+
+  if (!departureTimeParam) {
+    return HttpResponse.json(
+      {
+        error: 'INVALID_REQUEST',
+        message: '출발 시간을 입력해주세요',
       },
       { status: 400 }
     );
@@ -40,19 +46,22 @@ const searchItineraryHandler = http.post('/api/itineraries/search', async ({ req
     );
   }
 
-  // 출발 시각 파싱 (기본값: 현재 시각)
-  const parsedDepartureTime = departureTime ? new Date(departureTime) : new Date();
+  const parsedDepartureTime = new Date(departureTimeParam);
+  if (Number.isNaN(parsedDepartureTime.getTime())) {
+    return HttpResponse.json(
+      {
+        error: 'INVALID_REQUEST',
+        message: '출발 시간 형식이 올바르지 않습니다',
+      },
+      { status: 400 }
+    );
+  }
 
-  // 경로 검색
-  const itineraries = searchItineraries(fromStationId, toStationId, parsedDepartureTime);
+  // 경로 검색 (내부적으로 storage에 저장됨)
+  const recommendations = searchItineraries(fromStationId, toStationId, parsedDepartureTime);
 
-  // 조회된 경로를 인메모리에 저장 (쿠폰/예약 단계에서 참조)
-  saveItineraries(itineraries);
-
-  // 경로가 없어도 빈 배열 반환 (에러 대신)
-  return HttpResponse.json({
-    itineraries,
-  });
+  // 추천 경로를 객체 형식으로 반환
+  return HttpResponse.json(recommendations);
 });
 
 /**
@@ -86,30 +95,34 @@ const calculateFareHandler = http.post<{ itineraryId: string }, { couponCode?: s
       );
     }
 
-    const { couponCode } = await request.json();
+    let realCouponCode: string | undefined;
+    try {
+      const body = (await request.json()) as { couponCode?: string | null };
+      const couponUuid = body?.couponCode || undefined;
+
+      // UUID로 실제 쿠폰 코드 조회 (소유한 쿠폰)
+      if (couponUuid) {
+        realCouponCode = getRealCouponCode(couponUuid);
+        // 소유하지 않은 쿠폰이면 할인 적용 안함
+      }
+    } catch {
+      realCouponCode = undefined;
+    }
 
     // 쿠폰 적용 요금 계산
     const linesMap = new Map(lines.map(line => [line.lineId, line]));
-    const pricing = calculateFinalBookingPrice(storedItinerary.legs, couponCode || undefined, new Date(), linesMap);
+    const pricing = calculateFinalBookingPrice(storedItinerary.legs, realCouponCode || undefined, new Date(), linesMap);
 
-    // 적용된 쿠폰 정보
-    let appliedCoupon = null;
-    if (couponCode) {
-      const couponDef = getCouponDefinition(couponCode);
-      if (couponDef) {
-        const myCoupons = getMyCoupons();
-        const ownedCoupon = myCoupons.find(c => c.couponCode === couponCode);
-        appliedCoupon = ownedCoupon || {
-          ...couponDef,
-          ownedCount: 0,
-        };
-      }
-    }
+    const routeFare = pricing.subtotal - pricing.transferDiscount;
 
     return HttpResponse.json({
-      itinerary: storedItinerary,
-      pricing,
-      appliedCoupon,
+      itineraryId: storedItinerary.itineraryId,
+      baseFare: pricing.subtotal,
+      transferDiscount: pricing.transferDiscount,
+      routeFare,
+      couponDiscount: pricing.couponDiscount,
+      finalTotal: pricing.finalTotal,
+      appliedCouponCode: realCouponCode || null,
     });
   }
 );
