@@ -31,7 +31,7 @@ const PaymentDetailDescriptionsItem = ({
   );
 };
 
-const PaymentDescriptionsExpandableItem = ({
+const PaymentDetailDescriptionsExpandableItem = ({
   content,
   ...itemProps
 }: ComponentProps<typeof PaymentDetailDescriptionsItem> & {
@@ -44,7 +44,7 @@ const PaymentDescriptionsExpandableItem = ({
           key: 'item',
           label: <PaymentDetailDescriptionsItem {...itemProps} />,
           children: content,
-          indicator: <DownOutlined />,
+          indicator: <DownOutlined size={16} />,
         },
       ]}
     />
@@ -54,5 +54,5 @@ const PaymentDescriptionsExpandableItem = ({
 export const PaymentDetailDescriptions = {
   Root: PaymentDetailDescriptionsRoot,
   Item: PaymentDetailDescriptionsItem,
-  ExpandableItem: PaymentDescriptionsExpandableItem,
+  ExpandableItem: PaymentDetailDescriptionsExpandableItem,
 };

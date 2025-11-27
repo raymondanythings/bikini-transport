@@ -12,7 +12,7 @@ export const PaymentPage = () => {
     <Flex direction="column" height="screen">
       <Header>
         <Header.Left>
-          <ark.button>
+          <ark.button onClick={() => {}}>
             <CloseOutlined />
           </ark.button>
         </Header.Left>

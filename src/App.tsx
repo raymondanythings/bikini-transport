@@ -2,6 +2,7 @@ import { OverlayProvider } from 'overlay-kit';
 import { PageLayout } from './pages/PageLayout';
 import { Routes } from './pages/Routes';
 import TestPathfinding from './test-pathfinding';
+import { ToastProvider } from './ui-lib/components/Toast';
 
 function App() {
   // URL 쿼리 파라미터로 페이지 선택
@@ -16,9 +17,11 @@ function App() {
 
   return (
     <OverlayProvider>
-      <PageLayout>
-        <Routes />
-      </PageLayout>
+      <ToastProvider>
+        <PageLayout>
+          <Routes />
+        </PageLayout>
+      </ToastProvider>
     </OverlayProvider>
   );
 }

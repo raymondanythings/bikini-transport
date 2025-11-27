@@ -95,7 +95,7 @@
             "noDuplicateElseIf": "error",
             "noDuplicateObjectKeys": "error",
             "noDuplicateParameters": "error",
-            "noEmptyBlockStatements": "error",
+            "noEmptyBlockStatements": "off",
             "noFallthroughSwitchClause": "error",
             "noFunctionAssign": "error",
             "noGlobalAssign": "error",

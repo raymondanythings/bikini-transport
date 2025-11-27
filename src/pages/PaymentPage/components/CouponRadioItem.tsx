@@ -41,7 +41,7 @@ export const CouponRadioItem = ({ discountAmount, couponName, conditions, ...pro
             <VStack gap={1} alignItems="start">
               {conditions.map((condition, index) => (
                 <HStack key={index} gap={1.5}>
-                  <CircleFilled />
+                  <CircleFilled size={2} />
                   <Typography variant="C1_Medium" color="label.alternative">
                     {condition}
                   </Typography>

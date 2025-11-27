@@ -21,10 +21,10 @@ export const DepartureTimeBottomSheet = ({ isOpen, close }: DepartureTimeBottomS
       header={<BottomSheet.Header>출발 시간 설정</BottomSheet.Header>}
       cta={
         <HStack>
-          <Button key="지금 출발" color="secondary" fullWidth>
+          <Button color="secondary" fullWidth onClick={() => {}}>
             지금 출발
           </Button>
-          <Button key="확인" fullWidth>
+          <Button fullWidth onClick={() => {}}>
             확인
           </Button>
         </HStack>

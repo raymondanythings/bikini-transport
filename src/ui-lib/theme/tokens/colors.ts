@@ -78,6 +78,9 @@ export const colors = defineTokens.colors({
     safety: {
       value: '#414EFF',
     },
+    warning: {
+      value: '#FFD334',
+    },
     destructive: {
       value: '#FF1C35',
     },
@@ -91,6 +94,9 @@ export const colors = defineTokens.colors({
     },
     darkGray: {
       value: '#4B4B4B',
+    },
+    darkGrayAlpha: {
+      value: '#2A2A2AB3',
     },
     black: {
       value: '#000000',

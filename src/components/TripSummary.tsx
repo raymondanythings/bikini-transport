@@ -28,7 +28,7 @@ const TripSummaryContent = ({
         <Typography variant="H1_Bold" color="label.normal">
           {departure}
         </Typography>
-        <SwapRightOutlined />
+        <SwapRightOutlined size={16} />
         <Typography variant="H1_Bold" color="label.normal">
           {arrival}
         </Typography>

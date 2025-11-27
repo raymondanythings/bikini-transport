@@ -44,25 +44,25 @@ export const StationBottomSheet = ({ isOpen, close }: StationBottomSheetProps) =
         <Spacer height={2} />
 
         <Flex direction="column" as="ul" height="360px" overflowY="auto">
-          <StationListItem name="뉴 켈프 시티" />
+          <StationListItem name="뉴 켈프 시티" onClick={() => {}} />
           <Divider color="line.alternative" />
 
-          <StationListItem name="글러브월드" />
+          <StationListItem name="글러브월드" onClick={() => {}} />
           <Divider color="line.alternative" />
 
-          <StationListItem name="비키니시티" />
+          <StationListItem name="비키니시티" onClick={() => {}} />
           <Divider color="line.alternative" />
 
-          <StationListItem name="플로터스 묘지" />
+          <StationListItem name="플로터스 묘지" onClick={() => {}} />
           <Divider color="line.alternative" />
 
-          <StationListItem name="버블타운" />
+          <StationListItem name="버블타운" onClick={() => {}} />
           <Divider color="line.alternative" />
 
-          <StationListItem name="메롱시티" />
+          <StationListItem name="메롱시티" onClick={() => {}} />
           <Divider color="line.alternative" />
 
-          <StationListItem name="비키니 환초" />
+          <StationListItem name="비키니 환초" onClick={() => {}} />
           <Divider color="line.alternative" />
         </Flex>
       </Box>

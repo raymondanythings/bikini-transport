@@ -66,13 +66,13 @@ const RouteDetailArrivalStation = ({ stationName, lineType }: { stationName: str
         {(() => {
           switch (lineType) {
             case 'tour':
-              return <CircleOutlined color="bus.tour" />;
+              return <CircleOutlined color="bus.tour" size={10} />;
             case 'city':
-              return <CircleOutlined color="bus.city" />;
+              return <CircleOutlined color="bus.city" size={10} />;
             case 'suburb':
-              return <CircleOutlined color="bus.suburb" />;
+              return <CircleOutlined color="bus.suburb" size={10} />;
             default:
-              return <CircleOutlined />;
+              return <CircleOutlined size={10} />;
           }
         })()}
       </Flex>

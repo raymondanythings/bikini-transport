@@ -9,7 +9,7 @@ export const BusInfoSection = () => {
         <Typography variant="B1_Bold" color="label.normal">
           비키니시티
         </Typography>
-        <SwapRightOutlined />
+        <SwapRightOutlined size={16} />
         <Typography variant="B1_Bold" color="label.normal">
           징징빌라
         </Typography>

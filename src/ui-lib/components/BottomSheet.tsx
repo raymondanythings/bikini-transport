@@ -1,8 +1,6 @@
 import { Dialog, Portal } from '@ark-ui/react';
-import type React from 'react';
 import type { ReactNode } from 'react';
 import { styled } from 'styled-system/jsx';
-import { Button } from './Button';
 
 const Backdrop = styled(Dialog.Backdrop, {
   base: {
@@ -121,8 +119,4 @@ export const BottomSheet = ({ open, onDimmerClick, header, cta, children }: Bott
 
 BottomSheet.Header = function BottomSheetHeader({ children }: { children: ReactNode }) {
   return <Header>{children}</Header>;
-};
-
-BottomSheet.CTA = function BottomSheetCTA(props: React.ComponentProps<typeof Button>) {
-  return <Button {...props} />;
 };
