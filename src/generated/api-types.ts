@@ -75,6 +75,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/itineraries/{itineraryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 경로 상세 조회
+         * @description 특정 경로의 상세 정보를 조회합니다.
+         */
+        get: operations["getItineraryById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/itineraries/{itineraryId}/calculate-fare": {
         parameters: {
             query?: never;
@@ -802,6 +822,47 @@ export interface operations {
                         /** @description 최저요금 경로 (없으면 null) */
                         lowestFare?: components["schemas"]["ItineraryRecommendation"] | null;
                     };
+                };
+            };
+        };
+    };
+    getItineraryById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @example itinerary-1 */
+                itineraryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Itinerary"];
+                };
+            };
+            /** @description 잘못된 요청 (itineraryId 없음) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description 경로를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };

@@ -64,6 +64,28 @@ const searchItineraryHandler = http.get('/api/itineraries/search', async ({ requ
   return HttpResponse.json(recommendations);
 });
 
+const getItineraryByIdHandler = http.get<{ itineraryId: string }>(
+  '/api/itineraries/:itineraryId',
+  async ({ params }) => {
+    await delay(200);
+
+    const itineraryId = params.itineraryId as string | undefined;
+    if (!itineraryId) {
+      return HttpResponse.json({ error: 'INVALID_REQUEST', message: 'itineraryId가 필요합니다' }, { status: 400 });
+    }
+
+    const storedItinerary = getItineraryById(itineraryId);
+    if (!storedItinerary) {
+      return HttpResponse.json(
+        { error: 'ITINERARY_NOT_FOUND', message: '저장된 경로를 찾을 수 없습니다' },
+        { status: 404 }
+      );
+    }
+
+    return HttpResponse.json(storedItinerary);
+  }
+);
+
 /**
  * POST /api/itineraries/:itineraryId/calculate-fare
  * 요금 계산 (결제 전 미리보기)
@@ -127,4 +149,4 @@ const calculateFareHandler = http.post<{ itineraryId: string }, { couponCode?: s
   }
 );
 
-export const itineraryHandlers = [searchItineraryHandler, calculateFareHandler];
+export const itineraryHandlers = [searchItineraryHandler, getItineraryByIdHandler, calculateFareHandler];

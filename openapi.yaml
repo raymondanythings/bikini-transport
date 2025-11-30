@@ -146,6 +146,39 @@ paths:
                     nullable: true
                     description: 최저요금 경로 (없으면 null)
 
+  /itineraries/{itineraryId}:
+    get:
+      tags: [itineraries]
+      summary: 경로 상세 조회
+      description: 특정 경로의 상세 정보를 조회합니다.
+      operationId: getItineraryById
+      parameters:
+        - name: itineraryId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: itinerary-1
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Itinerary'
+        '404':
+          description: 경로를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: 잘못된 요청 (itineraryId 없음)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /itineraries/{itineraryId}/calculate-fare:
     post:
       tags: [itineraries]
