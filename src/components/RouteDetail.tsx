@@ -18,6 +18,7 @@ const RouteDetailStation = ({
   stationName,
   travelTime,
   stopsCount,
+  waitingTime,
 }: {
   line: {
     name: string;
@@ -26,6 +27,7 @@ const RouteDetailStation = ({
   stationName: string;
   travelTime: string;
   stopsCount: string;
+  waitingTime?: string;
 }) => {
   return (
     <>
@@ -46,6 +48,11 @@ const RouteDetailStation = ({
             {stopsCount}
           </Typography>
         </Flex>
+        {waitingTime && (
+          <Typography variant="C2_Regular" color="status.destructive">
+            {waitingTime}
+          </Typography>
+        )}
       </Flex>
     </>
   );

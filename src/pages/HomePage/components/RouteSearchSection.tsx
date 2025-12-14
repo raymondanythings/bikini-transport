@@ -20,7 +20,7 @@ export const RouteSearchSection = () => {
       <Box px={5} gap={4}>
         <DateButton
           label="가는날"
-          value="October 27 09:00 AM"
+          value="10월 28일 (화) 09:00"
           placeholder="날짜를 입력해주세요"
           onClick={openDepartureTimeBottomSheet}
         />
