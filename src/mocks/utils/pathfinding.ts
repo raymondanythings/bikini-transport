@@ -79,9 +79,7 @@ function createLeg(legId: string, line: Line, fromStationId: string, toStationId
 
   return {
     legId,
-    lineId: line.lineId,
-    lineName: line.name,
-    lineColor: line.color,
+    line,
     fromStation,
     toStation,
     fromStationIndex: fromIndex,
@@ -241,7 +239,7 @@ export function createItinerary(
     const arrivalAtTransferStation = currentTime;
 
     // 다음 노선의 다음 출발 시각
-    const line = linesMap.get(leg.lineId);
+    const line = linesMap.get(leg.line.lineId);
     if (!line) {
       return { ...leg, waitTimeMinutes: 0 };
     }
@@ -249,7 +247,7 @@ export function createItinerary(
     const nextDeparture = getNextDeparture(line, arrivalAtTransferStation, leg.fromStation.stationId);
     const waitTime = calculateWaitTime(arrivalAtTransferStation, nextDeparture);
 
-    return { ...leg, waitTimeMinutes: waitTime };
+    return { ...leg, departureTime, waitTimeMinutes: waitTime };
   });
 
   // 요금 계산
@@ -266,38 +264,38 @@ export function createItinerary(
 
   return {
     itineraryId,
-    recommendationTypes: [], // 나중에 결정
     totalDurationMinutes,
     transferCount,
     legs: legsWithWaitTime,
     pricing,
+    departureTime: departureTime.toISOString(),
   };
 }
 
 /**
  * Leg를 LegSummary로 변환
  */
-function convertToLegSummary(leg: Leg, line: Line): LegSummary {
+export function convertToLegSummary(leg: Leg, line: Line): LegSummary {
   return {
     legId: leg.legId,
-    lineType: line.type,
-    lineName: leg.lineName,
-    lineColor: leg.lineColor,
+    line: {
+      id: line.lineId,
+      name: line.name,
+      type: line.type,
+      color: line.color,
+    },
     fromStation: leg.fromStation,
     toStation: leg.toStation,
     durationMinutes: leg.durationMinutes,
     stopsCount: leg.stopsCount,
+    waitTimeMinutes: leg.waitTimeMinutes,
   };
 }
 
 /**
  * Itinerary를 ItineraryRecommendation으로 변환
  */
-function convertToRecommendation(
-  itinerary: Itinerary,
-  departureTime: Date,
-  linesMap: Map<string, Line>
-): ItineraryRecommendation {
+export function convertToRecommendation(itinerary: Itinerary, linesMap: Map<string, Line>): ItineraryRecommendation {
   const fromStation = itinerary.legs[0]?.fromStation;
   const toStation = itinerary.legs[itinerary.legs.length - 1]?.toStation;
 
@@ -306,16 +304,16 @@ function convertToRecommendation(
   }
 
   const legsSummary = itinerary.legs.map(leg => {
-    const line = linesMap.get(leg.lineId);
+    const line = linesMap.get(leg.line.lineId);
     if (!line) {
-      throw new Error(`Line not found: ${leg.lineId}`);
+      throw new Error(`Line not found: ${leg.line.lineId}`);
     }
     return convertToLegSummary(leg, line);
   });
 
   return {
     itineraryId: itinerary.itineraryId,
-    departureTime: departureTime.toISOString(),
+    departureTime: itinerary.departureTime,
     fromStation,
     toStation,
     totalDurationMinutes: itinerary.totalDurationMinutes,
@@ -372,10 +370,8 @@ export function searchItineraries(
   )[0];
 
   return {
-    shortestTime: shortestTimeItinerary
-      ? convertToRecommendation(shortestTimeItinerary, departureTime, linesMap)
-      : null,
-    minTransfer: minTransferItinerary ? convertToRecommendation(minTransferItinerary, departureTime, linesMap) : null,
-    lowestFare: lowestFareItinerary ? convertToRecommendation(lowestFareItinerary, departureTime, linesMap) : null,
+    shortestTime: shortestTimeItinerary ? convertToRecommendation(shortestTimeItinerary, linesMap) : null,
+    minTransfer: minTransferItinerary ? convertToRecommendation(minTransferItinerary, linesMap) : null,
+    lowestFare: lowestFareItinerary ? convertToRecommendation(lowestFareItinerary, linesMap) : null,
   };
 }

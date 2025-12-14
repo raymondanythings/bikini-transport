@@ -13,9 +13,9 @@ type Leg = components['schemas']['Leg'];
  */
 export function calculateLegsWithTransferDiscount(legs: Leg[], linesMap: Map<string, Line>): Leg[] {
   return legs.map((leg, index) => {
-    const line = linesMap.get(leg.lineId);
+    const line = linesMap.get(leg.line.lineId);
     if (!line) {
-      throw new Error(`Line not found: ${leg.lineId}`);
+      throw new Error(`Line not found: ${leg.line.lineId}`);
     }
 
     // 환승 번호 (0: 첫 구간, 1: 1회 환승, 2: 2회 환승, ...)
@@ -134,7 +134,7 @@ export function calculateCouponDiscount(
       if (couponDef.applicableLineTypes && couponDef.applicableLineTypes.length > 0) {
         // 투어패스: 특정 노선만 할인
         const applicableLegs = legs.filter(leg => {
-          const line = linesMap.get(leg.lineId);
+          const line = linesMap.get(leg.line.lineId);
           if (!line) return false;
           return checkLineTypeCondition(couponDef, line.type);
         });

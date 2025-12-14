@@ -141,7 +141,7 @@ export function checkTimeCondition(coupon: AppCouponDefinition, departureTime: D
 /**
  * 쿠폰 노선 타입 조건 체크
  */
-export function checkLineTypeCondition(coupon: AppCouponDefinition, lineType: 'CITY' | 'SUBURBAN' | 'TOUR'): boolean {
+export function checkLineTypeCondition(coupon: AppCouponDefinition, lineType: 'CITY' | 'SUBURB' | 'TOUR'): boolean {
   if (!coupon.applicableLineTypes) {
     return true;
   }

@@ -1,7 +1,7 @@
 import { delay, HttpResponse, http } from 'msw';
 import { lines } from '../data/lines';
 import { getItineraryById, getRealCouponCode } from '../storage';
-import { searchItineraries } from '../utils/pathfinding';
+import { convertToRecommendation, searchItineraries } from '../utils/pathfinding';
 import { calculateFinalBookingPrice } from '../utils/pricing';
 
 /**
@@ -82,7 +82,7 @@ const getItineraryByIdHandler = http.get<{ itineraryId: string }>(
       );
     }
 
-    return HttpResponse.json(storedItinerary);
+    return HttpResponse.json(convertToRecommendation(storedItinerary, new Map(lines.map(line => [line.lineId, line]))));
   }
 );
 
