@@ -21,10 +21,10 @@ describe('노선 유틸리티 (Lines)', () => {
     });
 
     it('외곽선 조회', () => {
-      const line = getLineById(LINE_UUIDS.SUBURBAN_LINE);
+      const line = getLineById(LINE_UUIDS.SUBURB_LINE);
       expect(line).toBeDefined();
       expect(line!.name).toBe('외곽선');
-      expect(line!.type).toBe('SUBURBAN');
+      expect(line!.type).toBe('SUBURB');
     });
 
     it('투어선 조회', () => {
@@ -47,8 +47,8 @@ describe('노선 유틸리티 (Lines)', () => {
     });
 
     it('외곽선: 단방향', () => {
-      expect(isBidirectional(LINE_UUIDS.SUBURBAN_LINE)).toBe(false);
-      expect(getLineDirection(LINE_UUIDS.SUBURBAN_LINE)).toBe('UNIDIRECTIONAL');
+      expect(isBidirectional(LINE_UUIDS.SUBURB_LINE)).toBe(false);
+      expect(getLineDirection(LINE_UUIDS.SUBURB_LINE)).toBe('UNIDIRECTIONAL');
     });
 
     it('투어선: 양방향', () => {
@@ -104,7 +104,7 @@ describe('노선 유틸리티 (Lines)', () => {
     it('비키니시티 → 징징빌라: 외곽선', () => {
       const line = findDirectLine(STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.TENTACLE_ACRES);
       expect(line).toBeDefined();
-      expect(line!.lineId).toBe(LINE_UUIDS.SUBURBAN_LINE);
+      expect(line!.lineId).toBe(LINE_UUIDS.SUBURB_LINE);
     });
 
     it('같은 역: undefined', () => {
@@ -120,7 +120,7 @@ describe('노선 유틸리티 (Lines)', () => {
 
   describe('getStopsCount - 정거장 수 계산', () => {
     const cityLine = lines.find(l => l.lineId === LINE_UUIDS.CITY_LINE)!;
-    const suburbanLine = lines.find(l => l.lineId === LINE_UUIDS.SUBURBAN_LINE)!;
+    const SUBURBLine = lines.find(l => l.lineId === LINE_UUIDS.SUBURB_LINE)!;
     const tourLine = lines.find(l => l.lineId === LINE_UUIDS.TOUR_LINE)!;
 
     describe('양방향 순환 (시티선)', () => {
@@ -146,18 +146,18 @@ describe('노선 유틸리티 (Lines)', () => {
 
     describe('단방향 순환 (외곽선)', () => {
       it('순방향: 비키니시티(0) → 버블타운(2) = 2구간', () => {
-        const stops = getStopsCount(suburbanLine, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN);
+        const stops = getStopsCount(SUBURBLine, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN);
         expect(stops).toBe(2);
       });
 
       it('순환 경로: 징징빌라(4) → 비키니시티(0) = 1구간 (순환)', () => {
-        const stops = getStopsCount(suburbanLine, STATION_UUIDS.TENTACLE_ACRES, STATION_UUIDS.BIKINI_CITY);
+        const stops = getStopsCount(SUBURBLine, STATION_UUIDS.TENTACLE_ACRES, STATION_UUIDS.BIKINI_CITY);
         // 단방향은 항상 순방향만: 4→0 = 1구간 (순환)
         expect(stops).toBe(1);
       });
 
       it('전체 순환: 비키니시티(0) → 징징빌라(4) = 4구간', () => {
-        const stops = getStopsCount(suburbanLine, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.TENTACLE_ACRES);
+        const stops = getStopsCount(SUBURBLine, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.TENTACLE_ACRES);
         expect(stops).toBe(4);
       });
     });
@@ -205,7 +205,7 @@ describe('노선 유틸리티 (Lines)', () => {
     });
 
     it('외곽선: 기본 25₴, 정거장당 8₴', () => {
-      const line = getLineById(LINE_UUIDS.SUBURBAN_LINE)!;
+      const line = getLineById(LINE_UUIDS.SUBURB_LINE)!;
       expect(line.baseFare).toBe(25);
       expect(line.extraFarePerStop).toBe(8);
     });
@@ -225,7 +225,7 @@ describe('노선 유틸리티 (Lines)', () => {
     });
 
     it('외곽선: 1회 15%, 2회 이상 25%', () => {
-      const line = getLineById(LINE_UUIDS.SUBURBAN_LINE)!;
+      const line = getLineById(LINE_UUIDS.SUBURB_LINE)!;
       expect(line.transferDiscount1st).toBe(0.15);
       expect(line.transferDiscount2nd).toBe(0.25);
     });
@@ -244,7 +244,7 @@ describe('노선 유틸리티 (Lines)', () => {
     });
 
     it('외곽선: 90분 간격', () => {
-      const line = getLineById(LINE_UUIDS.SUBURBAN_LINE)!;
+      const line = getLineById(LINE_UUIDS.SUBURB_LINE)!;
       expect(line.schedule?.intervalMinutes).toBe(90);
     });
 

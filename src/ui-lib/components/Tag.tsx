@@ -31,13 +31,13 @@ const tagRecipe = cva({
 
   variants: {
     color: {
-      city: {
+      CITY: {
         bgColor: 'bus.city',
       },
-      suburb: {
+      SUBURB: {
         bgColor: 'bus.suburb',
       },
-      tour: {
+      TOUR: {
         bgColor: 'bus.tour',
       },
       default: {

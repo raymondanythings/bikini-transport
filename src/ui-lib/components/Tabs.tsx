@@ -1,4 +1,5 @@
 import { Tabs as ArkTabs } from '@ark-ui/react';
+import type { ComponentPropsWithoutRef } from 'react';
 import { styled } from 'styled-system/jsx';
 
 const Root = styled(ArkTabs.Root, {
@@ -7,7 +8,7 @@ const Root = styled(ArkTabs.Root, {
   },
 });
 
-const List = styled(ArkTabs.List, {
+export const TabList = styled(ArkTabs.List, {
   base: {
     display: 'flex',
     gap: 0,
@@ -17,7 +18,7 @@ const List = styled(ArkTabs.List, {
   },
 });
 
-const Trigger = styled(ArkTabs.Trigger, {
+export const TabItem = styled(ArkTabs.Trigger, {
   base: {
     flex: 1,
     textStyle: 'B2_Bold',
@@ -51,41 +52,26 @@ const Trigger = styled(ArkTabs.Trigger, {
   },
 });
 
-const Indicator = styled(ArkTabs.Indicator, {
-  base: {
-    display: 'none',
-  },
-});
+const TabContent = styled(ArkTabs.Content);
 
-const Content = styled(ArkTabs.Content);
+type TabsProps = Omit<ComponentPropsWithoutRef<typeof ArkTabs.Root>, 'onValueChange'> & {
+  onValueChange?: (value: string) => void;
+};
 
-interface TabItem {
-  key: string;
-  label: React.ReactNode;
-  children: React.ReactNode;
-}
-
-interface TabsProps {
-  items: TabItem[];
-  defaultActiveKey?: string;
-}
-
-export const Tabs = ({ items, defaultActiveKey }: TabsProps) => {
+const TabRoot = ({ onValueChange, ...props }: TabsProps) => {
   return (
-    <Root defaultValue={defaultActiveKey || items[0]?.key}>
-      <List>
-        {items.map(item => (
-          <Trigger key={item.key} value={item.key}>
-            {item.label}
-          </Trigger>
-        ))}
-      </List>
-      {items.map(item => (
-        <Content key={item.key} value={item.key}>
-          {item.children}
-        </Content>
-      ))}
-      <Indicator />
-    </Root>
+    <Root
+      {...props}
+      onValueChange={details => {
+        onValueChange?.(details.value);
+      }}
+    />
   );
+};
+
+export const Tab = {
+  Root: TabRoot,
+  List: TabList,
+  Item: TabItem,
+  Content: TabContent,
 };

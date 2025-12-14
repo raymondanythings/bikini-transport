@@ -1,7 +1,7 @@
 import type { components } from '@/generated/api-types';
-import { getStationById, stations } from '../data/stations';
-import { getStopsCount, isBidirectional, lines } from '../data/lines';
 import { getDuration } from '../data/duration-map';
+import { getStopsCount, isBidirectional, lines } from '../data/lines';
+import { getStationById, stations } from '../data/stations';
 import { saveItineraries } from '../storage';
 import { calculateItineraryPricing, calculateLegsWithTransferDiscount } from './pricing';
 import { addMinutesToTime, calculateWaitTime, getNextDeparture } from './schedule-utils';
@@ -286,6 +286,7 @@ function convertToLegSummary(leg: Leg, line: Line): LegSummary {
     fromStation: leg.fromStation,
     toStation: leg.toStation,
     durationMinutes: leg.durationMinutes,
+    stopsCount: leg.stopsCount,
   };
 }
 
@@ -360,9 +361,7 @@ export function searchItineraries(
   saveItineraries(allItineraries);
 
   // 1. 최단시간 경로
-  const shortestTimeItinerary = [...allItineraries].sort(
-    (a, b) => a.totalDurationMinutes - b.totalDurationMinutes
-  )[0];
+  const shortestTimeItinerary = [...allItineraries].sort((a, b) => a.totalDurationMinutes - b.totalDurationMinutes)[0];
 
   // 2. 최소환승 경로
   const minTransferItinerary = [...allItineraries].sort((a, b) => a.transferCount - b.transferCount)[0];
@@ -373,7 +372,9 @@ export function searchItineraries(
   )[0];
 
   return {
-    shortestTime: shortestTimeItinerary ? convertToRecommendation(shortestTimeItinerary, departureTime, linesMap) : null,
+    shortestTime: shortestTimeItinerary
+      ? convertToRecommendation(shortestTimeItinerary, departureTime, linesMap)
+      : null,
     minTransfer: minTransferItinerary ? convertToRecommendation(minTransferItinerary, departureTime, linesMap) : null,
     lowestFare: lowestFareItinerary ? convertToRecommendation(lowestFareItinerary, departureTime, linesMap) : null,
   };

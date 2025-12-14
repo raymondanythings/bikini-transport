@@ -516,7 +516,7 @@ components:
           type: string
           enum:
             - CITY
-            - SUBURBAN
+            - SUBURB
             - TOUR
           description: 노선 타입
           example: CITY
@@ -589,7 +589,7 @@ components:
           type: string
           enum:
             - CITY
-            - SUBURBAN
+            - SUBURB
             - TOUR
           description: 노선 타입
           example: CITY
@@ -905,7 +905,7 @@ components:
             type: string
             enum:
               - CITY
-              - SUBURBAN
+              - SUBURB
               - TOUR
           nullable: true
           example: [TOUR]

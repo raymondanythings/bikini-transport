@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import {
-  getNextDeparture,
-  calculateWaitTime,
-  parseTimeString,
-  applyTimeToDate,
-  addMinutesToTime,
-} from './schedule-utils';
-import { lines, LINE_UUIDS } from '../data/lines';
+import { describe, expect, it } from 'vitest';
+import { LINE_UUIDS, lines } from '../data/lines';
 import { STATION_UUIDS } from '../data/stations';
+import {
+  addMinutesToTime,
+  applyTimeToDate,
+  calculateWaitTime,
+  getNextDeparture,
+  parseTimeString,
+} from './schedule-utils';
 
 describe('배차 시간표 계산 (Schedule Utils)', () => {
   describe('시간 파싱 및 조작', () => {
@@ -35,7 +35,7 @@ describe('배차 시간표 계산 (Schedule Utils)', () => {
 
   describe('환승역 다음 출발 시각 계산', () => {
     const cityLine = lines.find(line => line.lineId === LINE_UUIDS.CITY_LINE)!;
-    const suburbanLine = lines.find(line => line.lineId === LINE_UUIDS.SUBURBAN_LINE)!;
+    const SUBURBLine = lines.find(line => line.lineId === LINE_UUIDS.SUBURB_LINE)!;
 
     it('시티선: 첫차 시각 이전 도착 → 첫차 대기', () => {
       // 06:00에 비키니시티(환승역)에 도착 → 시티선 첫차 06:30
@@ -62,7 +62,7 @@ describe('배차 시간표 계산 (Schedule Utils)', () => {
     it('외곽선: 90분 배차 간격 고려', () => {
       // 07:00에 버블타운 도착 → 다음 차량 대기
       const arrivalTime = new Date('2024-01-15T07:00:00');
-      const nextDeparture = getNextDeparture(suburbanLine, arrivalTime, STATION_UUIDS.BUBBLE_TOWN);
+      const nextDeparture = getNextDeparture(SUBURBLine, arrivalTime, STATION_UUIDS.BUBBLE_TOWN);
 
       expect(nextDeparture).not.toBeNull();
       const waitTime = calculateWaitTime(arrivalTime, nextDeparture);
@@ -105,7 +105,7 @@ describe('배차 시간표 계산 (Schedule Utils)', () => {
   });
 
   describe('실전 시나리오', () => {
-    const suburbanLine = lines.find(line => line.lineId === LINE_UUIDS.SUBURBAN_LINE)!;
+    const SUBURBLine = lines.find(line => line.lineId === LINE_UUIDS.SUBURB_LINE)!;
 
     it('시나리오: 시티선 06:30 출발 → 버블타운 07:15 도착 → 외곽선 대기', () => {
       // 사용자가 제시한 시나리오
@@ -113,7 +113,7 @@ describe('배차 시간표 계산 (Schedule Utils)', () => {
       const arrivalAtBubbleTown = new Date('2024-01-15T07:15:00');
 
       // 외곽선 다음 차량 계산
-      const nextDeparture = getNextDeparture(suburbanLine, arrivalAtBubbleTown, STATION_UUIDS.BUBBLE_TOWN);
+      const nextDeparture = getNextDeparture(SUBURBLine, arrivalAtBubbleTown, STATION_UUIDS.BUBBLE_TOWN);
 
       expect(nextDeparture).not.toBeNull();
 

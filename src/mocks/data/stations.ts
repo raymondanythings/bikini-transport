@@ -25,7 +25,7 @@ export const STATION_UUIDS = {
  *
  * 3개 노선의 모든 정류장을 포함합니다:
  * - 시티선 (City Line)
- * - 외곽선 (Suburban Line)
+ * - 외곽선 (SUBURB Line)
  * - 투어선 (Tour Line)
  */
 export const stations: Station[] = [

@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { calculateLegsWithTransferDiscount, calculateItineraryPricing, calculateFinalBookingPrice } from './pricing';
-import { lines, LINE_UUIDS } from '../data/lines';
-import { STATION_UUIDS, getStationById } from '../data/stations';
+import { describe, expect, it } from 'vitest';
 import type { components } from '@/generated/api-types';
+import { LINE_UUIDS, lines } from '../data/lines';
+import { getStationById, STATION_UUIDS } from '../data/stations';
+import { calculateFinalBookingPrice, calculateItineraryPricing, calculateLegsWithTransferDiscount } from './pricing';
 
 type Leg = components['schemas']['Leg'];
 
@@ -52,7 +52,7 @@ describe('요금 계산 (Pricing)', () => {
     it('1회 환승: 시티선 10% 할인', () => {
       const legs: Leg[] = [
         createTestLeg(LINE_UUIDS.CITY_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 14),
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
       ];
 
       const result = calculateLegsWithTransferDiscount(legs, linesMap);
@@ -69,12 +69,12 @@ describe('요금 계산 (Pricing)', () => {
     });
 
     it('외곽선 1회 환승: 15% 할인', () => {
-      const suburbanLine = lines.find(l => l.lineId === LINE_UUIDS.SUBURBAN_LINE)!;
-      expect(suburbanLine.transferDiscount1st).toBe(0.15);
+      const SUBURBLine = lines.find(l => l.lineId === LINE_UUIDS.SUBURB_LINE)!;
+      expect(SUBURBLine.transferDiscount1st).toBe(0.15);
 
       const legs: Leg[] = [
         createTestLeg(LINE_UUIDS.CITY_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 14),
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
       ];
 
       const result = calculateLegsWithTransferDiscount(legs, linesMap);
@@ -116,7 +116,7 @@ describe('요금 계산 (Pricing)', () => {
     it('1회 환승: 환승 할인 적용', () => {
       const legs: Leg[] = [
         createTestLeg(LINE_UUIDS.CITY_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 14),
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
       ];
 
       const legsWithDiscount = calculateLegsWithTransferDiscount(legs, linesMap);
@@ -205,7 +205,7 @@ describe('요금 계산 (Pricing)', () => {
     it('1회 환승 + 고정 금액 쿠폰 (진주패스: 각 구간마다 할인)', () => {
       const legs: Leg[] = [
         createTestLeg(LINE_UUIDS.CITY_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 14),
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
       ];
 
       const pricing = calculateFinalBookingPrice(legs, 'PEARL_PASS', new Date(), linesMap);
@@ -241,8 +241,8 @@ describe('요금 계산 (Pricing)', () => {
     it('환승 할인 비율이 더 크면 추가 할인 없음', () => {
       const legs: Leg[] = [
         createTestLeg(LINE_UUIDS.CITY_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 10),
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 40),
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.TENTACLE_ACRES, STATION_UUIDS.BIKINI_CITY, 40),
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 40),
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.TENTACLE_ACRES, STATION_UUIDS.BIKINI_CITY, 40),
       ];
 
       const nightTime = new Date('2024-01-01T22:00:00');
@@ -279,7 +279,7 @@ describe('요금 계산 (Pricing)', () => {
     it('외곽선 → 시티선 야간 환승: 달팽이 15% > 환승 10%', () => {
       const legs: Leg[] = [
         // 외곽선 20:50 탑승 (주간, 할인 미적용)
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 40, {
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 40, {
           durationMinutes: 25,
         }),
         // 시티선 21:15 환승 (야간, 환승 할인 10% vs 달팽이 15%)
@@ -304,7 +304,7 @@ describe('요금 계산 (Pricing)', () => {
     it('할인 금액 소수점 2자리 이내', () => {
       const legs: Leg[] = [
         createTestLeg(LINE_UUIDS.CITY_LINE, STATION_UUIDS.BIKINI_CITY, STATION_UUIDS.BUBBLE_TOWN, 14),
-        createTestLeg(LINE_UUIDS.SUBURBAN_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
+        createTestLeg(LINE_UUIDS.SUBURB_LINE, STATION_UUIDS.BUBBLE_TOWN, STATION_UUIDS.TENTACLE_ACRES, 41),
       ];
 
       const legsWithDiscount = calculateLegsWithTransferDiscount(legs, linesMap);

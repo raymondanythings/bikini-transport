@@ -9,7 +9,7 @@ type Line = components['schemas']['Line'];
  */
 export const LINE_UUIDS = {
   CITY_LINE: '550e8400-e29b-41d4-a716-446655440001',
-  SUBURBAN_LINE: '550e8400-e29b-41d4-a716-446655440002',
+  SUBURB_LINE: '550e8400-e29b-41d4-a716-446655440002',
   TOUR_LINE: '550e8400-e29b-41d4-a716-446655440003',
 } as const;
 
@@ -18,7 +18,7 @@ export const LINE_UUIDS = {
  *
  * 3개 노선 (모든 노선이 순환 노선):
  * 1. 시티선 (City Line) - 도심 순환 (양방향 순환)
- * 2. 외곽선 (Suburban Line) - 주거 지역 연결 (단방향 순환)
+ * 2. 외곽선 (SUBURB Line) - 주거 지역 연결 (단방향 순환)
  * 3. 투어선 (Tour Line) - 관광 특화 (양방향 순환)
  *
  * 순환 노선 특징:
@@ -50,9 +50,9 @@ export const lines: Line[] = [
     },
   },
   {
-    lineId: LINE_UUIDS.SUBURBAN_LINE,
+    lineId: LINE_UUIDS.SUBURB_LINE,
     name: '외곽선',
-    type: 'SUBURBAN',
+    type: 'SUBURB',
     color: '#b7dcca', // 연한 청록색
     stationIds: [
       STATION_UUIDS.BIKINI_CITY, // 비키니 시티 (출발)
@@ -107,7 +107,7 @@ type LineDirection = 'BIDIRECTIONAL' | 'UNIDIRECTIONAL';
  */
 const LINE_DIRECTIONS: Record<string, LineDirection> = {
   [LINE_UUIDS.CITY_LINE]: 'BIDIRECTIONAL',
-  [LINE_UUIDS.SUBURBAN_LINE]: 'UNIDIRECTIONAL',
+  [LINE_UUIDS.SUBURB_LINE]: 'UNIDIRECTIONAL',
   [LINE_UUIDS.TOUR_LINE]: 'BIDIRECTIONAL',
 };
 
@@ -168,7 +168,7 @@ export function findDirectLine(fromStationId: string, toStationId: string): Line
  * // → 1 (순환 경로: 4→0, 역방향 4→3→2→1→0보다 짧음)
  *
  * // 외곽선 (5개 정거장, 단방향 순환): TENTACLE_ACRES(4) → BIKINI_CITY(0)
- * getStopsCount(suburbanLine, "TENTACLE_ACRES", "BIKINI_CITY")
+ * getStopsCount(SUBURBLine, "TENTACLE_ACRES", "BIKINI_CITY")
  * // → 1 (순환 경로: 4→0)
  *
  * @throws {Error} 역을 찾을 수 없는 경우

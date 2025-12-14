@@ -3,7 +3,7 @@ import { CircleOutlined } from '@/ui-lib/components/Icon';
 import { Tag } from '@/ui-lib/components/Tag';
 import { Typography } from '@/ui-lib/components/Typography';
 
-type BusLineType = 'tour' | 'city' | 'suburb';
+type BusLineType = 'TOUR' | 'CITY' | 'SUBURB';
 
 const RouteDetailRoot = ({ children, ...props }: Omit<BoxProps, 'display' | 'gridTemplateColumns' | 'columnGap'>) => {
   return (
@@ -18,7 +18,6 @@ const RouteDetailStation = ({
   stationName,
   travelTime,
   stopsCount,
-  waitingTime,
 }: {
   line: {
     name: string;
@@ -27,7 +26,6 @@ const RouteDetailStation = ({
   stationName: string;
   travelTime: string;
   stopsCount: string;
-  waitingTime?: string;
 }) => {
   return (
     <>
@@ -48,11 +46,6 @@ const RouteDetailStation = ({
             {stopsCount}
           </Typography>
         </Flex>
-        {waitingTime && (
-          <Typography variant="C2_Regular" color="status.destructive">
-            {waitingTime}
-          </Typography>
-        )}
       </Flex>
     </>
   );
@@ -65,11 +58,11 @@ const RouteDetailArrivalStation = ({ stationName, lineType }: { stationName: str
         <Divider orientation="vertical" height="1.5" color="line.normal" />
         {(() => {
           switch (lineType) {
-            case 'tour':
+            case 'TOUR':
               return <CircleOutlined color="bus.tour" size={10} />;
-            case 'city':
+            case 'CITY':
               return <CircleOutlined color="bus.city" size={10} />;
-            case 'suburb':
+            case 'SUBURB':
               return <CircleOutlined color="bus.suburb" size={10} />;
             default:
               return <CircleOutlined size={10} />;
