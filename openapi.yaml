@@ -87,7 +87,7 @@ paths:
                       $ref: '#/components/schemas/Line'
 
   /itineraries/search:
-    get:
+    post:
       tags: [itineraries]
       summary: 경로 검색
       description: |

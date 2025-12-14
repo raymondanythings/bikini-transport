@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "panda codegen && yarn openapi:generate",
     "openapi:generate": "openapi-typescript openapi.yaml -o src/generated/api-types.ts",
-    "doc": "swagger-ui-watcher openapi.yaml",
+    "docs": "swagger-ui-watcher openapi.yaml",
     "dev": "vite",
     "build": "yarn openapi:generate && tsc -b && vite build",
     "lint": "biome lint",
