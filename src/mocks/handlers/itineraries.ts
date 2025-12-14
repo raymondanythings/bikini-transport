@@ -8,7 +8,7 @@ import { calculateFinalBookingPrice } from '../utils/pricing';
  * GET /api/itineraries/search
  * 경로 검색
  */
-const searchItineraryHandler = http.post('/api/itineraries/search', async ({ request }: { request: Request }) => {
+const searchItineraryHandler = http.get('/api/itineraries/search', async ({ request }: { request: Request }) => {
   await delay(300); // 경로 검색은 좀 더 시간이 걸림
 
   const url = new URL(request.url);
